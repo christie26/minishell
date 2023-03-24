@@ -1,13 +1,10 @@
-
-#####
-
+# all file
 SRCS_EXEC		=	main_exec.c \
 					mini_echo.c
 
 SRCS_PARSE		=	testfile.c
 
-#####
-
+# add path as their usage
 DIR_EXEC		= execute/
 DIR_PARSE		= parse/
 
@@ -15,15 +12,14 @@ SRCS_EXEC		:= $(addprefix $(DIR_EXEC), $(SRCS_EXEC))
 SRCS_PARSE		:= $(addprefix $(DIR_PARSE), $(SRCS_PARSE))
 
 SRCS			= $(SRCS_EXEC) $(SRCS_PARSE)
-OBJS			:= $(SRCS:%.c=%.o)
 
-#####
-
+# add "./src" directory
 SRC_DIR			= ./src/
 SRCS			:= $(addprefix $(SRC_DIR), $(SRCS))
 
-OBJ_DIR 		= ./obj/
-OBJS			:= $(addprefix $(OBJ_DIR), $(OBJS))
+# make object files
+OBJS			:= $(SRCS:%.c=%.o)
+
 
 NAME		= ./mini
 LIBFT		= ./libft/libft.a
@@ -35,12 +31,7 @@ RM			= rm -f
 
 all:		${NAME}
 
-$(OBJ_DIR):
-			mkdir -p $(OBJ_DIR)
-			mkdir -p $(OBJ_DIR)$(DIR_EXEC)
-			mkdir -p $(OBJ_DIR)$(DIR_PARSE)
-
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJ_DIR)
+.c.o:
 			$(CC) $(CFLAGS) -Ilibft -c $< -o $@
 
 $(NAME): 	$(OBJS) $(LIBFT)
@@ -58,7 +49,6 @@ fclean:		clean
 			${RM} ${NAME}
 
 re:			fclean all
-
 
 
 .PHONY:		all clean fclean re
