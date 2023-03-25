@@ -1,33 +1,16 @@
 SRCS		= 	main.c \
 				utils.c \
 				set.c \
-				execute.c
+				execute.c \
+				heredoc.c
 
 OBJS		:= $(SRCS:%.c=%.o)
 
-SRC_DIR		= ./src/mandatory/
+SRC_DIR		= ./src/
 SRCS		:= $(addprefix $(SRC_DIR), $(SRCS))
 
-OBJ_DIR 	= ./obj/mandatory/
+OBJ_DIR 	= ./obj/
 OBJS		:= $(addprefix $(OBJ_DIR), $(OBJS))
-
-SRCS2		= 	main_bonus.c \
-				utils_bonus.c \
-				set_bonus.c \
-				execute_bonus.c \
-				here_doc.c
-
-OBJS2		:= $(SRCS2:%.c=%.o)
-
-SRC_DIR2	= ./src/bonus/
-SRCS2		:= $(addprefix $(SRC_DIR2), $(SRCS2))
-
-OBJ_DIR2 	= ./obj/bonus/
-OBJS2		:= $(addprefix $(OBJ_DIR2), $(OBJS2))
-
-ifdef BONUS
-	OBJS	:= $(OBJS2)
-endif
 
 NAME		= ./pipex
 LIBFT		= ./libft/libft.a

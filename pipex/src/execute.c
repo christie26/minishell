@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/pipex_bonus.h"
+#include "../include/pipex.h"
 
 void	close_center(t_data *data, int *p_fd, int i)
 {

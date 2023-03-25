@@ -16,6 +16,15 @@
 
 # include <stdio.h>
 
+typedef struct t_execute {
+    int     order;
+    int     fd_read;
+    int     fd_write;
+    char    *cmd;
+    char    **options;
+}   s_execute;
+
+
 int mini_echo(char *file, int option);
 
 #endif

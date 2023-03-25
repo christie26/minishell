@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/pipex_bonus.h"
+#include "../include/pipex.h"
 
 void	ft_err_msg(int condition, char *error_message, char *file, int line)
 {

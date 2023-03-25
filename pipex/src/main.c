@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/pipex_bonus.h"
+#include "../include/pipex.h"
 
 void	malloc_center(t_data *data)
 {
