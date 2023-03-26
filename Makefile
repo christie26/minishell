@@ -35,7 +35,7 @@ all:		${NAME}
 			$(CC) $(CFLAGS) -Ilibft -c $< -o $@
 
 $(NAME): 	$(OBJS) $(LIBFT)
-			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -o $(NAME)
+			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)
 
 $(LIBFT):
 			make -j3 -C ./libft all
