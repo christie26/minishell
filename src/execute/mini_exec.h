@@ -18,15 +18,15 @@
 
 
 
-typedef struct t_execute {
+typedef struct t_process {
     int     order; 
-    int     read; // 0 -> STDIO / 1 -> pipe / 2 -> file 
+    int     read_fd; // 0 -> STDIO / 1 -> pipe / 2 -> file 
     char    *read_file; // if read == 1or2 it's NULL
-    int     write; // 0 -> STDIO / 1 -> pipe / 2 -> file 
+    int     write_fd; // 0 -> STDIO / 1 -> pipe / 2 -> file 
     char    *write_file; // if read == 1or2 it's NULL
     char    *cmd;
     char    **options;
-}   s_execute;
+}   s_process;
 
 /*
 cat | grep a > file1 
