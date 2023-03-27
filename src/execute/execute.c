@@ -12,58 +12,71 @@
 
 #include "./mini_exec.h"
 
-void	close_center(t_data *data, int *p_fd, int i)
+void	close_center(t_process *process, int *p_fd, int read_end, int write_end)
 {
+	// close pipe
 	close_fd(p_fd[READ], __FILE__, __LINE__);
-	close_fd(p_fd[WRITE], __FILE__, __LINE__);
-	if (i != 0)
-		close_fd(data->read_fd, __FILE__, __LINE__);
+	if (process->write_fd != 1)
+		close_fd(p_fd[WRITE], __FILE__, __LINE__);
+	
+	// close read-end & write-end
+	if (process->read_fd != 0)
+		close_fd(read_end, __FILE__, __LINE__);
+	if (process->write_fd == 2 | process->write_fd == 3)
+		close_fd(write_end, __FILE__, __LINE__);
 }
 
 void	child_process(t_data *data, int *p_fd, int i, char **env)
 {
-	int	infile;
-	int	outfile;
+	int	read_end;
+	int	write_end;
 
-	if (i == 0)
-	{
-		infile = open(data->infile, O_RDONLY);
-		ft_err_sys(infile == -1, __FILE__, __LINE__);
-		duplicate_fd(infile, p_fd[WRITE], __FILE__, __LINE__);
-		close_fd(infile, __FILE__, __LINE__);
-	}
-	else if (i == data->number - 1)
-	{
-		if (data->offset == 3)
-			outfile = open(data->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		else
-			outfile = open(data->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		ft_err_sys(outfile == -1, __FILE__, __LINE__);
-		duplicate_fd(data->read_fd, outfile, __FILE__, __LINE__);
-		close_fd(outfile, __FILE__, __LINE__);
-	}
+	// set read_end
+	if (data->process[i].read_fd == 0)
+		read_end = STDIN_FILENO;
+	else if (data->process[i].read_fd == 1)
+		read_end = data->process[i - 1].pipe;
+	else if (data->process[i].read_fd == 2)
+		read_end = open(data->process[i].read_file, O_RDONLY);
 	else
-		duplicate_fd(data->read_fd, p_fd[WRITE], __FILE__, __LINE__);
-	close_center(data, p_fd, i);
-	execve(data->cmd[i], data->cmd_options[i], env);
+		read_end = open(data->process[i].read_file, O_RDONLY); // It has to be changed to heredoc options 
+
+	// set write_end
+	if (data->process[i].write_fd == 0)
+		write_end = STDOUT_FILENO;
+	else if (data->process[i].write_fd == 1)
+	{
+		write_end = p_fd[WRITE];
+		data->process[i].pipe = p_fd[READ];
+	}
+	else if (data->process[i].write_fd == 2)
+		write_end = open(data->process[i].write_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	else
+		write_end = open(data->process[i].write_file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+
+	duplicate_fd(read_end, write_end, __FILE__, __LINE__);
+	close_center(&data->process[i], p_fd, read_end, write_end);
+	execve(data->process[i].cmd, data->process[i].options, env);
 	exit(0);
 }
 
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 {
-	if (i == 0)
-		data->read_fd = p_fd[READ];
-	else if (i == data->number - 1)
-	{
-		close_fd(data->read_fd, __FILE__, __LINE__);
-		close_fd(p_fd[READ], __FILE__, __LINE__);
-	}
+	t_process	*process;
+
+	process = &data->process[i];
+
+	// close pipe fd
+	if (process->write_fd == 1)
+		process->pipe = p_fd[READ];
 	else
-	{
-		close_fd(data->read_fd, __FILE__, __LINE__);
-		data->read_fd = p_fd[READ];
-	}
+		close_fd(p_fd[READ], __FILE__, __LINE__);
 	close_fd((p_fd[WRITE]), __FILE__, __LINE__);
+
+	// close prev_fd
+	if (process->read_fd == 1)
+		close_fd(data->process[i - 1].pipe, __FILE__, __LINE__);
+	(void)(cpid);
 	data->pid_set[i] = cpid;
 }
 
@@ -85,6 +98,7 @@ int	pipex_execute(t_data *data, char **env)
 			parent_process(data, p_fd, i, cpid);
 		i++;
 	}
+	// printf("i = %d\n", i);
 	i = data->number;
 	while (i--)
 		waitpid(data->pid_set[i], 0, 0);
