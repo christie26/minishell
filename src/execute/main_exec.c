@@ -27,7 +27,7 @@ int main(int ac, char **av, char **env)
 	data.process = process;
 	data.pid_set = malloc(sizeof(pid_t) * data.number);
 
-	pipex_execute(&data, env);
+	execute_center(&data, env);
 
 	(void)(ac);
 	(void)(av);

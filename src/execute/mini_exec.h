@@ -44,7 +44,7 @@ typedef struct s_data {
 }   t_data;
 
 
-int     pipex_execute(t_data *data, char **env);
+int     execute_center(t_data *data, char **env);
 
 void	duplicate_fd(int read_end, int write_end, char *file, int line);
 void	close_fd(int fd, char *file, int line);
@@ -52,7 +52,13 @@ void	close_fd(int fd, char *file, int line);
 void	ft_err_msg(int condition, char *error_message, char *file, int line);
 void	ft_err_sys(int condition, char *file, int line);
 
+int     ft_echo(char *cmd, char **options, char **env);
+int     ft_cd(char *cmd, char **options, char **env);
+int     ft_pwd(char *cmd, char **options, char **env);
+int     ft_export(char *cmd, char **options, char **env);
+int     ft_unset(char *cmd, char **options, char **env);
+int     ft_env(char *cmd, char **options, char **env);
+int     ft_exit(char *cmd, char **options, char **env);
 
-int     mini_echo(char *file, int option);
 
 #endif

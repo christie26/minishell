@@ -54,13 +54,3 @@ void	duplicate_fd(int read_end, int write_end, char *file, int line)
 	ret2 = dup2(write_end, STDOUT_FILENO);
 	ft_err_sys(ret2 == -1, file, line);
 }
-
-void	free_array(char **item, int i)
-{
-	while (item[i])
-	{
-		free(item[i]);
-		i++;
-	}
-	free(item);
-}
