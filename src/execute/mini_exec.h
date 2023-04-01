@@ -13,11 +13,10 @@
 
 # include "../../libft/src/libft.h"
 
-
 typedef struct s_pipe {
     t_cmd_block *cmd_block;
     t_pipe      *pipe;
-} t_pipe;
+} 	t_pipe;
 
 typedef struct s_cmd_block {
 	t_redirect  *redirect;
@@ -30,9 +29,11 @@ typedef struct s_cmd_block {
 
 typedef struct s_redirect {
     int         type;           // 아래에 있음 
+	// int			fd;
     char        *filename;      
     t_redirect  *next;
 }   t_redirect;
+
 /*
 type
 1: < 

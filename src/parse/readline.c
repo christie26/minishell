@@ -3,8 +3,9 @@
 
 // get number of tokens 
 // white space          ' '
-// redirection operator <, >, <<, >> 
-// pipe                 '|'
+// redirection operator  <, >, <<, >> 
+// pipe                  '|'
+
 // operator             &&, ||
 
 int ft_get_number(char *res)
@@ -75,4 +76,5 @@ int main(void)
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
 
-// compile : cc -lreadline read_line.c && ./a.out 
+// compile : 
+// cc -lreadline readline.c parse_utils.c && ./a.out 
