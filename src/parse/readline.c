@@ -6,6 +6,7 @@
 // redirection operator <, >, <<, >> 
 // pipe                 '|'
 // operator             &&, ||
+
 int ft_get_number(char *res)
 {
     int i;

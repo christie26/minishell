@@ -14,6 +14,34 @@
 # include "../../libft/src/libft.h"
 
 
+typedef struct s_pipe {
+    t_cmd_block *cmd_block;
+    t_pipe      *pipe;
+} t_pipe;
+
+typedef struct s_cmd_block {
+	t_redirect  *redirect;
+	char		**cmd;
+}   t_cmd_block;
+
+// typedef struct s_command {
+// 	char    **cmd;
+// }   t_command;
+
+typedef struct s_redirect {
+    int         type;           // 아래에 있음 
+    char        *filename;      
+    t_redirect  *next;
+}   t_redirect;
+/*
+type
+1: < 
+2: << 
+3: > 
+4: >>
+*/ 
+
+/*
 typedef struct s_process {
     int     order; 
     int     read_fd;        // 0 -> STDIO | 1 -> pipe | 2 -> file | 3 -> here_doc
@@ -31,6 +59,7 @@ typedef struct s_data {
     t_process   *process;
 
 }   t_data;
+*/
 
 
 int     execute_center(t_data *data, char **env);

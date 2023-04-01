@@ -31,7 +31,6 @@ void	ft_execute(char *cmd, char **options, char **env)
 		ft_exit(cmd, options, env);
 	else
 		execve(cmd, options, env);
-
 }
 
 void	close_center(t_process *process, int *p_fd, int read_end, int write_end)
