@@ -67,7 +67,7 @@ void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 	data->pid_set[i] = cpid;
 }
 
-int	pipex_execute(t_data *data, char **env)
+int	execute_center(t_data *data, char **env)
 {
 	int		i;
 	int		p_fd[2];

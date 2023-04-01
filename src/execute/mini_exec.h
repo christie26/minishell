@@ -1,57 +1,82 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   mini_exec.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yoonsele <yoonsele@student.42.kr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/24 20:47:19 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/03/24 20:53:01 by yoonsele         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef MINI_EXEC_H
 
 # define MINI_EXEC_H
 
+# define READ 0
+# define WRITE 1
+
 # include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
+
+# include "../../libft/src/libft.h"
 
 
+typedef struct s_pipe {
+    t_cmd_block *cmd_block;
+    t_pipe      *pipe;
+} t_pipe;
 
-typedef struct t_execute {
-    int     order; 
-    int     read; // 0 -> STDIO / 1 -> pipe / 2 -> file 
-    char    *read_file; // if read == 1or2 it's NULL
-    int     write; // 0 -> STDIO / 1 -> pipe / 2 -> file 
-    char    *write_file; // if read == 1or2 it's NULL
-    char    *cmd;
-    char    **options;
-}   s_execute;
+typedef struct s_cmd_block {
+	t_redirect  *redirect;
+	char		**cmd;
+}   t_cmd_block;
+
+// typedef struct s_command {
+// 	char    **cmd;
+// }   t_command;
+
+typedef struct s_redirect {
+    int         type;           // 아래에 있음 
+    char        *filename;      
+    t_redirect  *next;
+}   t_redirect;
+/*
+type
+1: < 
+2: << 
+3: > 
+4: >>
+*/ 
 
 /*
-cat | grep a > file1 
+typedef struct s_process {
+    int     order; 
+    int     read_fd;        // 0 -> STDIO | 1 -> pipe | 2 -> file | 3 -> here_doc
+    char    *read_file;     // if read == 0 or 1, it's NULL
+    int     write_fd;       // 0 -> STDIO | 1 -> pipe | 2 -> redirect | 3 -> append
+    char    *write_file;    // if read == 0 or 1, it's NULL
+    int     pipe;           
+    char    *cmd;
+    char    **options;
+}   t_process;
 
-cat {
-    int order = 0;
-    int read = 0; //STDIN
-    char *read_file = NULL;
-    int write = 1; //pipe
-    char *write_file = NULL;
-    char *cmd = cat;
-    char **options = ???;
-}
+typedef struct s_data {
+    int         number;
+    pid_t       *pid_set;
+    t_process   *process;
 
-grep {
-    int order = 1;
-    int read = 1; //pipe
-    char *read_file = NULL;
-    int write = 2; // fie
-    char *write_file = file1; (str 그대로)
-    char *cmd = grep;
-    char **options = a 관련;
-}
+}   t_data;
 */
 
-int mini_echo(char *file, int option);
+
+int     execute_center(t_data *data, char **env);
+
+void	duplicate_fd(int read_end, int write_end, char *file, int line);
+void	close_fd(int fd, char *file, int line);
+
+void	ft_err_msg(int condition, char *error_message, char *file, int line);
+void	ft_err_sys(int condition, char *file, int line);
+
+int     ft_echo(char *cmd, char **options, char **env);
+int     ft_cd(char *cmd, char **options, char **env);
+int     ft_pwd(char *cmd, char **options, char **env);
+int     ft_export(char *cmd, char **options, char **env);
+int     ft_unset(char *cmd, char **options, char **env);
+int     ft_env(char *cmd, char **options, char **env);
+int     ft_exit(char *cmd, char **options, char **env);
+
 
 #endif

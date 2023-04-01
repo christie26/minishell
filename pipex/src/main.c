@@ -63,7 +63,7 @@ int	main(int ac, char **av, char **env)
 	}
 	malloc_center(&data);
 	pipex_set(av, env, &data);
-	pipex_execute(&data, env);
+	execute_center(&data, env);
 	free_center(&data);
 	return (EXIT_SUCCESS);
 }
