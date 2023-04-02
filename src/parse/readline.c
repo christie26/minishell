@@ -60,13 +60,32 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
+t_cmd_block *create_cmd_block(char *str)
+{
+	t_cmd_block *new_cmd_block;
+
+	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
+	if (!new_cmd_block)
+		return (NULL);
+	new_cmd_block->redir; // redirect부터 처리
+	new_cmd_block->cmd; // redirect가 제거된 문자열을 cmd에 split으로 대입
+	return (new_cmd_block);
+}
+
 t_list	*create_pipe(char *str)
 {
 	t_list		*new_pipe;
 	t_cmd_block *new_cmd_block;
 
 	new_cmd_block = create_cmd_block(str);
+	if (!new_cmd_block)
+		return (NULL);
 	new_pipe = ft_lstnew(new_cmd_block);
+	if (!new_pipe)
+	{
+		free(new_cmd_block);
+		return (NULL);
+	}
 	return (new_pipe);
 }
 
