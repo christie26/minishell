@@ -17,11 +17,15 @@
 // 	char    **cmd;
 // }   t_command;
 
-typedef struct s_redirect {
-    int					type;           // 아래에 있음 
-    char				*filename;      
-    struct s_redirect	*next;
-}   t_redirect;
+// typedef struct s_redirect {
+//     int					type;           // 아래에 있음 
+//     char				*filename;      
+//     struct s_redirect	*next;
+// }   t_redirect;
+typedef struct s_redir_info {
+    int		type;			// 아래에 있음 
+    char	*filename;
+}	t_redir_info;
 /*
 type
 1: < 
@@ -31,14 +35,14 @@ type
 */ 
 
 typedef struct s_cmd_block {
-	t_redirect	*redirect;
-	char		**cmd;
+	t_list	*redir;
+	char	**cmd;
 }   t_cmd_block;
 
-typedef struct s_prc_block {
-    t_cmd_block			*cmd_block;
-    struct s_prc_block	*next_prc;
-} t_prc_block;
+typedef struct s_pipe {
+    t_cmd_block		*cmd_block;
+    struct s_pipe	*next_prc;
+} t_pipe;
 
 int ft_is_space(char c);
 int ft_is_word(char c);
