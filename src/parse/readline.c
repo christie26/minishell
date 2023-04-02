@@ -60,6 +60,39 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
+t_list	*create_pipe(char *str)
+{
+	t_list		*new_pipe;
+	t_cmd_block *new_cmd_block;
+
+	new_cmd_block = create_cmd_block(str);
+	new_pipe = ft_lstnew(new_cmd_block);
+	return (new_pipe);
+}
+
+t_list	*my_parse(char *str)
+{
+	// split
+	// 순회하며 pipe 구조체 작성 (t_list)
+	// - cmd block 생성
+	// - redirection 처리 (t_list)
+	// - command char**로 처리
+
+	char	**pipe_lines;
+	t_list	*pipe_list;
+	t_list	*new_pipe;
+
+	pipe_lines = ft_split(str, '|');
+	pipe_list = NULL;
+	while (pipe_lines)
+	{
+		new_pipe = create_pipe(pipe_lines);
+		ft_lstadd_back(&pipe_list, new_pipe);
+		pipe_lines++;
+	}
+	return (pipe_list);
+}
+
 int	get_pipe_cnt(char *str)
 {
 	int cnt;
@@ -72,7 +105,6 @@ int	get_pipe_cnt(char *str)
 			cnt++;
 		while (*str == '|' && *str != '\0')
 			str++;
-		ft_printf("cur str: %s\n", str);
 	}
 	return (cnt);
 }
@@ -86,22 +118,36 @@ int	get_pipe_cnt(char *str)
 	해당 문자열에서 리다이렉션이 발견되면 리다이렉션 lst_addback
 	그럼 이전에 만든 t_redirection은...? -> 내용부분만 잘라내서 void* content에 넣기
 	기존의 lst 타입 활용하면 libft함수를 사용할수있음
-	
+
 	리다이렉션 이외의 문자열은 split을 사용해서 char **로 저장
 	리다이렉션들부터 먼저 처리!
 
 	리다이렉션은 (방향) (파일이름) 과 같은 단순한 형태만 우선 고려하기로...
 */
+/*
+	spilt을 사용해서 pipe단위로 문자열을 긁어냄
+	그 char **문자열이 null이 될때까지 순회하며 list 구조체 생성
+	pipe 단위에서도 구조체가 그냥 list쓰면 될것같음
+	void* content에 cmd_block만 넣기
+*/
 
 int main(void)
 {
     char    *res;
+	char	**split_by_pipe;
+	char	**temp2;
 
     while (1)
     {
 		res = readline("yo shell$ ");
 		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
 		ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
+		split_by_pipe = ft_split(res, '|');
+		ft_printf("split strings: ");
+		temp2 = split_by_pipe;
+		while (*temp2)
+			ft_printf("\"%s\" ", *temp2++);
+		ft_printf("\n");
 		free(res);
     }
     
