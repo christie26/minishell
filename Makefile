@@ -37,7 +37,7 @@ RM			= rm -f
 all:		${NAME}
 
 .c.o:
-			$(CC) $(CFLAGS) -Ilibft/src -c $< -o $@
+			$(CC) $(CFLAGS) -Ilibft/includes -c $< -o $@
 
 $(NAME): 	$(OBJS) $(LIBFT)
 			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)

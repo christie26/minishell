@@ -60,15 +60,33 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
+int	get_pipe_cnt(char *str)
+{
+	int cnt;
+
+	cnt = 0;
+	while (ft_strchr(str, '|'))
+	{
+		str = ft_strchr(str, '|');
+		if (*(str + 1) != '|')
+			cnt++;
+		while (*str == '|' && *str != '\0')
+			str++;
+		ft_printf("cur str: %s\n", str);
+	}
+	return (cnt);
+}
+
 int main(void)
 {
     char    *res;
 
     while (1)
     {
-    res = readline("minishell >> ");
-    printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
-
+		res = readline("yo shell$ ");
+		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
+		ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
+		free(res);
     }
     
 
