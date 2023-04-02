@@ -60,15 +60,37 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
+int	create_redirectes(t_list **redir_list, char *str)
+{
+	(void)redir_list;
+	(void)str;
+	return (0);
+}
+/*
+	str을 공백을 기준으로 split을하고
+	리다이렉션 문자 이후의 문자만 처리를 하려고했으나
+	ls a &> test, ls >test, ls>test 와 같이
+	모두 붙여서 작성해도 인식함...
+
+	<test_and_learn/a cat, <test_and_learn/acat
+	전자는 되지만 후자는 안됨
+	리다이렉션 문자이후로 공백이 나오기전까진 전부
+	리다이렉션이랑 묶어서 처리를 하는듯... 이후는 개별토큰으로 인식 (추가 리다이렉션이거나 명령어)
+	<test_and_learn/a<test_and_learn/b cat
+	이렇게 리다이렉션끼리 붙어있어도 리다이렉션 문자 자체가
+	스위치 역할을 하는것같음...
+*/
+
 t_cmd_block *create_cmd_block(char *str)
 {
 	t_cmd_block *new_cmd_block;
 
+	(void)str;
 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
 	if (!new_cmd_block)
 		return (NULL);
-	new_cmd_block->redir; // redirect부터 처리
-	new_cmd_block->cmd; // redirect가 제거된 문자열을 cmd에 split으로 대입
+	(void)new_cmd_block->redir; // redirect부터 처리
+	(void)new_cmd_block->cmd; // redirect가 제거된 문자열을 cmd에 split으로 대입
 	return (new_cmd_block);
 }
 
@@ -105,7 +127,7 @@ t_list	*my_parse(char *str)
 	pipe_list = NULL;
 	while (pipe_lines)
 	{
-		new_pipe = create_pipe(pipe_lines);
+		new_pipe = create_pipe(*pipe_lines);
 		ft_lstadd_back(&pipe_list, new_pipe);
 		pipe_lines++;
 	}
@@ -174,4 +196,9 @@ int main(void)
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
 
-// compile : cc -lreadline read_line.c && ./a.out 
+// compile : cc -lreadline read_line.c && ./a.out
+
+// readline 의 반환값에는 따옴표도 일반적인 문자처럼 포함되어있음
+// 기존 쉘에서는 따옴표를 하나의 문장으로 치환해서 해석하지만
+// 여기서는 포함된채 통째로 하나의 큰 문자열로 반환해줌
+// 모든것이 날것으로 남아있음
