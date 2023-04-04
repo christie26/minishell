@@ -52,10 +52,10 @@ typedef struct s_cmd_block {
 	char		**cmd;
 }   t_cmd_block;
 
-typedef struct s_pipe {
-    t_cmd_block		*cmd_block;
-    struct s_pipe	*next_prc;
-} t_pipe;
+typedef struct s_pipeline {
+    t_cmd_block			*cmd_block;
+    struct s_pipeline	*next_pipe;
+}	t_pipeline;
 
 int ft_is_space(char c);
 int ft_is_word(char c);
@@ -71,5 +71,5 @@ int ft_is_word(char c);
 
 	t_redirect : "<, <, <, >, >>"
 	char **cmd : "cat" "word1" "word2" NULL -> double pointer 
-	
+
 */

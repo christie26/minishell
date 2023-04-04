@@ -94,24 +94,24 @@ t_cmd_block *create_cmd_block(char *str)
 	return (new_cmd_block);
 }
 
-t_list	*create_pipe(char *str)
+t_pipeline	*create_pipeline(char *str)
 {
-	t_list		*new_pipe;
+	t_pipeline	*new_pipeline;
 	t_cmd_block *new_cmd_block;
 
 	new_cmd_block = create_cmd_block(str);
 	if (!new_cmd_block)
 		return (NULL);
-	new_pipe = ft_lstnew(new_cmd_block);
-	if (!new_pipe)
+	new_pipeline = ft_lstnew(new_cmd_block);
+	if (!new_pipeline)
 	{
 		free(new_cmd_block);
 		return (NULL);
 	}
-	return (new_pipe);
+	return (new_pipeline);
 }
 
-t_list	*my_parse(char *str)
+t_pipeline	*my_parse(char *str)
 {
 	// split
 	// 순회하며 pipe 구조체 작성 (t_list)
@@ -121,14 +121,14 @@ t_list	*my_parse(char *str)
 
 	char	**pipe_lines;
 	t_list	*pipe_list;
-	t_list	*new_pipe;
+	t_list	*new_pipeline;
 
 	pipe_lines = ft_split(str, '|');
 	pipe_list = NULL;
 	while (pipe_lines)
 	{
-		new_pipe = create_pipe(*pipe_lines);
-		ft_lstadd_back(&pipe_list, new_pipe);
+		new_pipeline = create_pipeline(*pipe_lines);
+		ft_lstadd_back(&pipe_list, new_pipeline);
 		pipe_lines++;
 	}
 	return (pipe_list);
@@ -189,7 +189,26 @@ int main(int argc, char *argv[], char *envp[])
 		// while (*temp2)
 		// 	ft_printf("\"%s\" ", *temp2++);
 		// ft_printf("\n");
-		my_parse(res);
+		t_pipeline *my_pipelist = my_parse(res);
+		t_pipeline *temp = my_pipelist;
+		while (temp)
+		{
+			t_cmd_block	*cur_cmd_block = temp->cmd_block;
+			t_redirect	*temp_redir = cur_cmd_block->redir;
+			while (temp_redir)
+			{
+				printf("redir type: %d\n", temp_redir->type);
+				printf("redir filename: %s\n", temp_redir->filename);
+				temp_redir = temp_redir ->next;
+			}
+			char	**temp_cmd = cur_cmd_block->cmd;
+			while (temp_cmd)
+			{
+				printf("cur word: %s\n", *temp_cmd);
+				temp_cmd++;
+			}
+			temp = temp ->next_pipe;
+		}
 		free(res);
     }
     
