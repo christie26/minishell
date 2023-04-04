@@ -4,9 +4,8 @@ SRCS_EXEC		=	#main_exec.c \
 					execute_center.c \
 					utils.c
 
-SRCS_PARSE		=	testfile.c \
-					parse_utils.c \
-					readline.c
+SRCS_PARSE		=	readline.c \
+					pipeline_list_utils.c
 
 # add path as their usage
 DIR_EXEC		= execute/

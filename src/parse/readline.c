@@ -94,22 +94,22 @@ t_cmd_block *create_cmd_block(char *str)
 	return (new_cmd_block);
 }
 
-t_pipeline	*create_pipeline(char *str)
-{
-	t_pipeline	*new_pipeline;
-	t_cmd_block *new_cmd_block;
+// t_pipeline	*create_pipeline(char *str)
+// {
+// 	t_pipeline	*new_pipeline;
+// 	t_cmd_block *new_cmd_block;
 
-	new_cmd_block = create_cmd_block(str);
-	if (!new_cmd_block)
-		return (NULL);
-	new_pipeline = ft_lstnew(new_cmd_block);
-	if (!new_pipeline)
-	{
-		free(new_cmd_block);
-		return (NULL);
-	}
-	return (new_pipeline);
-}
+// 	new_cmd_block = create_cmd_block(str);
+// 	if (!new_cmd_block)
+// 		return (NULL);
+// 	new_pipeline = ft_pipeline_lstnew(new_cmd_block);
+// 	if (!new_pipeline)
+// 	{
+// 		free(new_cmd_block);
+// 		return (NULL);
+// 	}
+// 	return (new_pipeline);
+// }
 
 t_pipeline	*my_parse(char *str)
 {
@@ -120,14 +120,22 @@ t_pipeline	*my_parse(char *str)
 	// - command char**로 처리
 
 	char	**pipe_lines;
-	t_list	*pipe_list;
-	t_list	*new_pipeline;
+	t_pipeline	*pipe_list;
+	t_pipeline	*new_pipeline;
+	t_cmd_block *new_cmd_block;
 
 	pipe_lines = ft_split(str, '|');
 	pipe_list = NULL;
 	while (pipe_lines)
 	{
-		new_pipeline = create_pipeline(*pipe_lines);
+		new_cmd_block = create_cmd_block(*pipe_lines);
+		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
+		if (!new_pipeline || !new_pipeline->cmd_block) // 노드생성 실패 || 컨텐츠 생성 실패
+		{
+			new_cmd_block;// cmd_block free 함수
+			ft_pipeline_lstclear(&pipe_list);
+			return (NULL);
+		}
 		ft_lstadd_back(&pipe_list, new_pipeline);
 		pipe_lines++;
 	}
@@ -178,6 +186,9 @@ int main(int argc, char *argv[], char *envp[])
 	char	**split_by_pipe;
 	char	**temp2;
 
+	(void)argc;
+	(void)argv;
+	(void)envp;
     while (1)
     {
 		res = readline("yo shell$ ");
