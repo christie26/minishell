@@ -17,15 +17,11 @@
 // 	char    **cmd;
 // }   t_command;
 
-// typedef struct s_redirect {
-//     int					type;           // 아래에 있음 
-//     char				*filename;      
-//     struct s_redirect	*next;
-// }   t_redirect;
-typedef struct s_redir_info {
-    int		type;			// 아래에 있음 
-    char	*filename;
-}	t_redir_info;
+typedef struct s_redirect {
+    int					type;           // 아래에 있음 
+    char				*filename;      
+    struct s_redirect	*next;
+}   t_redirect;
 /*
 type
 1: < 
@@ -34,17 +30,46 @@ type
 4: >>
 */ 
 
+// typedef struct s_redir_info {
+//     int		type;			// 아래에 있음 
+//     char	*filename;
+// }	t_redir_info;
+/*
+type
+1: < 
+2: << 
+3: > 
+4: >>
+*/ 
+
+// typedef struct s_cmd_block {
+// 	t_list	*redir;
+// 	char	**cmd;
+// }   t_cmd_block;
+
 typedef struct s_cmd_block {
-	t_list	*redir;
-	char	**cmd;
+	t_redirect	*redir;
+	char		**cmd;
 }   t_cmd_block;
 
-// typedef struct s_pipe {
-//     t_cmd_block		*cmd_block;
-//     struct s_pipe	*next_prc;
-// } t_pipe;
+typedef struct s_pipe {
+    t_cmd_block		*cmd_block;
+    struct s_pipe	*next_prc;
+} t_pipe;
 
 int ft_is_space(char c);
 int ft_is_word(char c);
 
 #endif
+
+/*
+
+	char *origin = "<a < a < a cat > a >> a < a";
+
+	after process
+	origin = "< a < a < a cat > a >> word1 word2 a < a";
+
+	t_redirect : "<, <, <, >, >>"
+	char **cmd : "cat" "word1" "word2" NULL -> double pointer 
+	
+*/

@@ -172,7 +172,7 @@ int	get_pipe_cnt(char *str)
 	void* content에 cmd_block만 넣기
 */
 
-int main(void)
+int main(int argc, char *argv[], char *envp[])
 {
     char    *res;
 	char	**split_by_pipe;
@@ -182,13 +182,14 @@ int main(void)
     {
 		res = readline("yo shell$ ");
 		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
-		ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
-		split_by_pipe = ft_split(res, '|');
-		ft_printf("split strings: ");
-		temp2 = split_by_pipe;
-		while (*temp2)
-			ft_printf("\"%s\" ", *temp2++);
-		ft_printf("\n");
+		// ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
+		// split_by_pipe = ft_split(res, '|');
+		// ft_printf("split strings: ");
+		// temp2 = split_by_pipe;
+		// while (*temp2)
+		// 	ft_printf("\"%s\" ", *temp2++);
+		// ft_printf("\n");
+		my_parse(res);
 		free(res);
     }
     
