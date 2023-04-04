@@ -13,36 +13,44 @@
 
 # include "../../libft/src/libft.h"
 
-typedef struct s_pipe {
-    t_cmd_block *cmd_block;
-    t_pipe      *pipe;
-} 	t_pipe;
+typedef struct s_pipeline {
+    t_cmd_block     *cmd_block;
+    t_pipeline      *next;
+} 	t_pipeline;
 
 typedef struct s_cmd_block {
 	t_redirect  *redirect;
 	char		**cmd;
 }   t_cmd_block;
 
-// typedef struct s_command {
-// 	char    **cmd;
-// }   t_command;
-
 typedef struct s_redirect {
     int         type;           // 아래에 있음 
-	// int			fd;
     char        *filename;      
     t_redirect  *next;
 }   t_redirect;
 
 /*
 type
+input
 1: < 
-2: << 
+2: <<
+output 
 3: > 
 4: >>
 */ 
 
+typedef struct s_data {
+    int     process_number;
+    pid_t   *pid_set;
+    int     prev_fd;
+    char    **env;
+    char    **path;
+}   t_data;
+
+
 /*
+the struct I made before 
+
 typedef struct s_process {
     int     order; 
     int     read_fd;        // 0 -> STDIO | 1 -> pipe | 2 -> file | 3 -> here_doc
@@ -63,7 +71,11 @@ typedef struct s_data {
 */
 
 
-int     execute_center(t_data *data, char **env);
+int     execute_center(t_data *data, t_pipeline *pipeline);
+
+char	**get_path(char **env);
+
+
 
 void	duplicate_fd(int read_end, int write_end, char *file, int line);
 void	close_fd(int fd, char *file, int line);

@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_bonus.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yoonsele <yoonsele@student.42.kr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/23 16:14:25 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/03/03 13:42:46 by yoonsele         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "./mini_exec.h"
 
@@ -44,6 +33,7 @@ void	close_fd(int fd, char *file, int line)
 	ft_err_sys(ret == -1, file, line);
 }
 
+// not using it 
 void	duplicate_fd(int read_end, int write_end, char *file, int line)
 {
 	int	ret1;

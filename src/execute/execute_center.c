@@ -1,20 +1,17 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   execute_bonus.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yoonsele <yoonsele@student.42.kr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/24 17:50:50 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/03/03 13:46:02 by yoonsele         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "./mini_exec.h"
 
 // 이미 path가 붙은 상태로 들어온다. path 는 set 에서 붙여준다. 
-void	ft_execute(char *cmd, char **options, char **env)
+void	ft_execute(char **options, t_data *data)
 {
+	char	*cmd;
+	char	**env;
+
+	env = data->env;
+	cmd = ft_strdup(options[0]);
+	cmd = check_access(cmd, data->path); // leak check 
+	ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
+
 	if (ft_strncmp(cmd, "echo", 4))
 		ft_echo(cmd, options, env);
 	else if (ft_strncmp(cmd, "cd", 2))
@@ -33,94 +30,100 @@ void	ft_execute(char *cmd, char **options, char **env)
 		execve(cmd, options, env);
 }
 
-void	close_center(t_process *process, int *p_fd, int read_end, int write_end)
+void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
-	// close pipe
-	close_fd(p_fd[READ], __FILE__, __LINE__);
-	if (process->write_fd != 1)
-		close_fd(p_fd[WRITE], __FILE__, __LINE__);
-	
-	// close read-end & write-end
-	if (process->read_fd != 0)
-		close_fd(read_end, __FILE__, __LINE__);
-	if (process->write_fd == 2 | process->write_fd == 3)
-		close_fd(write_end, __FILE__, __LINE__);
-}
+	// set pipe
+	// connect this process with previous process with prev_fd
+	if (i != 0)
+	{
+		dup2(data->prev_fd, 0);
+		dup2(p_fd[1], 1);
+		data->prev_fd = p_fd[0];	// Is it right place? 
+	}	
 
-void	child_process(t_data *data, int *p_fd, int i, char **env)
-{
+	// set redirection
+	t_redirect *redirect;
 	int	read_end;
 	int	write_end;
 
-	// set read_end
-	if (data->process[i].read_fd == 0)
-		read_end = STDIN_FILENO;
-	else if (data->process[i].read_fd == 1)
-		read_end = data->process[i - 1].pipe;
-	else if (data->process[i].read_fd == 2)
-		read_end = open(data->process[i].read_file, O_RDONLY);
-	else
-		read_end = open(data->process[i].read_file, O_RDONLY); // It has to be changed to heredoc options 
-
-	// set write_end
-	if (data->process[i].write_fd == 0)
-		write_end = STDOUT_FILENO;
-	else if (data->process[i].write_fd == 1)
+	redirect = pipeline->cmd_block->redirect;
+	while (redirect)
 	{
-		write_end = p_fd[WRITE];
-		data->process[i].pipe = p_fd[READ];
+		if (redirect->type == 1)
+		{
+			read_end = open(redirect->filename, O_RDONLY);
+			dup2(read_end, 0);
+			close_fd(read_end, __FILE__, __LINE__);
+		}
+		else if (redirect->type == 2)
+		{
+			read_end = open(redirect->filename, O_RDONLY); // here_doc
+			dup2(read_end, 0);
+			close_fd(read_end, __FILE__, __LINE__);
+		}
+		else if (redirect->type == 3)
+		{
+			write_end = open(redirect->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			dup2(write_end, 1);
+			close_fd(write_end, __FILE__, __LINE__);
+		}
+		else
+		{
+			write_end = open(redirect->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+			dup2(write_end, 1);
+			close_fd(write_end, __FILE__, __LINE__);
+		}
+		redirect = redirect->next;
 	}
-	else if (data->process[i].write_fd == 2)
-		write_end = open(data->process[i].write_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	else
-		write_end = open(data->process[i].write_file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	close_fd(p_fd[0], __FILE__, __LINE__);
+	close_fd(p_fd[1], __FILE__, __LINE__);
 
-	duplicate_fd(read_end, write_end, __FILE__, __LINE__);
-	close_center(&data->process[i], p_fd, read_end, write_end);
-	ft_execute(data->process[i].cmd, data->process[i].options, env);
+	// execute
+	ft_execute(pipeline->cmd_block->cmd, data);
 	exit(0);
 }
 
-void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
+void	parent_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i, pid_t cpid)
 {
-	t_process	*process;
-
-	process = &data->process[i];
-
-	// close pipe fd
-	if (process->write_fd == 1)
-		process->pipe = p_fd[READ];
+	if (i == 0)
+	{
+		close_fd(p_fd[1], __FILE__, __LINE__);
+		data->prev_fd = p_fd[0];
+	}
+	else if (i == data->process_number - 1)
+	{
+		close_fd(p_fd[1], __FILE__, __LINE__);
+		close_fd(data->prev_fd, __FILE__, __LINE__);
+		data->prev_fd = p_fd[0];
+	}
 	else
-		close_fd(p_fd[READ], __FILE__, __LINE__);
-	close_fd((p_fd[WRITE]), __FILE__, __LINE__);
-
-	// close prev_fd
-	if (process->read_fd == 1)
-		close_fd(data->process[i - 1].pipe, __FILE__, __LINE__);
-	(void)(cpid);
+	{
+		close_fd(p_fd[0], __FILE__, __LINE__);
+		close_fd(p_fd[1], __FILE__, __LINE__);
+	}
 	data->pid_set[i] = cpid;
 }
 
-int	execute_center(t_data *data, char **env)
+int	execute_center(t_data *data, t_pipeline *pipeline)
 {
 	int		i;
 	int		p_fd[2];
 	pid_t	cpid;
 
 	i = 0;
-	while (i < data->number)
+
+	while (i < data->process_number)
 	{
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
 		cpid = fork();
 		ft_err_sys(cpid == -1, __FILE__, __LINE__);
 		if (cpid == 0)
-			child_process(data, p_fd, i, env);
+			child_process(data, pipeline, p_fd, i);
 		else
-			parent_process(data, p_fd, i, cpid);
+			parent_process(data, pipeline, p_fd, i, cpid);
 		i++;
 	}
-	// printf("i = %d\n", i);
-	i = data->number;
+
 	while (i--)
 		waitpid(data->pid_set[i], 0, 0);
 	return (0);
