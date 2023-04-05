@@ -1,10 +1,11 @@
 # all file
-SRCS_EXEC		=	main_exec.c \
+SRCS_EXEC		=	#main_exec.c \
 					built_in.c	\
 					execute_center.c \
 					utils.c
 
-SRCS_PARSE		=	testfile.c
+SRCS_PARSE		=	readline.c \
+					pipeline_list_utils.c
 
 # add path as their usage
 DIR_EXEC		= execute/
@@ -21,6 +22,7 @@ SRCS			:= $(addprefix $(SRC_DIR), $(SRCS))
 
 # make object files
 OBJS			:= $(SRCS:%.c=%.o)
+# OBJS_PARSE		:= $(SRCS_PARSE:%.c=%.o)
 
 
 NAME		= ./mini
@@ -34,10 +36,12 @@ RM			= rm -f
 all:		${NAME}
 
 .c.o:
-			$(CC) $(CFLAGS) -Ilibft -c $< -o $@
+			$(CC) $(CFLAGS) -Ilibft/includes -c $< -o $@
 
 $(NAME): 	$(OBJS) $(LIBFT)
 			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)
+# $(NAME): 	$(OBJS_PARSE) $(LIBFT)
+# $(CC) $(CFLAGS) $(OBJS_PARSE) -L./libft -lft -lreadline -o $(NAME)
 
 $(LIBFT):
 			make -j3 -C ./libft all

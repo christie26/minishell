@@ -61,20 +61,170 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
-int main(void)
+int	create_redirectes(t_pipeline **redir_list, char *str)
+{
+	(void)redir_list;
+	(void)str;
+	return (0);
+}
+/*
+	str을 공백을 기준으로 split을하고
+	리다이렉션 문자 이후의 문자만 처리를 하려고했으나
+	ls a &> test, ls >test, ls>test 와 같이
+	모두 붙여서 작성해도 인식함...
+
+	<test_and_learn/a cat, <test_and_learn/acat
+	전자는 되지만 후자는 안됨
+	리다이렉션 문자이후로 공백이 나오기전까진 전부
+	리다이렉션이랑 묶어서 처리를 하는듯... 이후는 개별토큰으로 인식 (추가 리다이렉션이거나 명령어)
+	<test_and_learn/a<test_and_learn/b cat
+	이렇게 리다이렉션끼리 붙어있어도 리다이렉션 문자 자체가
+	스위치 역할을 하는것같음...
+*/
+
+t_cmd_block *create_cmd_block(char *str)
+{
+	t_cmd_block *new_cmd_block;
+	t_list		*tokens;
+
+	tokens = create_tokens(str); // 여기서 토큰으로 분리?
+	if (!tokens)
+		return (NULL);
+	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
+	if (!new_cmd_block)
+		return (NULL);
+	(void)new_cmd_block->redir; // redirect 저장
+	// 변수설정 저장
+	(void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기
+	/*
+		토큰을 해석하며 redir 와 cmd 중에 먼저 등장하는것부터 각자의 리스트에 순서대로 추가
+		중간에 에러가 발생하면 두 리스트 모두 날려버리고 new_cmd_block도 free 후 NULL 반환
+	*/
+	return (new_cmd_block);
+}
+
+t_pipeline	*my_parse(char *str)
+{
+	// split
+	// 순회하며 pipe 구조체 작성 (t_list)
+	// - cmd block 생성
+	// - redirection 처리 (t_list)
+	// - command char**로 처리
+
+	char	**pipe_lines;
+	t_pipeline	*pipe_list;
+	t_pipeline	*new_pipeline;
+	t_cmd_block *new_cmd_block;
+
+	pipe_lines = ft_split(str, '|');
+	pipe_list = NULL;
+	while (pipe_lines)
+	{
+		new_cmd_block = create_cmd_block(*pipe_lines);
+		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
+		if (!new_pipeline || !new_pipeline->cmd_block) // 노드생성 실패 || 컨텐츠 생성 실패
+		{
+			new_cmd_block;// cmd_block free 함수
+			ft_pipeline_lstclear(&pipe_list);
+			return (NULL);
+		}
+		ft_lstadd_back(&pipe_list, new_pipeline);
+		pipe_lines++;
+	}
+	return (pipe_list);
+}
+
+int	get_pipe_cnt(char *str)
+{
+	int cnt;
+
+	cnt = 0;
+	while (ft_strchr(str, '|'))
+	{
+		str = ft_strchr(str, '|');
+		if (*(str + 1) != '|')
+			cnt++;
+		while (*str == '|' && *str != '\0')
+			str++;
+	}
+	return (cnt);
+}
+/*
+	파이프 구분이 잘 되었다면
+	파이프를 기준으로 앞뒤 문자열을 잘라서
+	해당 문자열을 기준으로 하나의 pipe 구조체를 작성
+	|| |||| 와 같이 여러 파이프가 연속해서 들어오거나
+	" ' 같이 하나의 따옴표만 들어올 경우는 잠시 보류
+
+	해당 문자열에서 리다이렉션이 발견되면 리다이렉션 lst_addback
+	그럼 이전에 만든 t_redirection은...? -> 내용부분만 잘라내서 void* content에 넣기
+	기존의 lst 타입 활용하면 libft함수를 사용할수있음
+
+	리다이렉션 이외의 문자열은 split을 사용해서 char **로 저장
+	리다이렉션들부터 먼저 처리!
+
+	리다이렉션은 (방향) (파일이름) 과 같은 단순한 형태만 우선 고려하기로...
+*/
+/*
+	spilt을 사용해서 pipe단위로 문자열을 긁어냄
+	그 char **문자열이 null이 될때까지 순회하며 list 구조체 생성
+	pipe 단위에서도 구조체가 그냥 list쓰면 될것같음
+	void* content에 cmd_block만 넣기
+*/
+
+int main(int argc, char *argv[], char *envp[])
 {
     char    *res;
+	char	**split_by_pipe;
+	char	**temp2;
 
+	(void)argc;
+	(void)argv;
+	(void)envp;
     while (1)
     {
-    res = readline("minishell >> ");
-    printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
-
+		res = readline("yo shell$ ");
+		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
+		// ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
+		// split_by_pipe = ft_split(res, '|');
+		// ft_printf("split strings: ");
+		// temp2 = split_by_pipe;
+		// while (*temp2)
+		// 	ft_printf("\"%s\" ", *temp2++);
+		// ft_printf("\n");
+		t_pipeline *my_pipelist = my_parse(res);
+		t_pipeline *temp = my_pipelist;
+		while (temp)
+		{
+			t_cmd_block	*cur_cmd_block = temp->cmd_block;
+			t_redirect	*temp_redir = cur_cmd_block->redir;
+			printf("================================================\n");
+			while (temp_redir)
+			{
+				printf("\n");
+				printf("redir type: %d\n", temp_redir->type);
+				printf("redir filename: %s\n", temp_redir->filename);
+				temp_redir = temp_redir ->next;
+			}
+			printf("\n");
+			char	**temp_cmd = cur_cmd_block->cmd;
+			while (temp_cmd)
+			{
+				printf("cur word: %s\n", *temp_cmd);
+				temp_cmd++;
+			}
+			temp = temp ->next_pipe;
+		}
+		free(res);
     }
     
 
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
 
-// compile : 
-// cc -lreadline readline.c parse_utils.c && ./a.out 
+// compile : cc -lreadline read_line.c && ./a.out
+
+// readline 의 반환값에는 따옴표도 일반적인 문자처럼 포함되어있음
+// 기존 쉘에서는 따옴표를 하나의 문장으로 치환해서 해석하지만
+// 여기서는 포함된채 통째로 하나의 큰 문자열로 반환해줌
+// 모든것이 날것으로 남아있음
