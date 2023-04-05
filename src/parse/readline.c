@@ -3,8 +3,9 @@
 
 // get number of tokens 
 // white space          ' '
-// redirection operator <, >, <<, >> 
-// pipe                 '|'
+// redirection operator  <, >, <<, >> 
+// pipe                  '|'
+
 // operator             &&, ||
 
 int ft_get_number(char *res)

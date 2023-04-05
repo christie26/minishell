@@ -1,0 +1,17 @@
+#ifndef BUILT_IN_H
+
+# define BUILT_IN_H
+
+# include "../../libft/src/libft.h"
+# include "../common/model.h"
+
+// built-in files
+int     ft_echo(char *cmd, char **options, char **env);
+int     ft_cd(char *cmd, char **options, char **env);
+int     ft_pwd(char *cmd, char **options, char **env);
+int     ft_export(char *cmd, char **options, char **env);
+int     ft_unset(char *cmd, char **options, char **env);
+int     ft_env(char *cmd, char **options, char **env);
+int     ft_exit(char *cmd, char **options, char **env);
+
+#endif

@@ -12,71 +12,24 @@
 # include <fcntl.h>
 
 # include "../../libft/src/libft.h"
+# include "../common/model.h"
 
+// get path
+char	**get_path(char **env);
 
-typedef struct s_pipe {
-    t_cmd_block *cmd_block;
-    t_pipe      *pipe;
-} t_pipe;
+// child & parent process
+void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
+void	parent_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i, pid_t cpid);
 
-typedef struct s_cmd_block {
-	t_redirect  *redirect;
-	char		**cmd;
-}   t_cmd_block;
-
-// typedef struct s_command {
-// 	char    **cmd;
-// }   t_command;
-
-typedef struct s_redirect {
-    int         type;           // 아래에 있음 
-    char        *filename;      
-    t_redirect  *next;
-}   t_redirect;
-/*
-type
-1: < 
-2: << 
-3: > 
-4: >>
-*/ 
-
-/*
-typedef struct s_process {
-    int     order; 
-    int     read_fd;        // 0 -> STDIO | 1 -> pipe | 2 -> file | 3 -> here_doc
-    char    *read_file;     // if read == 0 or 1, it's NULL
-    int     write_fd;       // 0 -> STDIO | 1 -> pipe | 2 -> redirect | 3 -> append
-    char    *write_file;    // if read == 0 or 1, it's NULL
-    int     pipe;           
-    char    *cmd;
-    char    **options;
-}   t_process;
-
-typedef struct s_data {
-    int         number;
-    pid_t       *pid_set;
-    t_process   *process;
-
-}   t_data;
-*/
-
-
-int     execute_center(t_data *data, char **env);
-
-void	duplicate_fd(int read_end, int write_end, char *file, int line);
+// utils
 void	close_fd(int fd, char *file, int line);
 
+// built-in
+int     ft_builtin(t_pipeline *pipeline, char **env);
+int     is_builtin(char *cmd);
+
+// ft_error
 void	ft_err_msg(int condition, char *error_message, char *file, int line);
 void	ft_err_sys(int condition, char *file, int line);
-
-int     ft_echo(char *cmd, char **options, char **env);
-int     ft_cd(char *cmd, char **options, char **env);
-int     ft_pwd(char *cmd, char **options, char **env);
-int     ft_export(char *cmd, char **options, char **env);
-int     ft_unset(char *cmd, char **options, char **env);
-int     ft_env(char *cmd, char **options, char **env);
-int     ft_exit(char *cmd, char **options, char **env);
-
 
 #endif
