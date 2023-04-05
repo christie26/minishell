@@ -1,6 +1,8 @@
 # all file
 SRCS_EXEC		=	main_exec.c \
-					mini_echo.c
+					built_in.c	\
+					execute_center.c \
+					utils.c
 
 SRCS_PARSE		=	testfile.c
 

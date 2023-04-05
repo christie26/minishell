@@ -52,6 +52,6 @@ void	here_doc(t_data *data);
 int		pipex_set(char **av, char **env, t_data *data);
 
 // fork and execute 
-int		pipex_execute(t_data *data, char **env);
+int		execute_center(t_data *data, char **env);
 
 #endif
