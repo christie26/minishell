@@ -1,7 +1,6 @@
 
 #include "./mini_exec.h"
 
-// 이미 path가 붙은 상태로 들어온다. path 는 set 에서 붙여준다. 
 void	ft_execute(char **options, t_data *data)
 {
 	char	*cmd;
@@ -11,23 +10,7 @@ void	ft_execute(char **options, t_data *data)
 	cmd = ft_strdup(options[0]);
 	cmd = check_access(cmd, data->path); // leak check 
 	ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
-
-	if (ft_strncmp(cmd, "echo", 4))
-		ft_echo(cmd, options, env);
-	else if (ft_strncmp(cmd, "cd", 2))
-		ft_cd(cmd, options, env);
-	else if (ft_strncmp(cmd, "pwd", 3))
-		ft_pwd(cmd, options, env);
-	else if (ft_strncmp(cmd, "export", 6))
-		ft_export(cmd, options, env);
-	else if (ft_strncmp(cmd, "unset", 5))
-		ft_unset(cmd, options, env);
-	else if (ft_strncmp(cmd, "env", 6))
-		ft_env(cmd, options, env);
-	else if (ft_strncmp(cmd, "exit", 6))
-		ft_exit(cmd, options, env);
-	else
-		execve(cmd, options, env);
+	execve(cmd, options, env);
 }
 
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
@@ -102,29 +85,4 @@ void	parent_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i, pid_t 
 		close_fd(p_fd[1], __FILE__, __LINE__);
 	}
 	data->pid_set[i] = cpid;
-}
-
-int	execute_center(t_data *data, t_pipeline *pipeline)
-{
-	int		i;
-	int		p_fd[2];
-	pid_t	cpid;
-
-	i = 0;
-
-	while (i < data->process_number)
-	{
-		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
-		cpid = fork();
-		ft_err_sys(cpid == -1, __FILE__, __LINE__);
-		if (cpid == 0)
-			child_process(data, pipeline, p_fd, i);
-		else
-			parent_process(data, pipeline, p_fd, i, cpid);
-		i++;
-	}
-
-	while (i--)
-		waitpid(data->pid_set[i], 0, 0);
-	return (0);
 }

@@ -78,18 +78,18 @@ char	*check_access(char *cmd, char **path)
 // 	}
 // }
 
-int	pipex_set(char **av, char **env, t_data *data)
-{
-	char	**path;
+// int	pipex_set(char **av, char **env, t_data *data)
+// {
+// 	char	**path;
 
-	// path = get_path(env);
-	// if (data->offset == 2)
-	// 	data->infile = av[1];
-	// else
-	// 	here_doc(data);
-	// data->outfile = av[data->number + data->offset];
-	get_cmd(data, av);
-	get_path_cmd(data, path);
-	free_array(path, 0);
-	return (0);
-}
+// 	// path = get_path(env);
+// 	// if (data->offset == 2)
+// 	// 	data->infile = av[1];
+// 	// else
+// 	// 	here_doc(data);
+// 	// data->outfile = av[data->number + data->offset];
+// 	get_cmd(data, av);
+// 	get_path_cmd(data, path);
+// 	free_array(path, 0);
+// 	return (0);
+// }
