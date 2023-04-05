@@ -61,7 +61,7 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
-int	create_redirectes(t_pipeline **redir_list, char *str)
+int	create_redirectes(t_redirect **redir_list, char *str)
 {
 	(void)redir_list;
 	(void)str;
@@ -93,15 +93,33 @@ t_cmd_block *create_cmd_block(char *str)
 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
 	if (!new_cmd_block)
 		return (NULL);
-	(void)new_cmd_block->redir; // redirect 저장
+	(void)new_cmd_block->redirect; // redirect 저장
 	// 변수설정 저장
-	(void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기
-	/*
-		토큰을 해석하며 redir 와 cmd 중에 먼저 등장하는것부터 각자의 리스트에 순서대로 추가
-		중간에 에러가 발생하면 두 리스트 모두 날려버리고 new_cmd_block도 free 후 NULL 반환
-	*/
+	(void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기 (expanded 가 된 후 공백이 있으면 별개의 word로 구별하는듯함)
 	return (new_cmd_block);
 }
+/*
+	토큰을 해석하며 redir 와 cmd 중에 먼저 등장하는것부터 각자의 리스트에 순서대로 추가
+	중간에 에러가 발생하면 두 리스트 모두 날려버리고 new_cmd_block도 free 후 NULL 반환
+
+	----
+
+	char *origin = "<a < a < a cat > a >> a < a";
+
+	after process
+	origin = "< a < a < a cat > a >> word1 word2 a < a";
+
+	t_redirect : "<, <, <, >, >>"
+	char **cmd : "cat" "word1" "word2" NULL -> double pointer
+
+	----
+
+	cmd는 마지막에 NULL 포인터 하나 넣어주기 (split과 같은 결과물이 되어야함)
+
+	----
+
+
+*/
 
 t_pipeline	*my_parse(char *str)
 {

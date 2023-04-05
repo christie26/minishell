@@ -9,6 +9,7 @@ t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block)
 	if (!new_pipeline_lst)
 		return (0);
 	new_pipeline_lst->cmd_block = new_cmd_block;
+	new_pipeline_lst->next = NULL;
 	return (new_pipeline_lst);
 }
 
