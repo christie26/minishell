@@ -54,7 +54,7 @@ typedef struct s_cmd_block {
 
 typedef struct s_pipeline {
     t_cmd_block			*cmd_block;
-    struct s_pipeline	*next_pipe;
+    struct s_pipeline	*next;
 }	t_pipeline;
 
 int ft_is_space(char c);
