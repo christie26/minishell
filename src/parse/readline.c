@@ -61,10 +61,82 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
-int	create_redirectes(t_redirect **redir_list, char *str)
+int	create_redirectes(t_redirect **redirect_list, char *str)
 {
-	(void)redir_list;
-	(void)str;
+	int is_word;
+	int is_redirect;
+	int is_quote;
+
+	is_redirect = 0;
+	is_quote = 0;
+	is_word = 0;
+	while (1)
+	{
+		while (*str == ' ')
+			str++;
+		if (ft_strchr("<>", *str))
+			is_redirect = 1;
+		else if (ft_strchr("\"\'", *str))
+			is_quote = 1;
+		else if (*str != '\0')
+			is_word = 1;
+		
+		if (is_redirect)
+		{
+			int dir_type = 0;
+
+			// 방향별로 타입 설정
+			if (*str == '<')
+				dir_type = 1;
+			else
+				dir_type = 3;
+			
+			// << >> 을 위한 증가연산자, 다음 문자부터 읽기위한 포인터 연산
+			// 일치하지 않은 redirection 이 등장하면 에러
+			if (ft_strchr("<>", *str + 1))
+			{
+				if (*str == *str + 1)
+				{
+					dir_type++;
+					str++;
+				}
+				// else
+					// error
+			}
+
+			// 이후에도 redirection 문자가 있다면 에러
+			// if (*str == *str + 1)
+			// {
+			// 	errror
+			// }
+
+			// filename을 substr로 긁어내기전에 사이에 공백이 있는지 체크
+			while (*str == ' ')
+				str++;
+			
+			// 문자가 나타났다면 다음 공백이나 null 문자가 나타날때까지 탐색
+			char *substr_len;
+			char *filename;
+
+			substr_len = str;
+			while (*substr_len != ' ' && *substr_len != '\0')
+				substr_len++;
+			filename = ft_substr(str, 0, substr_len);
+			
+			is_redirect = 0;
+		}
+		else if (is_quote)
+		{
+			//
+			is_quote = 0;
+		}
+		else if (is_word)
+		{
+			//
+			is_word = 0;
+		}
+	}
+
 	return (0);
 }
 /*
@@ -81,6 +153,22 @@ int	create_redirectes(t_redirect **redir_list, char *str)
 	이렇게 리다이렉션끼리 붙어있어도 리다이렉션 문자 자체가
 	스위치 역할을 하는것같음...
 */
+
+void	create_tokens(char *str)
+{
+	/*
+
+		따옴표는 다음따옴표가 나올때까지 인덱스를 밀고 substr 사용
+		redirection 문자가 나오면 바로 flag 설정하고 redirection 만들기
+		꺽쇄를 strchr로 찾아서 인덱스를 타입숫자로 넣기
+		뒤에 공백이 오면 다음 문자를 filename에, 공백이 없으면 다음문자가 나올때까지
+		탐색후 문자를 filename에 넣기, 후자의 조건을 while문으로 먼저 검사하면 될듯
+
+		근데 여기선 토큰화를 하는거니까 그냥 공백단위로 다 쪼개기
+		따옴표만 위에서 말한대로 특수처리
+
+	*/
+}
 
 t_cmd_block *create_cmd_block(char *str)
 {
