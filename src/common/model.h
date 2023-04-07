@@ -4,21 +4,21 @@
 
 #include <unistd.h>
 
-typedef struct s_pipeline {
-    t_cmd_block     *cmd_block;
-    t_pipeline      *next;
-} 	t_pipeline;
+typedef struct s_redirect {
+    int         type;
+    char        *filename;      
+    struct s_redirect  *next;
+}   t_redirect;
 
 typedef struct s_cmd_block {
 	t_redirect  *redirect;
 	char		**cmd;
 }   t_cmd_block;
 
-typedef struct s_redirect {
-    int         type;
-    char        *filename;      
-    t_redirect  *next;
-}   t_redirect;
+typedef struct s_pipeline {
+    t_cmd_block     *cmd_block;
+    struct s_pipeline      *next;
+} 	t_pipeline;
 
 typedef struct s_data {
     int     process_number;
