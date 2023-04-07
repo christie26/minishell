@@ -69,6 +69,7 @@ LIBFT_SRCS = ${addprefix libft_srcs/,\
 						 ft_strlcpy.c \
 						 ft_strlen.c \
 						 ft_strmapi.c \
+						 ft_strcmp.c \
 						 ft_strncmp.c \
 						 ft_strnstr.c \
 						 ft_strrchr.c \
@@ -79,6 +80,7 @@ LIBFT_SRCS = ${addprefix libft_srcs/,\
 						 ft_strisnum.c \
 						 ft_strisint.c \
 						 ft_check_intdup.c \
+						 ft_error.c \
 }
 
 LIBFT_OBJS = ${LIBFT_SRCS:.c=.o}

@@ -16,13 +16,13 @@ void	ft_execute(char **options, t_data *data)
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
 	// set pipe
-	// connect this process with previous process with prev_fd
 	if (i != 0)
-	{
 		dup2(data->prev_fd, 0);
+	if (i != data->process_number - 1) 
+	{
 		dup2(p_fd[1], 1);
 		data->prev_fd = p_fd[0];	// Is it right place? 
-	}	
+	}
 
 	// set redirection
 	t_redirect *redirect;
@@ -68,6 +68,7 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 
 void	parent_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i, pid_t cpid)
 {
+	(void)(pipeline);
 	if (i == 0)
 	{
 		close_fd(p_fd[1], __FILE__, __LINE__);

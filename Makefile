@@ -1,20 +1,25 @@
 # all file
-SRCS_EXEC		=	#main_exec.c \
-					built_in.c	\
-					execute_center.c \
-					utils.c
+SRCS_EXEC		=	fake_main.c \
+					mini_exec.c \
+					get_path.c \
+					utils.c \
+					child_parent.c
 
-SRCS_PARSE		=	readline.c \
+SRCS_PARSE		=	#readline.c \
 					pipeline_list_utils.c
+
+SRCS_BUILT		=	built_in.c
 
 # add path as their usage
 DIR_EXEC		= execute/
 DIR_PARSE		= parse/
+DIR_BUILT		= built_in/
 
 SRCS_EXEC		:= $(addprefix $(DIR_EXEC), $(SRCS_EXEC))
 SRCS_PARSE		:= $(addprefix $(DIR_PARSE), $(SRCS_PARSE))
+SRCS_BUILT		:= $(addprefix $(DIR_BUILT), $(SRCS_BUILT))
 
-SRCS			= $(SRCS_EXEC) $(SRCS_PARSE)
+SRCS			= $(SRCS_EXEC) $(SRCS_PARSE) $(SRCS_BUILT)
 
 # add "./src" directory
 SRC_DIR			= ./src/
@@ -22,7 +27,6 @@ SRCS			:= $(addprefix $(SRC_DIR), $(SRCS))
 
 # make object files
 OBJS			:= $(SRCS:%.c=%.o)
-# OBJS_PARSE		:= $(SRCS_PARSE:%.c=%.o)
 
 
 NAME		= ./mini
