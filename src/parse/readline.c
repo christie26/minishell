@@ -61,84 +61,84 @@ int ft_get_number(char *res)
     return (cnt);
 }
 
-int	create_redirectes(t_redirect **redirect_list, char *str)
-{
-	int is_word;
-	int is_redirect;
-	int is_quote;
+// int	create_redirectes(t_redirect **redirect_list, char *str)
+// {
+// 	int is_word;
+// 	int is_redirect;
+// 	int is_quote;
 
-	is_redirect = 0;
-	is_quote = 0;
-	is_word = 0;
-	while (1)
-	{
-		while (*str == ' ')
-			str++;
-		if (ft_strchr("<>", *str))
-			is_redirect = 1;
-		else if (ft_strchr("\"\'", *str))
-			is_quote = 1;
-		else if (*str != '\0')
-			is_word = 1;
+// 	is_redirect = 0;
+// 	is_quote = 0;
+// 	is_word = 0;
+// 	while (1)
+// 	{
+// 		while (*str == ' ')
+// 			str++;
+// 		if (ft_strchr("<>", *str))
+// 			is_redirect = 1;
+// 		else if (ft_strchr("\"\'", *str))
+// 			is_quote = 1;
+// 		else if (*str != '\0')
+// 			is_word = 1;
 		
-		if (is_redirect)
-		{
-			int dir_type = 0;
+// 		if (is_redirect)
+// 		{
+// 			int dir_type = 0;
 
-			// 방향별로 타입 설정
-			if (*str == '<')
-				dir_type = 1;
-			else
-				dir_type = 3;
+// 			// 방향별로 타입 설정
+// 			if (*str == '<')
+// 				dir_type = 1;
+// 			else
+// 				dir_type = 3;
 			
-			// << >> 을 위한 증가연산자, 다음 문자부터 읽기위한 포인터 연산
-			// 일치하지 않은 redirection 이 등장하면 에러
-			if (ft_strchr("<>", *str + 1))
-			{
-				if (*str == *str + 1)
-				{
-					dir_type++;
-					str++;
-				}
-				// else
-					// error
-			}
+// 			// << >> 을 위한 증가연산자, 다음 문자부터 읽기위한 포인터 연산
+// 			// 일치하지 않은 redirection 이 등장하면 에러
+// 			if (ft_strchr("<>", *str + 1))
+// 			{
+// 				if (*str == *str + 1)
+// 				{
+// 					dir_type++;
+// 					str++;
+// 				}
+// 				// else
+// 					// error
+// 			}
 
-			// 이후에도 redirection 문자가 있다면 에러
-			// if (*str == *str + 1)
-			// {
-			// 	errror
-			// }
+// 			// 이후에도 redirection 문자가 있다면 에러
+// 			// if (*str == *str + 1)
+// 			// {
+// 			// 	errror
+// 			// }
 
-			// filename을 substr로 긁어내기전에 사이에 공백이 있는지 체크
-			while (*str == ' ')
-				str++;
+// 			// filename을 substr로 긁어내기전에 사이에 공백이 있는지 체크
+// 			while (*str == ' ')
+// 				str++;
 			
-			// 문자가 나타났다면 다음 공백이나 null 문자가 나타날때까지 탐색
-			char *substr_len;
-			char *filename;
+// 			// 문자가 나타났다면 다음 공백이나 null 문자가 나타날때까지 탐색
+// 			char *substr_len;
+// 			char *filename;
 
-			substr_len = str;
-			while (*substr_len != ' ' && *substr_len != '\0')
-				substr_len++;
-			filename = ft_substr(str, 0, substr_len);
+// 			substr_len = str;
+// 			while (*substr_len != ' ' && *substr_len != '\0')
+// 				substr_len++;
+// 			filename = ft_substr(str, 0, substr_len);
 			
-			is_redirect = 0;
-		}
-		else if (is_quote)
-		{
-			//
-			is_quote = 0;
-		}
-		else if (is_word)
-		{
-			//
-			is_word = 0;
-		}
-	}
+// 			is_redirect = 0;
+// 		}
+// 		else if (is_quote)
+// 		{
+// 			//
+// 			is_quote = 0;
+// 		}
+// 		else if (is_word)
+// 		{
+// 			//
+// 			is_word = 0;
+// 		}
+// 	}
 
-	return (0);
-}
+// 	return (0);
+// }
 /*
 	str을 공백을 기준으로 split을하고
 	리다이렉션 문자 이후의 문자만 처리를 하려고했으나
@@ -153,6 +153,57 @@ int	create_redirectes(t_redirect **redirect_list, char *str)
 	이렇게 리다이렉션끼리 붙어있어도 리다이렉션 문자 자체가
 	스위치 역할을 하는것같음...
 */
+
+int	create_redirect(t_redirect **redirect_list, char *str)
+{
+	int dir_type = 0;
+
+	// 방향별로 타입 설정
+	if (*str == '<')
+		dir_type = 1;
+	else
+		dir_type = 3;
+	
+	// << >> 을 위한 증가연산자, 다음 문자부터 읽기위한 포인터 연산
+	// 일치하지 않은 redirection 이 등장하면 에러
+	if (ft_strchr("<>", *str + 1))
+	{
+		if (*str == *str + 1)
+		{
+			dir_type++;
+			str += 2;
+		}
+		// else
+			// error
+	}
+
+	// 이후에도 redirection 문자가 있다면 에러
+	// if (*str == *str + 1)
+	// {
+	// 	errror
+	// }
+
+	// filename을 substr로 긁어내기전에 사이에 공백이 있는지 체크
+	while (*str == ' ')
+		str++;
+	
+	// 문자가 나타났다면 다음 공백이나 null 문자가 나타날때까지 탐색
+	char *substr_len;
+	char *filename;
+
+	substr_len = str;
+	while (*substr_len != ' ' && *substr_len != '\0')
+		substr_len++;
+	filename = ft_substr(str, 0, substr_len);
+
+	t_redirect *new_redirect = ft_redirect_lstnew(dir_type, filename);
+	if (!new_redirect)
+		return (NULL);
+	
+	ft_redirect_lstadd_back(&redirect_list, new_redirect);
+
+	return (0);
+}
 
 void	create_tokens(char *str)
 {
@@ -173,17 +224,26 @@ void	create_tokens(char *str)
 t_cmd_block *create_cmd_block(char *str)
 {
 	t_cmd_block *new_cmd_block;
-	t_list		*tokens;
 
-	tokens = create_tokens(str); // 여기서 토큰으로 분리?
-	if (!tokens)
-		return (NULL);
 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
 	if (!new_cmd_block)
 		return (NULL);
-	(void)new_cmd_block->redirect; // redirect 저장
+	// (void)new_cmd_block->redirect; // redirect 저장
 	// 변수설정 저장
-	(void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기 (expanded 가 된 후 공백이 있으면 별개의 word로 구별하는듯함)
+	// (void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기 (expanded 가 된 후 공백이 있으면 별개의 word로 구별하는듯함)
+
+	while (*str)
+	{
+		if (ft_strchr("<>", *str))
+			create_redirect(&(new_cmd_block->redirect), str);
+		// else if (ft_strchr("\"\'", *str))
+			// create_quoto();
+		else
+			create_word();
+		*str++;
+	}
+	// ft_printf 처럼 한글자씩 읽으면서 분기하기...
+
 	return (new_cmd_block);
 }
 /*
