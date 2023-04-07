@@ -16,6 +16,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <limits.h>
+# include <stdio.h>
 
 typedef struct s_list
 {
@@ -36,6 +37,7 @@ size_t	ft_strlcpy(char *dest, const char *src, size_t d_size);
 size_t	ft_strlcat(char *dest, const char *src, size_t d_size);
 char	*ft_strchr(const char *str, int c);
 char	*ft_strrchr(const char *str, int c);
+int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 void	*ft_memset(void *b, int c, size_t len);
@@ -73,5 +75,8 @@ int		ft_strisnum(char *str);
 int		ft_strisint(char *str);
 
 int		ft_check_intdup(char *bit_array, unsigned int num);
+
+void	ft_err_msg(int condition, char *error_message, char *file, int line);
+void	ft_err_sys(int condition, char *file, int line);
 
 #endif

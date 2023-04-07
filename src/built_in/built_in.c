@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./mini_exec.h"
+#include "./built_in.h"
 
 int ft_echo(char *cmd, char **options, char **env)
 {
@@ -75,6 +75,7 @@ int ft_exit(char *cmd, char **options, char **env)
 	return (0);
 }
 
+#include <string.h>
 // run builtin here
 // return 0 if it sucess, return 1 if there's a error 
 int ft_builtin(t_pipeline *pipeline, char **env)
@@ -85,19 +86,19 @@ int ft_builtin(t_pipeline *pipeline, char **env)
 	cmd = pipeline->cmd_block->cmd[0];
 	options = pipeline->cmd_block->cmd;
 
-	if (ft_strncmp(cmd, "echo", 4))
+	if (!ft_strcmp(cmd, "echo"))
 		return (ft_echo(cmd, options, env));
-	else if (ft_strncmp(cmd, "cd", 2))
+	else if (!ft_strcmp(cmd, "cd")) 
 		return (ft_cd(cmd, options, env));
-	else if (ft_strncmp(cmd, "pwd", 3))
+	else if (!ft_strcmp(cmd, "pwd"))
 		return (ft_pwd(cmd, options, env));
-	else if (ft_strncmp(cmd, "export", 6))
+	else if (!ft_strcmp(cmd, "export"))
 		return (ft_export(cmd, options, env));
-	else if (ft_strncmp(cmd, "unset", 5))
+	else if (!ft_strcmp(cmd, "unset"))
 		return (ft_unset(cmd, options, env));
-	else if (ft_strncmp(cmd, "env", 6))
+	else if (!ft_strcmp(cmd, "env"))
 		return (ft_env(cmd, options, env));
-	else if (ft_strncmp(cmd, "exit", 6))
+	else if (!ft_strcmp(cmd, "exit"))
 		return (ft_exit(cmd, options, env));
 	else
 		return (0);
@@ -106,19 +107,19 @@ int ft_builtin(t_pipeline *pipeline, char **env)
 // check cmd if it's builtin cmd or not 
 int is_builtin(char	*cmd)
 {
-	if (ft_strncmp(cmd, "echo", 4))
+	if (!strcmp(cmd, "echo"))
 		return (1);
-	else if (ft_strncmp(cmd, "cd", 2))
+	else if (!strcmp(cmd, "cd"))
 		return (1);
-	else if (ft_strncmp(cmd, "pwd", 3))
+	else if (!strcmp(cmd, "pwd"))
 		return (1);
-	else if (ft_strncmp(cmd, "export", 6))
+	else if (!strcmp(cmd, "export"))
 		return (1);
-	else if (ft_strncmp(cmd, "unset", 5))
+	else if (!strcmp(cmd, "unset"))
 		return (1);
-	else if (ft_strncmp(cmd, "env", 6))
+	else if (!strcmp(cmd, "env"))
 		return (1);
-	else if (ft_strncmp(cmd, "exit", 6))
+	else if (!strcmp(cmd, "exit"))
 		return (1);
 	else
 		return (0);

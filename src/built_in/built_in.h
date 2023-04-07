@@ -2,8 +2,10 @@
 
 # define BUILT_IN_H
 
-# include "../../libft/src/libft.h"
-# include "../common/model.h"
+# include <stdio.h>
+
+# include "../../libft/includes/libft.h"
+# include "../model.h"
 
 // built-in files
 int     ft_echo(char *cmd, char **options, char **env);
