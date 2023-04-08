@@ -32,59 +32,6 @@ void print_tree(t_pipeline *pipeline_list)
 
 // operator             &&, ||
 
-// int ft_get_number(char *res)
-// {
-//     int i;
-//     int cnt;
-
-//     i = 0;
-//     cnt = 0;
-
-//     while (res[i] && ft_is_space(res[i]))
-//         i++;
-//     while (res[i])
-//     {
-//         // printf("res[%d] = '%c' cnt is %d\n", i, res[i], cnt);
-//         if (res[i] == '<')
-//         {
-//             cnt++;
-//             i++;
-//             if (res[i] && res[i] == '<')
-//                 i++;
-//         }
-//         else if (res[i] == '>')
-//         {
-//             cnt++;
-//             i++;
-//             if (res[i] && res[i] == '>')
-//                 i++;
-//         }
-//         else if (res[i] == '|')
-//         {
-//             cnt++;  
-//             i++;
-//             if (res[i] && res[i] == '|')
-//                 i++;
-//         }
-//         else if (res[i] == '&')
-//         {
-//             cnt++;
-//             i++;
-//             if (res[i] && res[i] == '&')
-//                 i++;
-//         }
-//         else if (res[i] == ' ')
-//             i++;
-//         else
-//         {
-//             while (res[i] && ft_is_word(res[i]))
-//                 i++;
-//             cnt++;
-//         }
-//     }
-//     return (cnt);
-// }
-
 void	create_tokens(t_list **tokens, char *str)
 {
 	/*
@@ -106,8 +53,7 @@ void	create_tokens(t_list **tokens, char *str)
 	{
 		while (*str == 32 || *str == 9 || *str == 10)
 			str++;
-		
-		
+
 		if (*str == '<' || *str == '>')
 		{
 			if ((*(str + 1) == '<' || *(str + 1) == '>'))
@@ -126,14 +72,25 @@ void	create_tokens(t_list **tokens, char *str)
 				token_str = ft_substr(str, 0, 1);
 				str++;
 			}
-			
+
+			new_node = ft_lstnew(token_str);
+			ft_lstadd_back(tokens, new_node);
+		}
+		else if (*str == '|')
+		{
+			// if (*(str + 1) == '|')
+				// error
+			token_str = ft_substr(str, 0, 1);
+			str++;
+
 			new_node = ft_lstnew(token_str);
 			ft_lstadd_back(tokens, new_node);
 		}
 		else
 		{
-			int is_quote = 0;
 			char *substr_offset = str;
+			int is_quote = 0;
+
 			while (*str != '\0')
 			{
 				if (*str == '\'' || *str == '\"')
@@ -143,16 +100,14 @@ void	create_tokens(t_list **tokens, char *str)
 					else
 						is_quote = 1;
 				}
-				else if (*str == 32 || *str == 9 || *str == 10)
+				else if (*str == 32 || *str == 9 || *str == 10 || *str == '<' || *str == '>' || *str == '|')
 				{
 					if (!is_quote)
 						break;
 				}
 				str++;
 			}
-
 			token_str = ft_substr(substr_offset, 0, str - substr_offset);
-
 			new_node = ft_lstnew(token_str);
 			ft_lstadd_back(tokens, new_node);
 		}
@@ -204,21 +159,6 @@ t_pipeline	*my_parse(char *str)
 	// return (pipe_list);
 }
 
-int	get_pipe_cnt(char *str)
-{
-	int cnt;
-
-	cnt = 0;
-	while (ft_strchr(str, '|'))
-	{
-		str = ft_strchr(str, '|');
-		if (*(str + 1) != '|')
-			cnt++;
-		while (*str == '|' && *str != '\0')
-			str++;
-	}
-	return (cnt);
-}
 /*
 	파이프 구분이 잘 되었다면
 	파이프를 기준으로 앞뒤 문자열을 잘라서
