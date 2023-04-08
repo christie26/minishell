@@ -145,10 +145,16 @@ t_cmd_block *create_cmd_block(char *str)
 		return (NULL);
 	create_tokens(&tokens, str);
 	ft_lstiter(tokens, print_tokens);
-	// (void)new_cmd_block->redirect; // redirect 저장
-	// 변수설정 저장
-	// (void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기 (expanded 가 된 후 공백이 있으면 별개의 word로 구별하는듯함)
-
+		
+	// tokens 해석하며 cmd_block 채워넣기
+	// while (tokens)
+	// {
+	// 	if (ft_strchr("<>", *(char *)tokens->content))
+	// 		// create redirect and addback
+	// 	else
+	// 		// quote remove and cmd addback
+	// 	tokens = tokens->next;
+	// }
 
 	return (new_cmd_block);
 }
@@ -166,7 +172,7 @@ t_pipeline	*my_parse(char *str)
 	t_pipeline	*new_pipeline;
 	t_cmd_block *new_cmd_block;
 
-	pipe_lines = ft_split(str, '|');
+	pipe_lines = ft_split(str, '|'); // <<- 애시당초 얘도 토큰으로 쪼개면 됫음 ㅋㅋ
 	pipe_list = NULL;
 	while (pipe_lines)
 	{
@@ -234,6 +240,7 @@ int main(int argc, char *argv[], char *envp[])
     while (1)
     {
 		res = readline("yo shell$ ");
+	
 		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
 		// ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
 		// split_by_pipe = ft_split(res, '|');
@@ -246,6 +253,7 @@ int main(int argc, char *argv[], char *envp[])
 		t_list *tokens;
 		create_tokens(&tokens, res);
 		ft_lstiter(tokens, print_tokens);
+		ft_lstclear(&tokens, free);
 
 		// t_pipeline *my_pipelist = my_parse(res);
 		// t_pipeline *temp = my_pipelist;
