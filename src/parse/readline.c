@@ -1,6 +1,30 @@
 
 #include "mini_parse.h"
 
+void print_tree(t_pipeline *pipeline_list)
+{
+	while (pipeline_list)
+	{
+		t_cmd_block	*cur_cmd_block = pipeline_list->cmd_block;
+		t_redirect	*temp_redir = cur_cmd_block->redirect;
+		printf("================================================\n");
+		while (temp_redir)
+		{
+			printf("\n");
+			printf("redirect type: %d\n", temp_redir->type);
+			printf("redirect filename: %s\n", temp_redir->filename);
+			temp_redir = temp_redir ->next;
+		}
+		printf("\n");
+		char	**temp_cmd = cur_cmd_block->cmd;
+		while (temp_cmd)
+		{
+			printf("current word: %s\n", *temp_cmd);
+			temp_cmd++;
+		}
+		pipeline_list = pipeline_list ->next;
+	}
+}
 // get number of tokens 
 // white space          ' '
 // redirection operator  <, >, <<, >> 
@@ -65,14 +89,13 @@ void	create_tokens(t_list **tokens, char *str)
 {
 	/*
 
-		따옴표는 다음따옴표가 나올때까지 인덱스를 밀고 substr 사용
-		redirection 문자가 나오면 바로 flag 설정하고 redirection 만들기
-		꺽쇄를 strchr로 찾아서 인덱스를 타입숫자로 넣기
-		뒤에 공백이 오면 다음 문자를 filename에, 공백이 없으면 다음문자가 나올때까지
-		탐색후 문자를 filename에 넣기, 후자의 조건을 while문으로 먼저 검사하면 될듯
-
-		근데 여기선 토큰화를 하는거니까 그냥 공백단위로 다 쪼개기
-		따옴표만 위에서 말한대로 특수처리
+		1. 문자는 공백을 기준으로 분할이됨
+		2. 따옴표로 감싸있는 애들은 분할이 진행되지 않음
+		3. 문자열끼리 공백없이 함쳐져있으면 하나의 문자열로 인식됨
+		4. 리다이렉션 문자가 나오면 리다이렉션 문자만 따로 잘라서 인식 (파이프 포함)
+		(리다이렉션이나 파이프같은 오퍼레이터는 따옴표가 없으면 따로 잘라서 인식)
+		(하지만 이 오퍼레이터도 따옴표가 더 우선순위가 높음을 주의)
+		5. 오퍼레이터가 공백없이 문자 도중에 나오는것도 의식할것
 
 	*/
 	
@@ -84,12 +107,19 @@ void	create_tokens(t_list **tokens, char *str)
 		while (*str == 32 || *str == 9 || *str == 10)
 			str++;
 		
+		
 		if (*str == '<' || *str == '>')
 		{
-			if ((*(str + 1) == '<' || *(str + 1) == '>') && *str == *(str + 1))
+			if ((*(str + 1) == '<' || *(str + 1) == '>'))
 			{
-				token_str = ft_substr(str, 0, 2);
-				str += 2;
+				if (*str == *(str + 1))
+				{
+					token_str = ft_substr(str, 0, 2);
+					str += 2;
+				}
+				// else
+					//error
+					// ft_err_msg("Syntax error with <>\n", __FILE__, __LINE__);
 			}
 			else
 			{
@@ -161,33 +191,17 @@ t_cmd_block *create_cmd_block(char *str)
 
 t_pipeline	*my_parse(char *str)
 {
-	// split
-	// 순회하며 pipe 구조체 작성 (t_list)
-	// - cmd block 생성
-	// - redirection 처리 (t_list)
-	// - command char**로 처리
-
-	char	**pipe_lines;
 	t_pipeline	*pipe_list;
-	t_pipeline	*new_pipeline;
-	t_cmd_block *new_cmd_block;
+	t_list		*tokens = NULL;
 
-	pipe_lines = ft_split(str, '|'); // <<- 애시당초 얘도 토큰으로 쪼개면 됫음 ㅋㅋ
-	pipe_list = NULL;
-	while (pipe_lines)
-	{
-		new_cmd_block = create_cmd_block(*pipe_lines);
-		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
-		if (!new_pipeline || !new_pipeline->cmd_block) // 노드생성 실패 || 컨텐츠 생성 실패
-		{
-			// new_cmd_block;// cmd_block free 함수
-			ft_pipeline_lstclear(&pipe_list);
-			return (NULL);
-		}
-		ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
-		pipe_lines++;
-	}
-	return (pipe_list);
+	create_tokens(&tokens, str);
+	ft_lstiter(tokens, print_tokens);
+
+	(void)(pipe_list);
+	// 토큰을 해석하면서 트리에 넣는 함수들
+	// 단계별로 함수들이 다름
+	return (0);
+	// return (pipe_list);
 }
 
 int	get_pipe_cnt(char *str)
@@ -231,57 +245,19 @@ int	get_pipe_cnt(char *str)
 int main(int argc, char *argv[], char *envp[])
 {
     char    *res;
-	// char	**split_by_pipe;
-	// char	**temp2;
+	t_pipeline *pipeline_list;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
+
     while (1)
     {
 		res = readline("yo shell$ ");
-	
-		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
-		// ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
-		// split_by_pipe = ft_split(res, '|');
-		// ft_printf("split strings: ");
-		// temp2 = split_by_pipe;
-		// while (*temp2)
-		// 	ft_printf("\"%s\" ", *temp2++);
-		// ft_printf("\n");
 
-		t_list *tokens;
-		create_tokens(&tokens, res);
-		ft_lstiter(tokens, print_tokens);
-		ft_lstclear(&tokens, free);
-
-		// t_pipeline *my_pipelist = my_parse(res);
-		// t_pipeline *temp = my_pipelist;
-		// while (temp)
-		// {
-		// 	t_cmd_block	*cur_cmd_block = temp->cmd_block;
-		// 	t_redirect	*temp_redir = cur_cmd_block->redirect;
-		// 	printf("================================================\n");
-		// 	while (temp_redir)
-		// 	{
-		// 		printf("\n");
-		// 		printf("redir type: %d\n", temp_redir->type);
-		// 		printf("redir filename: %s\n", temp_redir->filename);
-		// 		temp_redir = temp_redir ->next;
-		// 	}
-		// 	printf("\n");
-		// 	char	**temp_cmd = cur_cmd_block->cmd;
-		// 	while (temp_cmd)
-		// 	{
-		// 		printf("cur word: %s\n", *temp_cmd);
-		// 		temp_cmd++;
-		// 	}
-		// 	temp = temp ->next;
-		// }
-		// free(res);
+		pipeline_list = my_parse(res);
+		print_tree(pipeline_list);
     }
-    
-
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
 
