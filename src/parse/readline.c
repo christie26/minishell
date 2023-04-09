@@ -3,28 +3,33 @@
 
 void print_tree(t_pipeline *pipeline_list)
 {
+	size_t idx = 0;
 	while (pipeline_list)
 	{
+		ft_printf("====================== pipeline %d =======================\n\n", idx++);
+
 		t_cmd_block	*cur_cmd_block = pipeline_list->cmd_block;
+
+		ft_printf("--- redirect ---\n");
 		t_redirect	*temp_redir = cur_cmd_block->redirect;
-		printf("================================================\n\n");
-		printf("--- redirect ---\n");
 		while (temp_redir)
 		{
-			printf("\n");
-			printf("redirect type: %d\n", temp_redir->type);
-			printf("redirect filename: %s\n", temp_redir->filename);
-			temp_redir = temp_redir ->next;
+			ft_printf("\n");
+			ft_printf("redirect type: %d\n", temp_redir->type);
+			ft_printf("redirect filename: %s\n", temp_redir->filename);
+			temp_redir = temp_redir->next;
 		}
-		printf("\n");
-		printf("--- cmd ---\n\n");
+		ft_printf("\n");
+
+		ft_printf("--- cmd ---\n\n");
 		char	**temp_cmd = cur_cmd_block->cmd;
-		while (temp_cmd)
+		while (temp_cmd && *temp_cmd) // 이중배열의 NULL 조건을 잘 살펴봐야한다...
 		{
-			printf("current word: %s\n", *temp_cmd);
+			ft_printf("current word: %s\n", *temp_cmd);
 			temp_cmd++;
 		}
-		pipeline_list = pipeline_list ->next;
+
+		pipeline_list = pipeline_list->next;
 	}
 }
 // get number of tokens 
@@ -151,10 +156,12 @@ void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
 	t_list *cur_token;
 	t_list *next_token;
 
+	if (!tokens || !*tokens)
+		return;
 	cur_token = *tokens;
-	next_token = cur_token->next;
 	while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
 	{
+		next_token = cur_token->next;
 		if (*((char *)(cur_token->content)) == '<' || *((char *)(cur_token->content)) == '>')
 		{
 			int type = 0;
@@ -179,7 +186,6 @@ void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
 			// next_token = cur_token->next;
 		}
 		cur_token = next_token;
-		next_token = cur_token->next;
 	}
 }
 
@@ -190,25 +196,25 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 	t_list *cur_token;
 	t_list *next_token;
 
+	if (!tokens || !*tokens)
+		return;
 	cur_token = *tokens;
-	next_token = cur_token->next;
 	while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
 	{
+		next_token = cur_token->next;
 		cnt++;
 		cur_token = next_token;
-		next_token = cur_token->next;
 	}
 
 	(*cmd_block)->cmd = (char **)calloc(cnt + 1, sizeof(char *)); // NULL 포인터가 필요한 이중배열이기때문에 +1만큼 생성
 
 	cur_token = *tokens;
-	next_token = cur_token->next;
-	while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	while (idx < cnt)
 	{
+		next_token = cur_token->next;
 		(*cmd_block)->cmd[idx++] = (char *)(cur_token->content);
 		ft_lstdel_node(tokens, cur_token, NULL); // 문자열이 cmd안에서 쓰여야 하니 살려둔다
 		cur_token = next_token;
-		next_token = cur_token->next;
 	}
 }
 
@@ -234,20 +240,20 @@ t_pipeline	*my_parse(char *str)
 		exit(1);
 	}
 	
-	// while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
-	// {
+	while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
+	{
 		t_pipeline *new_pipeline;
 		t_cmd_block *new_cmd_block;
 
 		new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
 		get_redirections(&tokens, &new_cmd_block);
-		// get_cmds(&tokens, &new_cmd_block);
+		
+		get_cmds(&tokens, &new_cmd_block);
+		
 		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
 		ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
 
-		ft_lstiter(tokens, print_tokens);
-
-		if ((*(char *)(tokens->content)) == '|')
+		if (tokens && (*(char *)(tokens->content)) == '|')
 		{
 			t_list *cur_token;
 			t_list *next_token;
@@ -258,10 +264,7 @@ t_pipeline	*my_parse(char *str)
 			cur_token = next_token;
 			next_token = cur_token->next;
 		}
-		ft_printf("\n");
-		ft_lstiter(tokens, print_tokens);
-	// }
-
+	}
 	return (pipe_list);
 }
 
@@ -303,6 +306,7 @@ int main(int argc, char *argv[], char *envp[])
 
 		pipeline_list = my_parse(res);
 		print_tree(pipeline_list);
+		free(res);
     }
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
