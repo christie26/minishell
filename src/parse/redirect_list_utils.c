@@ -5,7 +5,7 @@ t_redirect	*ft_redirect_lstnew(int type, char *filename)
 {
 	t_redirect	*new_redirect_lst;
 
-	new_redirect_lst = (t_pipeline *)malloc(sizeof(t_pipeline));
+	new_redirect_lst = (t_redirect *)malloc(sizeof(t_redirect));
 	if (!new_redirect_lst)
 		return (0);
 	new_redirect_lst->type = type;
@@ -42,7 +42,7 @@ t_redirect	*ft_redirect_lstlast(t_redirect *redirect_lst)
 	return (cur_redirect);
 }
 
-void	ft_redirect_lstadd_back(t_redirect *redirect_lst, t_redirect *new)
+void	ft_redirect_lstadd_back(t_redirect **redirect_lst, t_redirect *new)
 {
 	t_redirect	*cur_redirect;
 

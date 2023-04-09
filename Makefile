@@ -5,7 +5,8 @@ SRCS_EXEC		=	#main_exec.c \
 					utils.c
 
 SRCS_PARSE		=	readline.c \
-					pipeline_list_utils.c
+					pipeline_list_utils.c \
+					redirect_list_utils.c
 
 # add path as their usage
 DIR_EXEC		= execute/

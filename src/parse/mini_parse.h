@@ -21,9 +21,9 @@ void		ft_pipeline_lstadd_back(t_pipeline **pipeline_lst, t_pipeline *new);
 void		ft_pipeline_lstclear(t_pipeline **pipeline_lst);
 
 t_redirect	*ft_redirect_lstnew(int type, char *filename);
-int	ft_redirect_lstsize(t_redirect *redirect_lst);
+int			ft_redirect_lstsize(t_redirect *redirect_lst);
 t_redirect	*ft_redirect_lstlast(t_redirect *redirect_lst);
-void	ft_redirect_lstadd_back(t_redirect *redirect_lst, t_redirect *new);
-void	ft_redirect_lstclear(t_redirect **redirect_lst);
+void		ft_redirect_lstadd_back(t_redirect **redirect_lst, t_redirect *new);
+void		ft_redirect_lstclear(t_redirect **redirect_lst);
 
 #endif
