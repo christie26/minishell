@@ -96,20 +96,20 @@ void	create_tokens(t_list **tokens, char *str)
 		else
 		{
 			char *substr_offset = str;
-			int is_quote = 0;
+			char open_quote = '\0';
 
 			while (*str != '\0')
 			{
 				if (*str == '\'' || *str == '\"')
 				{
-					if (is_quote)
-						is_quote = 0;
-					else
-						is_quote = 1;
+					if (open_quote == '\0')
+						open_quote = *str;
+					else if (open_quote == *str)
+						open_quote = '\0';
 				}
 				else if (*str == 32 || *str == 9 || *str == 10 || *str == '<' || *str == '>' || *str == '|')
 				{
-					if (!is_quote)
+					if (open_quote == '\0')
 						break;
 				}
 				str++;
