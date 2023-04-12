@@ -32,12 +32,50 @@ void print_tree(t_pipeline *pipeline_list)
 		pipeline_list = pipeline_list->next;
 	}
 }
+int is_metacharacter(char c)
+{
+	if (ft_strchr("|&;()<>", c))
+		return (1)
+	return (0);
+}
 // get number of tokens 
 // white space          ' '
 // redirection operator  <, >, <<, >> 
 // pipe                  '|'
 
 // operator             &&, ||
+
+int		validate_tokens(t_list *tokens)
+{
+	char *str;
+
+	str = (tokens->content);
+	if (ft_strlen(str) == 1 && ft_strncmp(str, "|", 1) == 0)
+		return (0);
+	str = ft_lstlast(tokens)->content;
+	if (ft_strlen(str) == 1 && ft_strncmp(str, "|", 1) == 0)
+		return (0);
+	// 파이프로 시작하거나 파이프로 끝나는 경우 에러
+
+	while (tokens)
+	{
+		str = (tokens->content);
+
+		if (ft_strlen(str) == 1)
+		{
+			if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0)
+			//
+		}
+		else if (ft_strlen(str) == 2)
+		{
+			if (ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0)
+			//
+		}
+
+		tokens = tokens->next;
+	}
+	
+}
 
 void	create_tokens(t_list **tokens, char *str)
 {
