@@ -35,7 +35,7 @@ void print_tree(t_pipeline *pipeline_list)
 int is_metacharacter(char c)
 {
 	if (ft_strchr("|&;()<>", c))
-		return (1)
+		return (1);
 	return (0);
 }
 // get number of tokens 
@@ -57,24 +57,24 @@ int		validate_tokens(t_list *tokens)
 		return (0);
 	// 파이프로 시작하거나 파이프로 끝나는 경우 에러
 
-	while (tokens)
-	{
-		str = (tokens->content);
+	// while (tokens)
+	// {
+	// 	str = (tokens->content);
 
-		if (ft_strlen(str) == 1)
-		{
-			if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0)
-			//
-		}
-		else if (ft_strlen(str) == 2)
-		{
-			if (ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0)
-			//
-		}
+	// 	if (ft_strlen(str) == 1)
+	// 	{
+	// 		if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0)
+	// 		//
+	// 	}
+	// 	else if (ft_strlen(str) == 2)
+	// 	{
+	// 		if (ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0)
+	// 		//
+	// 	}
 
-		tokens = tokens->next;
-	}
-	
+	// 	tokens = tokens->next;
+	// }
+	return (1);
 }
 
 void	create_tokens(t_list **tokens, char *str)
@@ -337,14 +337,18 @@ int main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	(void)argv;
 	(void)envp;
+	(void)pipeline_list;
 
     while (1)
     {
 		res = readline("yo shell$ ");
 
-		pipeline_list = my_parse(res);
-		print_tree(pipeline_list);
-		free(res);
+		// pipeline_list = my_parse(res);
+		// print_tree(pipeline_list);
+		// free(res);
+		// while (*res)
+			// ft_printf("c: %d\n", *res++);
+		ft_printf("res p: %p\n", res);
     }
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
