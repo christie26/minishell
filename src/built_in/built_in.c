@@ -14,9 +14,25 @@
 
 int ft_echo(char *cmd, char **options, char **env)
 {
-    printf("execute echo\n");
+	int	endl;
+
+	options++;
+	endl = 1;
+	if (!ft_strcmp(*options, "-n"))	// in case of option -n, it has to be the first 
+	{
+		options++;
+		endl = 0;
+	}
+	while (*options)
+	{
+		ft_putstr_fd(*options, 1);
+		options++;
+		if (*options)
+			ft_putchar_fd(' ', 1);
+	}
+	if (endl)
+		ft_putchar_fd('\n', 1);
     (void)(cmd);
-    (void)(options);
     (void)(env);
 	return (0);
 }

@@ -21,7 +21,6 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = 0;
-
 	while (i < data->process_number)
 	{
 		if (is_builtin(pipeline->cmd_block->cmd[0]))
@@ -53,10 +52,10 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 
 int	mini_execute(t_pipeline *pipeline, char **env)
 {
-	int		i;
+	// int		i;
 	t_data	data;
 
-	i = 0;
+	// i = 0;
 	data.process_number = get_process_number(pipeline);
 	data.env = env;
 	data.path = get_path(env);
@@ -64,5 +63,5 @@ int	mini_execute(t_pipeline *pipeline, char **env)
 	if (!data.pid_set)
 		return (1);
 	execute_center(&data, pipeline);
-return (0);
+	return (0);
 }
