@@ -162,7 +162,8 @@ void	create_tokens(t_list **tokens, char *str)
 	// 	}
 	// }
 	
-	int is_opt = 0;
+	int is_opt = is_metacharacter(*str);
+	char *substr_offset = str;
 	while (*str)
 	{
 		/*
@@ -191,76 +192,45 @@ void	create_tokens(t_list **tokens, char *str)
 			정보를 담는 역할도 한다
 
 		*/
-		char *substr_offset = str;
+		
 
 		if (is_metacharacter(*str))
 		{
 			if (is_opt)
 			{
-				// 조합 가능한 오퍼레이터인지 검사
-				// 더이상 조합가능하지 않으면 읽었던 오퍼레이터까지 토큰화하고 is_opt 갱신
-				// 조합이 가능하면 조합하고 is_opt를 0으로 초기화
-				if (ft_strchr("<>", is_opt))
-				{
-					if (is_opt == *str)
-					{
-						is_opt = 0;
-
-						token_str = ft_substr(substr_offset, 0, str - substr_offset + 1);
-						new_node = ft_lstnew(token_str);
-						ft_lstadd_back(tokens, new_node);
-					}
-					else
-					{
-						is_opt = *str;
-
-						// token_str = ft_substr(substr_offset, 0, str - substr_offset);
-						// 이 상태에서는 자기자신 하나만 잘라내는것이 불가능해진다...
-						token_str = ft_substr(substr_offset, 0, str - substr_offset + 1);
-						new_node = ft_lstnew(token_str);
-						ft_lstadd_back(tokens, new_node);
-					}
-					// <>a 는 <, >, a 세개의 토큰으로 나뉘어야 한다
-					// <a 는 <, a 두개의 토큰으로 나뉘어야 한다
-					// 플래그 반전이나 널문자가 나올때 잘라내야 하나?
-					//
-					// 조합이 가능하면 현재 문자까지 포함해서 자른다
-					// 조합이 불가능하면 이전 문자까지만 자른다?
-					// 그러면 실패한 경우 or 변수에 킵 해놓는 경우는 한글자가 늦게 잘리나?
-					//
-					// 킵 해놓는 이유 -> 플래그로도 사용하기 위해서
-					//
-					// 아무튼 같아도 자르고 달라도 자르고...
-					// 여러 오퍼레이션이 연속해서 들어오는 경우는 어떻게 처리하는지? <- 결국 이거때문에
-					// 킵 해놓은 거랑 비교해보는것 아닌가??
-					// 매번 한글자씩 밀려서 자르다가 플래그 반전이 일어나면
-					// 그떄 킵해놨던 오퍼레이터를 토큰화?
-					// 문자는 킵해놓을 이유가 없음 그냥 문자열 주소를 쭉쭉 밀어버리면 됨
-					//
-					// 그러나 오퍼레이터는 조합도 봐야하고
-					// 오퍼레이터 자체도 플래그라서 계속 확인해야함
-					// 오퍼레이터 쪽에서 플래그 반전이나 널문자를 만나기전까진
-					// 킵해놓는것 때문에 하나씩 밀려서 잘리는건 당연한것
-					// 다만 오퍼레이터에서 word 로 바뀔때만 킵해놓은것을 자르는게 일어남
-					// 그 반대는 현재까지 보고있는 문자까지 바로 잘라버림
-				}
-				str++;
-				// 인덱스를 늘리는 타이밍과 여태까지 인덱스를 잘라내는 타이밍의 차이는...?
-				// 과제 요구사항으로는 같은 오퍼레이터 두개까지만 조합을 확인하면 된다
-				// 플래그 반전이 일어나서 끊고가는것처럼 조합도 같은 타이밍에 끊고가면 되지 않을까
-				// 문자열 밀어주기가 끝날때 잘라내면 플래그 반전에도 대응할수있지 않을까...
+				if (ft_strchr("<>", is_opt) && is_opt == *str) // 리다이렉션은 중복해서 두개까지 조합가능하다, 킵해놓은게 리다이렉션이고 같은 문자라면...
+					is_opt = 0; // 플래그 초기화, 여기까지를 토큰의 최대조합으로 보겠다는 뜻 이후로는 뭐가오던 새로 해석
+				else
+					is_opt = *str; // 리다이렉션이 아니면 킵해놓을 필요가없음, 조합이 없기 때문
+				
+				token_str = ft_substr(substr_offset, 0, str + (is_opt == 0) - substr_offset);
+				new_node = ft_lstnew(token_str);
+				ft_lstadd_back(tokens, new_node);
+				
 			}
-			else if (is_opt == 0)
+			else // 플래그반전, 읽어놨던 단어를 토큰화
 			{
 				is_opt = *str;
-				// 플래그 반전
-				// 이전까지 읽었던 문자까지 토큰화
+
+				token_str = ft_substr(substr_offset, 0, str - substr_offset);
+				new_node = ft_lstnew(token_str);
+				ft_lstadd_back(tokens, new_node);
+
+				substr_offset = str;
 			}
 		}
 		else
 		{
-			if (is_opt)
+			if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
+			{
 				is_opt = 0;
+
+				token_str = ft_substr(substr_offset, 0, str - substr_offset);
+				new_node = ft_lstnew(token_str);
+				ft_lstadd_back(tokens, new_node);
+
+				substr_offset = str;
+			}
 			else
 				str++;
 		}
