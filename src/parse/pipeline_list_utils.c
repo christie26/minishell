@@ -9,6 +9,7 @@ t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block)
 	if (!new_pipeline_lst)
 		return (0);
 	new_pipeline_lst->cmd_block = new_cmd_block;
+	new_pipeline_lst->next = NULL;
 	return (new_pipeline_lst);
 }
 
@@ -40,7 +41,7 @@ t_pipeline	*ft_pipeline_lstlast(t_pipeline *pipeline_lst)
 	return (cur_pipeline);
 }
 
-void	ft_pipeline_lstadd_back(t_pipeline *pipeline_lst, t_pipeline *new)
+void	ft_pipeline_lstadd_back(t_pipeline **pipeline_lst, t_pipeline *new)
 {
 	t_pipeline	*cur_pipeline;
 
@@ -66,7 +67,7 @@ void	ft_pipeline_lstclear(t_pipeline **pipeline_lst)
 		while (cur_pipeline)
 		{
 			next_pipeline = cur_pipeline->next;
-			cur_pipeline->cmd_block;// cmd_block free 함수
+			// cur_pipeline->cmd_block;// cmd_block free 함수
 			free(cur_pipeline);
 			cur_pipeline = next_pipeline;
 		}

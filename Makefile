@@ -5,8 +5,9 @@ SRCS_EXEC		=	fake_main.c \
 					utils.c \
 					child_parent.c
 
-SRCS_PARSE		=	#readline.c \
-					pipeline_list_utils.c
+SRCS_PARSE		=	readline.c \
+					pipeline_list_utils.c \
+					redirect_list_utils.c
 
 SRCS_BUILT		=	built_in.c
 

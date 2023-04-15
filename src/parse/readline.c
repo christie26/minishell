@@ -1,6 +1,47 @@
 
 #include "mini_parse.h"
 
+void print_tree(t_pipeline *pipeline_list)
+{
+	size_t idx = 0;
+	while (pipeline_list)
+	{
+		ft_printf("====================== pipeline %d =======================\n\n", idx++);
+
+		t_cmd_block	*cur_cmd_block = pipeline_list->cmd_block;
+
+		ft_printf("--- redirect ---\n");
+		t_redirect	*temp_redir = cur_cmd_block->redirect;
+		while (temp_redir)
+		{
+			ft_printf("\n");
+			ft_printf("redirect type: %d\n", temp_redir->type);
+			ft_printf("redirect filename: %s\n", temp_redir->filename);
+			temp_redir = temp_redir->next;
+		}
+		ft_printf("\n");
+
+		ft_printf("--- cmd ---\n\n");
+		char	**temp_cmd = cur_cmd_block->cmd;
+		while (temp_cmd && *temp_cmd) // 이중배열의 NULL 조건을 잘 살펴봐야한다...
+		{
+			ft_printf("current word: %s\n", *temp_cmd);
+			temp_cmd++;
+		}
+
+		pipeline_list = pipeline_list->next;
+	}
+}
+
+int is_blank(char c)
+{
+	return (c == 32 || c == 9 || c == 10);
+}
+
+int is_metacharacter(char c)
+{
+	return (is_blank(c) || ft_strchr("|&;()<>", c));
+}
 // get number of tokens 
 // white space          ' '
 // redirection operator  <, >, <<, >> 
@@ -8,147 +49,341 @@
 
 // operator             &&, ||
 
-int ft_get_number(char *res)
+int		validate_tokens(t_list *tokens)
 {
-    int i;
-    int cnt;
+	char *str;
 
-    i = 0;
-    cnt = 0;
+	str = (tokens->content);
+	if (ft_strlen(str) == 1 && ft_strncmp(str, "|", 1) == 0)
+		return (0);
+	str = ft_lstlast(tokens)->content;
+	if (ft_strlen(str) == 1 && ft_strncmp(str, "|", 1) == 0)
+		return (0);
+	// 파이프로 시작하거나 파이프로 끝나는 경우 에러
 
-    while (res[i] && ft_is_space(res[i]))
-        i++;
-    while (res[i])
-    {
-        // printf("res[%d] = '%c' cnt is %d\n", i, res[i], cnt);
-        if (res[i] == '<')
-        {
-            cnt++;
-            i++;
-            if (res[i] && res[i] == '<')
-                i++;
-        }
-        else if (res[i] == '>')
-        {
-            cnt++;
-            i++;
-            if (res[i] && res[i] == '>')
-                i++;
-        }
-        else if (res[i] == '|')
-        {
-            cnt++;  
-            i++;
-            if (res[i] && res[i] == '|')
-                i++;
-        }
-        else if (res[i] == '&')
-        {
-            cnt++;
-            i++;
-            if (res[i] && res[i] == '&')
-                i++;
-        }
-        else if (res[i] == ' ')
-            i++;
-        else
-        {
-            while (res[i] && ft_is_word(res[i]))
-                i++;
-            cnt++;
-        }
-    }
-    return (cnt);
+	// while (tokens)
+	// {
+	// 	str = (tokens->content);
+
+	// 	if (ft_strlen(str) == 1)
+	// 	{
+	// 		if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0)
+	// 		//
+	// 	}
+	// 	else if (ft_strlen(str) == 2)
+	// 	{
+	// 		if (ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0)
+	// 		//
+	// 	}
+
+	// 	tokens = tokens->next;
+	// }
+	return (1);
 }
 
-int	create_redirectes(t_pipeline **redir_list, char *str)
+void	create_tokens(t_list **tokens, char *str)
 {
-	(void)redir_list;
-	(void)str;
-	return (0);
-}
-/*
-	str을 공백을 기준으로 split을하고
-	리다이렉션 문자 이후의 문자만 처리를 하려고했으나
-	ls a &> test, ls >test, ls>test 와 같이
-	모두 붙여서 작성해도 인식함...
+	/*
 
-	<test_and_learn/a cat, <test_and_learn/acat
-	전자는 되지만 후자는 안됨
-	리다이렉션 문자이후로 공백이 나오기전까진 전부
-	리다이렉션이랑 묶어서 처리를 하는듯... 이후는 개별토큰으로 인식 (추가 리다이렉션이거나 명령어)
-	<test_and_learn/a<test_and_learn/b cat
-	이렇게 리다이렉션끼리 붙어있어도 리다이렉션 문자 자체가
-	스위치 역할을 하는것같음...
-*/
+		1. 문자는 공백을 기준으로 분할이됨
+		2. 따옴표로 감싸있는 애들은 분할이 진행되지 않음
+		3. 문자열끼리 공백없이 함쳐져있으면 하나의 문자열로 인식됨
+		4. 리다이렉션 문자가 나오면 리다이렉션 문자만 따로 잘라서 인식 (파이프 포함)
+		(리다이렉션이나 파이프같은 오퍼레이터는 따옴표가 없으면 따로 잘라서 인식)
+		(하지만 이 오퍼레이터도 따옴표가 더 우선순위가 높음을 주의)
+		5. 오퍼레이터가 공백없이 문자 도중에 나오는것도 의식할것
+
+	*/
+	
+	char *token_str;
+	t_list *new_node;
+
+	// while (*str)
+	// {
+	// 	while (*str == 32 || *str == 9 || *str == 10)
+	// 		str++;
+
+	// 	if (*str == '<' || *str == '>')
+	// 	{
+	// 		if ((*(str + 1) == '<' || *(str + 1) == '>'))
+	// 		{
+	// 			if (*str == *(str + 1))
+	// 			{
+	// 				token_str = ft_substr(str, 0, 2);
+	// 				str += 2;
+	// 			}
+	// 			// else
+	// 				//error
+	// 				// ft_err_msg("Syntax error with <>\n", __FILE__, __LINE__);
+	// 		}
+	// 		else
+	// 		{
+	// 			token_str = ft_substr(str, 0, 1);
+	// 			str++;
+	// 		}
+
+	// 		new_node = ft_lstnew(token_str);
+	// 		ft_lstadd_back(tokens, new_node);
+	// 	}
+	// 	else if (*str == '|')
+	// 	{
+	// 		// if (*(str + 1) == '|')
+	// 			// error
+	// 		token_str = ft_substr(str, 0, 1);
+	// 		str++;
+
+	// 		new_node = ft_lstnew(token_str);
+	// 		ft_lstadd_back(tokens, new_node);
+	// 	}
+	// 	else
+	// 	{
+	// 		char *substr_offset = str;
+	// 		char open_quote = '\0';
+
+	// 		while (*str != '\0')
+	// 		{
+	// 			if (*str == '\'' || *str == '\"')
+	// 			{
+	// 				if (open_quote == '\0')
+	// 					open_quote = *str;
+	// 				else if (open_quote == *str)
+	// 					open_quote = '\0';
+	// 			}
+	// 			else if (*str == 32 || *str == 9 || *str == 10 || *str == '<' || *str == '>' || *str == '|')
+	// 			{
+	// 				if (open_quote == '\0')
+	// 					break;
+	// 			}
+	// 			str++;
+	// 		}
+	// 		token_str = ft_substr(substr_offset, 0, str - substr_offset);
+	// 		new_node = ft_lstnew(token_str);
+	// 		ft_lstadd_back(tokens, new_node);
+	// 	}
+	// }
+	
+	int is_opt = is_metacharacter(*str);
+	char *substr_offset = str;
+	while (*str)
+	{
+		/*
+
+			if *str == opt
+				if is_opt
+					str++
+				else
+					is_opt = 1;
+				- 오퍼레이터를 읽고있었다면 계속 읽는다
+				- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
+			else
+				if is_opt
+					is_opt = 0;
+				else
+					str++
+				- 문자를 읽고있었다면 계속 읽는다
+				- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
+			
+			이렇게 하면 플래그에 따라서 읽었던것까지 잘라주고
+			다른 타입의 토큰이 나와도 무조건적으로 다음 문자를 보지않게된다
+			다른 타입의 토큰이 나올때 예외처리를 신경쓰지 않아도 된다
+			그냥 플래그를 확인하고 플래그에 따른 동작만 수행한다
+
+			is_opt는 플래그 역할도 수행하지만 이전에 읽은 opt에 대한
+			정보를 담는 역할도 한다
+
+		*/
+		
+
+		if (is_metacharacter(*str))
+		{
+			if (is_opt)
+			{
+				if (ft_strchr("<>", is_opt) && is_opt == *str) // 리다이렉션은 중복해서 두개까지 조합가능하다, 킵해놓은게 리다이렉션이고 같은 문자라면...
+					is_opt = 0; // 플래그 초기화, 여기까지를 토큰의 최대조합으로 보겠다는 뜻 이후로는 뭐가오던 새로 해석
+				else
+					is_opt = *str; // 리다이렉션이 아니면 킵해놓을 필요가없음, 조합이 없기 때문
+				
+				token_str = ft_substr(substr_offset, 0, str + (is_opt == 0) - substr_offset);
+				new_node = ft_lstnew(token_str);
+				ft_lstadd_back(tokens, new_node);
+				
+			}
+			else // 플래그반전, 읽어놨던 단어를 토큰화
+			{
+				is_opt = *str;
+
+				token_str = ft_substr(substr_offset, 0, str - substr_offset);
+				new_node = ft_lstnew(token_str);
+				ft_lstadd_back(tokens, new_node);
+
+				substr_offset = str;
+			}
+		}
+		else
+		{
+			if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
+			{
+				is_opt = 0;
+
+				token_str = ft_substr(substr_offset, 0, str - substr_offset);
+				new_node = ft_lstnew(token_str);
+				ft_lstadd_back(tokens, new_node);
+
+				substr_offset = str;
+			}
+			else
+				str++;
+		}
+	}
+}
+
+void print_tokens(void *content)
+{
+	content = (char *)content;
+	ft_putendl_fd(content, 1);
+}
 
 t_cmd_block *create_cmd_block(char *str)
 {
 	t_cmd_block *new_cmd_block;
-	t_list		*tokens;
+	t_list *tokens;
 
-	tokens = create_tokens(str); // 여기서 토큰으로 분리?
-	if (!tokens)
-		return (NULL);
 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
 	if (!new_cmd_block)
 		return (NULL);
-	(void)new_cmd_block->redir; // redirect 저장
-	// 변수설정 저장
-	(void)new_cmd_block->cmd; // expaned 된 문자열을 list에 substr로 넣어놧다가 char**로 옮겨담기
-	/*
-		토큰을 해석하며 redir 와 cmd 중에 먼저 등장하는것부터 각자의 리스트에 순서대로 추가
-		중간에 에러가 발생하면 두 리스트 모두 날려버리고 new_cmd_block도 free 후 NULL 반환
-	*/
+	create_tokens(&tokens, str);
+	ft_lstiter(tokens, print_tokens);
+		
+	// tokens 해석하며 cmd_block 채워넣기
+	// while (tokens)
+	// {
+	// 	if (ft_strchr("<>", *(char *)tokens->content))
+	// 		// create redirect and addback
+	// 	else
+	// 		// quote remove and cmd addback
+	// 	tokens = tokens->next;
+	// }
+
 	return (new_cmd_block);
+}
+
+void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
+{
+	t_list *cur_token;
+	t_list *next_token;
+
+	if (!tokens || !*tokens)
+		return;
+	cur_token = *tokens;
+	while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	{
+		next_token = cur_token->next;
+		if (*((char *)(cur_token->content)) == '<' || *((char *)(cur_token->content)) == '>')
+		{
+			int type = 0;
+			if (ft_strncmp(((char *)(cur_token->content)), "<", 2) == 0)
+				type = 1;
+			else if (ft_strncmp(((char *)(cur_token->content)), "<<", 2) == 0)
+				type = 2;
+			else if (ft_strncmp(((char *)(cur_token->content)), ">", 2) == 0)
+				type = 3;
+			else if (ft_strncmp(((char *)(cur_token->content)), ">>", 2) == 0)
+				type = 4;
+			
+			ft_lstdel_node(tokens, cur_token, free);
+			cur_token = next_token;
+			next_token = cur_token->next;
+
+			t_redirect *new_redirect = ft_redirect_lstnew(type, (char *)(cur_token->content));
+			ft_redirect_lstadd_back(&((*cmd_block)->redirect), new_redirect);
+
+			ft_lstdel_node(tokens, cur_token, NULL); // 문자열은 lstnew에서 써야하니 살려둬야함
+			// cur_token = next_token;
+			// next_token = cur_token->next;
+		}
+		cur_token = next_token;
+	}
+}
+
+void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
+{
+	size_t cnt = 0;
+	size_t idx = 0;
+	t_list *cur_token;
+	t_list *next_token;
+
+	if (!tokens || !*tokens)
+		return;
+	cur_token = *tokens;
+	while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	{
+		next_token = cur_token->next;
+		cnt++;
+		cur_token = next_token;
+	}
+
+	(*cmd_block)->cmd = (char **)calloc(cnt + 1, sizeof(char *)); // NULL 포인터가 필요한 이중배열이기때문에 +1만큼 생성
+
+	cur_token = *tokens;
+	while (idx < cnt)
+	{
+		next_token = cur_token->next;
+		(*cmd_block)->cmd[idx++] = (char *)(cur_token->content);
+		ft_lstdel_node(tokens, cur_token, NULL); // 문자열이 cmd안에서 쓰여야 하니 살려둔다
+		cur_token = next_token;
+	}
 }
 
 t_pipeline	*my_parse(char *str)
 {
-	// split
-	// 순회하며 pipe 구조체 작성 (t_list)
-	// - cmd block 생성
-	// - redirection 처리 (t_list)
-	// - command char**로 처리
+	t_pipeline	*pipe_list = NULL;
+	t_list		*tokens = NULL;
 
-	char	**pipe_lines;
-	t_pipeline	*pipe_list;
-	t_pipeline	*new_pipeline;
-	t_cmd_block *new_cmd_block;
+	create_tokens(&tokens, str);
+	// ft_lstiter(tokens, print_tokens);
 
-	pipe_lines = ft_split(str, '|');
-	pipe_list = NULL;
-	while (pipe_lines)
+	(void)(pipe_list);
+	// 토큰을 해석하면서 트리에 넣는 함수들
+	// 단계별로 함수들이 다름
+
+	// 무조건적으로 토큰화를 하고
+	// 1차적으로 토큰을 읽으면서 오류 검사를 할지
+	// 토큰화를 하면서 오류 검사를 할지
+
+	if ((*((char *)(tokens->content)) == '|') || (*((char *)(ft_lstlast(tokens)->content)) == '|')) // 첫번째나 마지막이 파이프인 경우 에러
 	{
-		new_cmd_block = create_cmd_block(*pipe_lines);
+		ft_printf("Error\n");
+		exit(1);
+	}
+	
+	while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
+	{
+		t_pipeline *new_pipeline;
+		t_cmd_block *new_cmd_block;
+
+		new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
+		get_redirections(&tokens, &new_cmd_block);
+		
+		get_cmds(&tokens, &new_cmd_block);
+		
 		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
-		if (!new_pipeline || !new_pipeline->cmd_block) // 노드생성 실패 || 컨텐츠 생성 실패
+		ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
+
+		if (tokens && (*(char *)(tokens->content)) == '|')
 		{
-			new_cmd_block;// cmd_block free 함수
-			ft_pipeline_lstclear(&pipe_list);
-			return (NULL);
+			t_list *cur_token;
+			t_list *next_token;
+
+			cur_token = tokens;
+			next_token = cur_token->next;
+			ft_lstdel_node(&tokens, cur_token, free);
+			cur_token = next_token;
+			next_token = cur_token->next;
 		}
-		ft_lstadd_back(&pipe_list, new_pipeline);
-		pipe_lines++;
 	}
 	return (pipe_list);
 }
 
-int	get_pipe_cnt(char *str)
-{
-	int cnt;
-
-	cnt = 0;
-	while (ft_strchr(str, '|'))
-	{
-		str = ft_strchr(str, '|');
-		if (*(str + 1) != '|')
-			cnt++;
-		while (*str == '|' && *str != '\0')
-			str++;
-	}
-	return (cnt);
-}
 /*
 	파이프 구분이 잘 되었다면
 	파이프를 기준으로 앞뒤 문자열을 잘라서
@@ -175,50 +410,24 @@ int	get_pipe_cnt(char *str)
 int main(int argc, char *argv[], char *envp[])
 {
     char    *res;
-	char	**split_by_pipe;
-	char	**temp2;
+	t_pipeline *pipeline_list;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
+	// (void)pipeline_list;
+
     while (1)
     {
 		res = readline("yo shell$ ");
-		// printf("cmd read: %s\nget token number: %d\n", res, ft_get_number(res));
-		// ft_printf("input: %s\npipe cnt: %d\n", res, get_pipe_cnt(res));
-		// split_by_pipe = ft_split(res, '|');
-		// ft_printf("split strings: ");
-		// temp2 = split_by_pipe;
-		// while (*temp2)
-		// 	ft_printf("\"%s\" ", *temp2++);
-		// ft_printf("\n");
-		t_pipeline *my_pipelist = my_parse(res);
-		t_pipeline *temp = my_pipelist;
-		while (temp)
-		{
-			t_cmd_block	*cur_cmd_block = temp->cmd_block;
-			t_redirect	*temp_redir = cur_cmd_block->redir;
-			printf("================================================\n");
-			while (temp_redir)
-			{
-				printf("\n");
-				printf("redir type: %d\n", temp_redir->type);
-				printf("redir filename: %s\n", temp_redir->filename);
-				temp_redir = temp_redir ->next;
-			}
-			printf("\n");
-			char	**temp_cmd = cur_cmd_block->cmd;
-			while (temp_cmd)
-			{
-				printf("cur word: %s\n", *temp_cmd);
-				temp_cmd++;
-			}
-			temp = temp ->next_pipe;
-		}
-		free(res);
-    }
-    
 
+		pipeline_list = my_parse(res);
+		print_tree(pipeline_list);
+		free(res);
+		// while (*res)
+			// ft_printf("c: %d\n", *res++);
+		// ft_printf("res p: %p\n", res);
+    }
 }
 // readline 의 return 은 malloc 된 상태로 나오기 때문에, 호출 후 다 사용하고 나면 free 해줘야 한다. 
 
