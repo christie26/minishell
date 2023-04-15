@@ -211,11 +211,18 @@ void	create_tokens(t_list **tokens, char *str)
 			if (is_opt)
 			{
 				if (ft_strchr("<>", is_opt) && is_opt == *str) // 리다이렉션은 중복해서 두개까지 조합가능하다, 킵해놓은게 리다이렉션이고 같은 문자라면...
+				{
+					ft_printf("combine opt\n");
 					is_opt = 0; // 플래그 초기화, 여기까지를 토큰의 최대조합으로 보겠다는 뜻 이후로는 뭐가오던 새로 해석
+					str++; // 항상 이전에 읽은곳까지만 잘라내기 때문에, 여기서는 조합을 위해 현재까지 잘라내니 문자열주소를 한번 더 밀어줘야한다
+				}
 				else
+				{
+					ft_printf("diff opt\n");
 					is_opt = *str; // 리다이렉션이 아니면 킵해놓을 필요가없음, 조합이 없기 때문
+				}
 				
-				token_str = ft_substr(substr_offset, 0, str + (is_opt == 0) - substr_offset);
+				token_str = ft_substr(substr_offset, 0, str - substr_offset);
 				new_node = ft_lstnew(token_str);
 				ft_lstadd_back(tokens, new_node);
 
@@ -225,6 +232,7 @@ void	create_tokens(t_list **tokens, char *str)
 			}
 			else // 플래그반전, 읽어놨던 단어를 토큰화
 			{
+				ft_printf("flag swtich word to token\n");
 				is_opt = *str;
 
 				token_str = ft_substr(substr_offset, 0, str - substr_offset);
@@ -239,6 +247,7 @@ void	create_tokens(t_list **tokens, char *str)
 		{
 			if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
 			{
+				ft_printf("flag swtich opt to token\n");
 				is_opt = 0;
 
 				token_str = ft_substr(substr_offset, 0, str - substr_offset);
