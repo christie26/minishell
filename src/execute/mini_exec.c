@@ -23,15 +23,18 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	i = 0;
 	while (i < data->process_number)
 	{
+		printf("cmd = %s\n", pipeline->cmd_block->cmd[0]);
+
 		if (is_builtin(pipeline->cmd_block->cmd[0]))
 		{
-			printf("it's built-in\n");
+			printf("%d, it's built-in\n", i	);
 			if (ft_builtin(pipeline, data->env))
 			{
 				ft_err_msg(1, "Error", __FILE__, __LINE__);	// have to think more 
 			// have to think about pipe and redirection stuff
 			}
 			i++;
+			pipeline = pipeline->next;
 			continue ;
 		}
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);

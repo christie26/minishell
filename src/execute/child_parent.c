@@ -9,6 +9,7 @@ void	ft_execute(char **options, t_data *data)
 	env = data->env;
 	cmd = ft_strdup(options[0]);
 	cmd = check_access(cmd, data->path); // leak check 
+	printf("after check access %s\n", cmd);
 	ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
 	execve(cmd, options, env);
 }
