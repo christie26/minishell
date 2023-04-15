@@ -11,11 +11,14 @@
 # include <unistd.h>
 # include <fcntl.h>
 
-# include "../../libft/src/libft.h"
-# include "../common/model.h"
+# include "../../libft/includes/libft.h"
+# include "../model.h"
+
+int     mini_execute(t_pipeline *pipeline, char **env);
 
 // get path
 char	**get_path(char **env);
+char	*check_access(char *cmd, char **path);
 
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);

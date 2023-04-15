@@ -1,13 +1,14 @@
+
 #ifndef MODEL_H
 
 # define MODEL_H
 
-#include <unistd.h>
+# include <unistd.h>
 
 typedef struct s_redirect {
-    int         type;
-    char        *filename;      
-    struct s_redirect  *next;
+    int					type;
+    char				*filename;      
+    struct s_redirect	*next;
 }   t_redirect;
 
 typedef struct s_cmd_block {
@@ -16,8 +17,8 @@ typedef struct s_cmd_block {
 }   t_cmd_block;
 
 typedef struct s_pipeline {
-    t_cmd_block     *cmd_block;
-    struct s_pipeline      *next;
+    t_cmd_block			*cmd_block;
+    struct s_pipeline	*next;
 } 	t_pipeline;
 
 typedef struct s_data {
@@ -36,4 +37,4 @@ output  3: >
         4: >>
 */ 
 
-# endif
+#endif

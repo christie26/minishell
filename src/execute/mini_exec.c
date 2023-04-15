@@ -21,17 +21,20 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = 0;
-
 	while (i < data->process_number)
 	{
-		if (is_builtin(pipeline->cmd_block->cmd[0])) // check and execute if it's builtin 
+		printf("cmd = %s\n", pipeline->cmd_block->cmd[0]);
+
+		if (is_builtin(pipeline->cmd_block->cmd[0]))
 		{
+			printf("%d, it's built-in\n", i	);
 			if (ft_builtin(pipeline, data->env))
 			{
 				ft_err_msg(1, "Error", __FILE__, __LINE__);	// have to think more 
 			// have to think about pipe and redirection stuff
 			}
 			i++;
+			pipeline = pipeline->next;
 			continue ;
 		}
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
@@ -42,6 +45,7 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 		else
 			parent_process(data, pipeline, p_fd, i, cpid);
 		i++;
+		pipeline = pipeline->next;
 	}
 
 	while (i--)
@@ -51,12 +55,10 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 
 int	mini_execute(t_pipeline *pipeline, char **env)
 {
-	int		i;
-	int		p_fd[2];
+	// int		i;
 	t_data	data;
-	pid_t	cpid;
 
-	i = 0;
+	// i = 0;
 	data.process_number = get_process_number(pipeline);
 	data.env = env;
 	data.path = get_path(env);
@@ -64,4 +66,5 @@ int	mini_execute(t_pipeline *pipeline, char **env)
 	if (!data.pid_set)
 		return (1);
 	execute_center(&data, pipeline);
+	return (0);
 }
