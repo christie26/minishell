@@ -15,7 +15,7 @@ int main(int ac, char **av, char **env)
     pipe_2.cmd_block = &cmd_2;
     pipe_3.cmd_block = &cmd_3;
 
-    cmd_1.cmd = ft_split("./test_and_learn/crasher", ' ');
+    cmd_1.cmd = ft_split("cd happy", ' ');
     cmd_2.cmd = ft_split("cat", ' ');
     cmd_3.cmd = ft_split("cat", ' ');
 
@@ -46,9 +46,3 @@ int main(int ac, char **av, char **env)
 
 // cat a | cat < happy | cat > result
 
-
-
-
-
-// 이거로는 나중에 
-// cat a | cat < happy < sad | cat > result

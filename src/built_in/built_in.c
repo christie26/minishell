@@ -18,7 +18,7 @@ int ft_echo(char *cmd, char **options, char **env)
 
 	options++;
 	endl = 1;
-	if (!ft_strcmp(*options, "-n"))	// in case of option -n, it has to be the first 
+	if (!ft_strcmp(*options, "-n"))
 	{
 		options++;
 		endl = 0;
@@ -39,16 +39,20 @@ int ft_echo(char *cmd, char **options, char **env)
 
 int ft_cd(char *cmd, char **options, char **env)
 {
-    printf("execute cd\n");
+	options++;
+	ft_err_sys(!*options, __FILE__, __LINE__);
+	ft_err_sys(chdir(*options) == -1, __FILE__, __LINE__);
     (void)(cmd);
-    (void)(options);
     (void)(env);
 	return (0);
 }
 
 int ft_pwd(char *cmd, char **options, char **env)
 {
-    printf("execute pwd\n");    
+	char	buf[1024];
+
+	ft_err_sys((getcwd(buf, 1024) == NULL), __FILE__, __LINE__);
+	ft_putendl_fd(buf, 1);
     (void)(cmd);
     (void)(options);
     (void)(env);
@@ -91,7 +95,6 @@ int ft_exit(char *cmd, char **options, char **env)
 	return (0);
 }
 
-#include <string.h>
 // run builtin here
 // return 0 if it sucess, return 1 if there's a error 
 int ft_builtin(t_pipeline *pipeline, char **env)
@@ -123,19 +126,19 @@ int ft_builtin(t_pipeline *pipeline, char **env)
 // check cmd if it's builtin cmd or not 
 int is_builtin(char	*cmd)
 {
-	if (!strcmp(cmd, "echo"))
+	if (!ft_strcmp(cmd, "echo"))
 		return (1);
-	else if (!strcmp(cmd, "cd"))
+	else if (!ft_strcmp(cmd, "cd"))
 		return (1);
-	else if (!strcmp(cmd, "pwd"))
+	else if (!ft_strcmp(cmd, "pwd"))
 		return (1);
-	else if (!strcmp(cmd, "export"))
+	else if (!ft_strcmp(cmd, "export"))
 		return (1);
-	else if (!strcmp(cmd, "unset"))
+	else if (!ft_strcmp(cmd, "unset"))
 		return (1);
-	else if (!strcmp(cmd, "env"))
+	else if (!ft_strcmp(cmd, "env"))
 		return (1);
-	else if (!strcmp(cmd, "exit"))
+	else if (!ft_strcmp(cmd, "exit"))
 		return (1);
 	else
 		return (0);
