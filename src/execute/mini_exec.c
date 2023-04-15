@@ -19,6 +19,7 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	int		i;
 	int		p_fd[2];
 	pid_t	cpid;
+	int exit_status;
 
 	i = 0;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
@@ -39,9 +40,15 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 		i++;
 		pipeline = pipeline->next;
 	}
-
-	while (i--)
-		waitpid(data->pid_set[i], 0, 0);
+	i = 0;
+	while (i < data->process_number)
+	{
+		waitpid(data->pid_set[i], &exit_status, 0);
+		i++;
+	}
+	printf("last exit status is %d\n", exit_status);
+	// how can I put it to '$?' ?
+	// ft_export ? 
 	return (0);
 }
 
@@ -57,5 +64,6 @@ int	mini_execute(t_pipeline *pipeline, char **env)
 	if (!data.pid_set)
 		return (1);
 	execute_center(&data, pipeline);
+	heredoc_unlink(pipeline);
 	return (0);
 }

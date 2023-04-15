@@ -97,7 +97,7 @@ int ft_env(char *cmd, char **options, char **env)
 
 int ft_exit(char *cmd, char **options, char **env)
 {
-    printf("execute exit\n");
+	exit(0);
     (void)(cmd);
     (void)(options);
     (void)(env);

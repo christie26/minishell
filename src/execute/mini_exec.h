@@ -17,6 +17,7 @@
 
 int     mini_execute(t_pipeline *pipeline, char **env);
 void    heredoc_center(t_pipeline *pipeline);
+void	heredoc_unlink(t_pipeline *pipeline);
 
 // get path
 char	**get_path(char **env);

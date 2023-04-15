@@ -1,6 +1,23 @@
 
 #include "./mini_exec.h"
 
+void	heredoc_unlink(t_pipeline *pipeline)
+{
+	t_redirect *redirect;
+
+    while (pipeline)
+    {
+        redirect = pipeline->cmd_block->redirect;
+        while(redirect)
+        {
+            if (redirect->type == 2)
+                unlink(redirect->filename);
+            redirect = redirect->next;
+        }
+        pipeline = pipeline->next;
+    }
+}
+
 char	*random_name(void)
 {
 	char	*tmp_file;
@@ -25,7 +42,7 @@ char	*random_name(void)
 	return (0);
 }
 
-void	here_doc(t_redirect *redirect)
+void	heredoc_open(t_redirect *redirect)
 {
 	char	*buf;
 	char	*tmp_file;
@@ -61,7 +78,7 @@ void    heredoc_center(t_pipeline *pipeline)
         while(redirect)
         {
             if (redirect->type == 2)
-                here_doc(redirect);
+                heredoc_open(redirect);
             redirect = redirect->next;
         }
         pipeline = pipeline->next;
