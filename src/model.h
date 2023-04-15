@@ -21,6 +21,11 @@ typedef struct s_pipeline {
     struct s_pipeline	*next;
 } 	t_pipeline;
 
+// typedef struct s_envp {
+//     char	*key;
+//     char	*value;
+// }   t_envp;
+
 typedef struct s_data {
     int     process_number;
     pid_t   *pid_set;

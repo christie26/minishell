@@ -79,10 +79,19 @@ int ft_unset(char *cmd, char **options, char **env)
 
 int ft_env(char *cmd, char **options, char **env)
 {
-    printf("execute env\n");
+	options++;
+	if (*options)
+	{
+		ft_err_msg(1, "We don't need arguments", __FILE__, __LINE__);
+		return (1);
+	}
+	// ft_err_msg((int)(*options), "We don't need arguments", __FILE__, __LINE__);
+	while (*env)
+	{
+		ft_putendl_fd(*env, 1);
+		env++;
+	}
     (void)(cmd);
-    (void)(options);
-    (void)(env);
 	return (0);
 }
 
@@ -97,28 +106,26 @@ int ft_exit(char *cmd, char **options, char **env)
 
 // run builtin here
 // return 0 if it sucess, return 1 if there's a error 
-int ft_builtin(t_pipeline *pipeline, char **env)
+int ft_builtin(char	**argv, char **env)
 {
 	char	*cmd;
-	char	**options;
 
-	cmd = pipeline->cmd_block->cmd[0];
-	options = pipeline->cmd_block->cmd;
+	cmd = argv[0];
 
 	if (!ft_strcmp(cmd, "echo"))
-		return (ft_echo(cmd, options, env));
+		return (ft_echo(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "cd")) 
-		return (ft_cd(cmd, options, env));
+		return (ft_cd(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "pwd"))
-		return (ft_pwd(cmd, options, env));
+		return (ft_pwd(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "export"))
-		return (ft_export(cmd, options, env));
+		return (ft_export(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "unset"))
-		return (ft_unset(cmd, options, env));
+		return (ft_unset(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "env"))
-		return (ft_env(cmd, options, env));
+		return (ft_env(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "exit"))
-		return (ft_exit(cmd, options, env));
+		return (ft_exit(cmd, argv, env));
 	else
 		return (0);
 }

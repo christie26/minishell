@@ -6,12 +6,22 @@ void	ft_execute(char **options, t_data *data)
 	char	*cmd;
 	char	**env;
 
+	cmd = ft_strdup(options[0]); // malloc ? 
 	env = data->env;
-	cmd = ft_strdup(options[0]);
-	cmd = check_access(cmd, data->path); // leak check 
-	printf("after check access %s\n", cmd);
-	ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
-	execve(cmd, options, env);
+	if (is_builtin(cmd))
+	{
+		if (ft_builtin(options, data->env))
+		{
+			ft_err_msg(1, "Error", __FILE__, __LINE__);	// have to think more 
+		}
+	}
+	else
+	{
+		cmd = check_access(cmd, data->path); // leak check 
+		ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
+		execve(cmd, options, env);
+	}
+	free(cmd); // not sure
 }
 
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
@@ -41,7 +51,7 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 		}
 		else if (redirect->type == 2)
 		{
-			read_end = open(redirect->filename, O_RDONLY); // here_doc
+			read_end = open(redirect->filename, O_RDONLY);
 			dup2(read_end, 0);
 			close_fd(read_end, __FILE__, __LINE__);
 		}

@@ -26,21 +26,6 @@ char	**get_path(char **env)
 	return (path);
 }
 
-// void	get_cmd(t_data *data, char **av)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < data->number)
-// 	{
-// 		// data->cmd_options[i] = ft_split(av[i + data->offset], ' ');
-// 		// ft_err_msg(!data->cmd_options[i], "Fail to malloc();", \
-// 				__FILE__, __LINE__);
-// 		// data->cmd[i] = data->cmd_options[i][0];
-// 		i++;    
-// 	}
-// }
-
 char	*check_access(char *cmd, char **path)
 {
 	int		i;

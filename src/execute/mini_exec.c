@@ -21,19 +21,14 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = 0;
+	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
+	{
+		ft_builtin(pipeline->cmd_block->cmd, data->env);
+		// error case ?
+		i++;
+	}
 	while (i < data->process_number)
 	{
-		if (is_builtin(pipeline->cmd_block->cmd[0]))
-		{
-			if (ft_builtin(pipeline, data->env))
-			{
-				ft_err_msg(1, "Error", __FILE__, __LINE__);	// have to think more 
-			// have to think about pipe and redirection stuff
-			}
-			i++;
-			pipeline = pipeline->next;
-			continue ;
-		}
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
 		cpid = fork();
 		ft_err_sys(cpid == -1, __FILE__, __LINE__);
@@ -52,15 +47,13 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 
 int	mini_execute(t_pipeline *pipeline, char **env)
 {
-	// int		i;
 	t_data	data;
 
-	// i = 0;
 	data.process_number = get_process_number(pipeline);
 	data.env = env;
 	data.path = get_path(env);
 	data.pid_set = malloc(sizeof(pid_t) * data.process_number);
-	heredoc_center(&data, pipeline);
+	heredoc_center(pipeline);
 	if (!data.pid_set)
 		return (1);
 	execute_center(&data, pipeline);

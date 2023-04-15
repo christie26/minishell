@@ -36,10 +36,11 @@ void	here_doc(t_redirect *redirect)
 	ft_err_msg(!tmp_file, "Fail to find random file name", __FILE__, __LINE__);
 	fd = open(tmp_file, O_CREAT | O_WRONLY, 0644);
 	ft_err_sys(fd == -1, __FILE__, __LINE__);
-	len = ft_strlen(data->limiter);
+	len = ft_strlen(redirect->filename);
 	buf = get_next_line(STDIN_FILENO);
-	while (ft_strncmp(buf, data->limiter, len) || buf[len] != '\n')
+	while (ft_strncmp(buf, redirect->filename, len) || buf[len] != '\n')
 	{
+		// add expand part here !!
 		write(fd, buf, ft_strlen(buf));
 		free(buf);
 		buf = get_next_line(STDIN_FILENO);
@@ -50,16 +51,16 @@ void	here_doc(t_redirect *redirect)
 }
 
 //여러개 들어오면 하나씩 처리 
-void    heredoc_center(t_data *data, t_pipeline *pipeline)
+void    heredoc_center(t_pipeline *pipeline)
 {
     t_redirect *redirect;
 
     while (pipeline)
     {
-        redirect = pipeline->cmd_block->redirect
+        redirect = pipeline->cmd_block->redirect;
         while(redirect)
         {
-            if (redirect->type == 3)
+            if (redirect->type == 2)
                 here_doc(redirect);
             redirect = redirect->next;
         }

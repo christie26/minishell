@@ -1,9 +1,9 @@
 # all file
-SRCS_EXEC		=	fake_main.c \
-					mini_exec.c \
+SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
 					utils.c \
-					child_parent.c
+					child_parent.c \
+					heredoc.c
 
 SRCS_PARSE		=	readline.c \
 					pipeline_list_utils.c \
@@ -45,8 +45,6 @@ all:		${NAME}
 
 $(NAME): 	$(OBJS) $(LIBFT)
 			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)
-# $(NAME): 	$(OBJS_PARSE) $(LIBFT)
-# $(CC) $(CFLAGS) $(OBJS_PARSE) -L./libft -lft -lreadline -o $(NAME)
 
 $(LIBFT):
 			make -j3 -C ./libft all

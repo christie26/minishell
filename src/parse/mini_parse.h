@@ -12,7 +12,7 @@
 # include "libft.h"
 # include "ft_printf.h"
 # include "get_next_line.h"
-# include "../common/model.h"
+# include "../model.h"
 
 t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
 int			ft_pipeline_lstsize(t_pipeline *pipeline_lst);
@@ -25,5 +25,7 @@ int			ft_redirect_lstsize(t_redirect *redirect_lst);
 t_redirect	*ft_redirect_lstlast(t_redirect *redirect_lst);
 void		ft_redirect_lstadd_back(t_redirect **redirect_lst, t_redirect *new);
 void		ft_redirect_lstclear(t_redirect **redirect_lst);
+
+int         mini_execute(t_pipeline *pipeline, char **env);
 
 #endif

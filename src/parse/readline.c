@@ -98,143 +98,143 @@ void	create_tokens(t_list **tokens, char *str)
 	char *token_str;
 	t_list *new_node;
 
-	// while (*str)
-	// {
-	// 	while (*str == 32 || *str == 9 || *str == 10)
-	// 		str++;
-
-	// 	if (*str == '<' || *str == '>')
-	// 	{
-	// 		if ((*(str + 1) == '<' || *(str + 1) == '>'))
-	// 		{
-	// 			if (*str == *(str + 1))
-	// 			{
-	// 				token_str = ft_substr(str, 0, 2);
-	// 				str += 2;
-	// 			}
-	// 			// else
-	// 				//error
-	// 				// ft_err_msg("Syntax error with <>\n", __FILE__, __LINE__);
-	// 		}
-	// 		else
-	// 		{
-	// 			token_str = ft_substr(str, 0, 1);
-	// 			str++;
-	// 		}
-
-	// 		new_node = ft_lstnew(token_str);
-	// 		ft_lstadd_back(tokens, new_node);
-	// 	}
-	// 	else if (*str == '|')
-	// 	{
-	// 		// if (*(str + 1) == '|')
-	// 			// error
-	// 		token_str = ft_substr(str, 0, 1);
-	// 		str++;
-
-	// 		new_node = ft_lstnew(token_str);
-	// 		ft_lstadd_back(tokens, new_node);
-	// 	}
-	// 	else
-	// 	{
-	// 		char *substr_offset = str;
-	// 		char open_quote = '\0';
-
-	// 		while (*str != '\0')
-	// 		{
-	// 			if (*str == '\'' || *str == '\"')
-	// 			{
-	// 				if (open_quote == '\0')
-	// 					open_quote = *str;
-	// 				else if (open_quote == *str)
-	// 					open_quote = '\0';
-	// 			}
-	// 			else if (*str == 32 || *str == 9 || *str == 10 || *str == '<' || *str == '>' || *str == '|')
-	// 			{
-	// 				if (open_quote == '\0')
-	// 					break;
-	// 			}
-	// 			str++;
-	// 		}
-	// 		token_str = ft_substr(substr_offset, 0, str - substr_offset);
-	// 		new_node = ft_lstnew(token_str);
-	// 		ft_lstadd_back(tokens, new_node);
-	// 	}
-	// }
-	
-	int is_opt = is_metacharacter(*str);
-	char *substr_offset = str;
 	while (*str)
 	{
-		/*
+		while (*str == 32 || *str == 9 || *str == 10)
+			str++;
 
-			if *str == opt
-				if is_opt
-					str++
-				else
-					is_opt = 1;
-				- 오퍼레이터를 읽고있었다면 계속 읽는다
-				- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
-			else
-				if is_opt
-					is_opt = 0;
-				else
-					str++
-				- 문자를 읽고있었다면 계속 읽는다
-				- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
-			
-			이렇게 하면 플래그에 따라서 읽었던것까지 잘라주고
-			다른 타입의 토큰이 나와도 무조건적으로 다음 문자를 보지않게된다
-			다른 타입의 토큰이 나올때 예외처리를 신경쓰지 않아도 된다
-			그냥 플래그를 확인하고 플래그에 따른 동작만 수행한다
-
-			is_opt는 플래그 역할도 수행하지만 이전에 읽은 opt에 대한
-			정보를 담는 역할도 한다
-
-		*/
-		
-
-		if (is_metacharacter(*str))
+		if (*str == '<' || *str == '>')
 		{
-			if (is_opt)
+			if ((*(str + 1) == '<' || *(str + 1) == '>'))
 			{
-				if (ft_strchr("<>", is_opt) && is_opt == *str) // 리다이렉션은 중복해서 두개까지 조합가능하다, 킵해놓은게 리다이렉션이고 같은 문자라면...
-					is_opt = 0; // 플래그 초기화, 여기까지를 토큰의 최대조합으로 보겠다는 뜻 이후로는 뭐가오던 새로 해석
-				else
-					is_opt = *str; // 리다이렉션이 아니면 킵해놓을 필요가없음, 조합이 없기 때문
-				
-				token_str = ft_substr(substr_offset, 0, str + (is_opt == 0) - substr_offset);
-				new_node = ft_lstnew(token_str);
-				ft_lstadd_back(tokens, new_node);
-				
+				if (*str == *(str + 1))
+				{
+					token_str = ft_substr(str, 0, 2);
+					str += 2;
+				}
+				// else
+					//error
+					// ft_err_msg("Syntax error with <>\n", __FILE__, __LINE__);
 			}
-			else // 플래그반전, 읽어놨던 단어를 토큰화
+			else
 			{
-				is_opt = *str;
-
-				token_str = ft_substr(substr_offset, 0, str - substr_offset);
-				new_node = ft_lstnew(token_str);
-				ft_lstadd_back(tokens, new_node);
-
-				substr_offset = str;
+				token_str = ft_substr(str, 0, 1);
+				str++;
 			}
+
+			new_node = ft_lstnew(token_str);
+			ft_lstadd_back(tokens, new_node);
+		}
+		else if (*str == '|')
+		{
+			// if (*(str + 1) == '|')
+				// error
+			token_str = ft_substr(str, 0, 1);
+			str++;
+
+			new_node = ft_lstnew(token_str);
+			ft_lstadd_back(tokens, new_node);
 		}
 		else
 		{
-			if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
+			char *substr_offset = str;
+			char open_quote = '\0';
+
+			while (*str != '\0')
 			{
-				is_opt = 0;
-
-				token_str = ft_substr(substr_offset, 0, str - substr_offset);
-				new_node = ft_lstnew(token_str);
-				ft_lstadd_back(tokens, new_node);
-
-				substr_offset = str;
-			}
-			else
+				if (*str == '\'' || *str == '\"')
+				{
+					if (open_quote == '\0')
+						open_quote = *str;
+					else if (open_quote == *str)
+						open_quote = '\0';
+				}
+				else if (*str == 32 || *str == 9 || *str == 10 || *str == '<' || *str == '>' || *str == '|')
+				{
+					if (open_quote == '\0')
+						break;
+				}
 				str++;
+			}
+			token_str = ft_substr(substr_offset, 0, str - substr_offset);
+			new_node = ft_lstnew(token_str);
+			ft_lstadd_back(tokens, new_node);
 		}
 	}
+	
+	// int is_opt = is_metacharacter(*str);
+	
+	// while (*str)
+	// {
+	// 	/*
+
+	// 		if *str == opt
+	// 			if is_opt
+	// 				str++
+	// 			else
+	// 				is_opt = 1;
+	// 			- 오퍼레이터를 읽고있었다면 계속 읽는다
+	// 			- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
+	// 		else
+	// 			if is_opt
+	// 				is_opt = 0;
+	// 			else
+	// 				str++
+	// 			- 문자를 읽고있었다면 계속 읽는다
+	// 			- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
+			
+	// 		이렇게 하면 플래그에 따라서 읽었던것까지 잘라주고
+	// 		다른 타입의 토큰이 나와도 무조건적으로 다음 문자를 보지않게된다
+	// 		다른 타입의 토큰이 나올때 예외처리를 신경쓰지 않아도 된다
+	// 		그냥 플래그를 확인하고 플래그에 따른 동작만 수행한다
+
+	// 		is_opt는 플래그 역할도 수행하지만 이전에 읽은 opt에 대한
+	// 		정보를 담는 역할도 한다
+
+	// 	*/
+		
+
+	// 	if (is_metacharacter(*str))
+	// 	{
+	// 		if (is_opt)
+	// 		{
+	// 			if (ft_strchr("<>", is_opt) && is_opt == *str) // 리다이렉션은 중복해서 두개까지 조합가능하다, 킵해놓은게 리다이렉션이고 같은 문자라면...
+	// 				is_opt = 0; // 플래그 초기화, 여기까지를 토큰의 최대조합으로 보겠다는 뜻 이후로는 뭐가오던 새로 해석
+	// 			else
+	// 				is_opt = *str; // 리다이렉션이 아니면 킵해놓을 필요가없음, 조합이 없기 때문
+				
+	// 			token_str = ft_substr(substr_offset, 0, str + (is_opt == 0) - substr_offset);
+	// 			new_node = ft_lstnew(token_str);
+	// 			ft_lstadd_back(tokens, new_node);
+				
+	// 		}
+	// 		else // 플래그반전, 읽어놨던 단어를 토큰화
+	// 		{
+	// 			is_opt = *str;
+
+	// 			token_str = ft_substr(substr_offset, 0, str - substr_offset);
+	// 			new_node = ft_lstnew(token_str);
+	// 			ft_lstadd_back(tokens, new_node);
+
+	// 			substr_offset = str;
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
+	// 		{
+	// 			is_opt = 0;
+
+	// 			token_str = ft_substr(substr_offset, 0, str - substr_offset);
+	// 			new_node = ft_lstnew(token_str);
+	// 			ft_lstadd_back(tokens, new_node);
+
+	// 			substr_offset = str;
+	// 		}
+	// 		else
+	// 			str++;
+	// 	}
+	// }
 }
 
 void print_tokens(void *content)
@@ -407,6 +407,7 @@ t_pipeline	*my_parse(char *str)
 	void* content에 cmd_block만 넣기
 */
 
+
 int main(int argc, char *argv[], char *envp[])
 {
     char    *res;
@@ -414,7 +415,6 @@ int main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
 	// (void)pipeline_list;
 
     while (1)
@@ -422,7 +422,9 @@ int main(int argc, char *argv[], char *envp[])
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res);
-		print_tree(pipeline_list);
+		// print_tree(pipeline_list);
+		mini_execute(pipeline_list, envp);
+
 		free(res);
 		// while (*res)
 			// ft_printf("c: %d\n", *res++);
