@@ -1,4 +1,3 @@
-
 #include "./mini_exec.h"
 
 int	get_process_number(t_pipeline *pipeline)
@@ -19,13 +18,13 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	int		i;
 	int		p_fd[2];
 	pid_t	cpid;
-	int exit_status;
+	int		exit_status;
 
 	i = 0;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
 	{
-		ft_builtin(pipeline->cmd_block->cmd, data->env);
-		// error case ?
+		if (ft_builtin(pipeline->cmd_block->cmd, data->env))
+			return (1);
 		i++;
 	}
 	while (i < data->process_number)
@@ -36,7 +35,7 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 		if (cpid == 0)
 			child_process(data, pipeline, p_fd, i);
 		else
-			parent_process(data, pipeline, p_fd, i, cpid);
+			parent_process(data, p_fd, i, cpid);
 		i++;
 		pipeline = pipeline->next;
 	}
@@ -60,9 +59,9 @@ int	mini_execute(t_pipeline *pipeline, char **env)
 	data.env = env;
 	data.path = get_path(env);
 	data.pid_set = malloc(sizeof(pid_t) * data.process_number);
-	heredoc_center(pipeline);
 	if (!data.pid_set)
 		return (1);
+	heredoc_center(pipeline);
 	execute_center(&data, pipeline);
 	heredoc_unlink(pipeline);
 	return (0);

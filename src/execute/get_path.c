@@ -1,4 +1,3 @@
-
 #include "./mini_exec.h"
 
 char	**get_path(char **env)

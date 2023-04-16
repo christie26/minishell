@@ -76,7 +76,7 @@ int		ft_strisint(char *str);
 
 int		ft_check_intdup(char *bit_array, unsigned int num);
 
-int		ft_err_msg(int condition, char *error_message, char *file, int line);
-int		ft_err_sys(int condition, char *file, int line);
+void	ft_err_msg(int condition, char *error_message, char *file, int line);
+void	ft_err_sys(int condition, char *file, int line);
 
 #endif

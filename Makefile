@@ -3,6 +3,7 @@ SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
 					utils.c \
 					child_parent.c \
+					redirection.c \
 					heredoc.c
 
 SRCS_PARSE		=	readline.c \

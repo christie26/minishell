@@ -1,4 +1,3 @@
-
 #include "./mini_exec.h"
 
 void	ft_execute(char **options, t_data *data)
@@ -6,95 +5,60 @@ void	ft_execute(char **options, t_data *data)
 	char	*cmd;
 	char	**env;
 
-	cmd = ft_strdup(options[0]); // malloc ? 
+	cmd = ft_strdup(options[0]);
 	env = data->env;
 	if (is_builtin(cmd))
 	{
 		if (ft_builtin(options, data->env))
 		{
-			ft_err_msg(1, "Error", __FILE__, __LINE__);	// have to think more 
-		}
+			free(cmd);
+			exit(EXIT_FAILURE);
+		}	
 	}
 	else
 	{
-		cmd = check_access(cmd, data->path); // leak check 
+		cmd = check_access(cmd, data->path);
 		ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
-		execve(cmd, options, env);
+		if (execve(cmd, options, env) == -1)
+			ft_err_sys(1, __FILE__, __LINE__);
 	}
-	free(cmd); // not sure
 }
 
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
-	// set pipe
 	if (i != 0)
-		dup2(data->prev_fd, 0);
-	if (i != data->process_number - 1) 
+		if (dup2(data->prev_fd, 0) == -1)
+			ft_err_sys(1, __FILE__, __LINE__);
+	if (i != data->process_number - 1)
 	{
-		dup2(p_fd[1], 1);
-		data->prev_fd = p_fd[0];	// Is it right place? 
+		if (dup2(p_fd[1], 1) == -1)
+			ft_err_sys(1, __FILE__, __LINE__);
+		data->prev_fd = p_fd[0];
 	}
-
-	// set redirection
-	t_redirect *redirect;
-	int	read_end;
-	int	write_end;
-
-	redirect = pipeline->cmd_block->redirect;
-	while (redirect)
-	{
-		if (redirect->type == 1)
-		{
-			read_end = open(redirect->filename, O_RDONLY);
-			dup2(read_end, 0);
-			close_fd(read_end, __FILE__, __LINE__);
-		}
-		else if (redirect->type == 2)
-		{
-			read_end = open(redirect->filename, O_RDONLY);
-			dup2(read_end, 0);
-			close_fd(read_end, __FILE__, __LINE__);
-		}
-		else if (redirect->type == 3)
-		{
-			write_end = open(redirect->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			dup2(write_end, 1);
-			close_fd(write_end, __FILE__, __LINE__);
-		}
-		else
-		{
-			write_end = open(redirect->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-			dup2(write_end, 1);
-			close_fd(write_end, __FILE__, __LINE__);
-		}
-		redirect = redirect->next;
-	}
-	close_fd(p_fd[0], __FILE__, __LINE__);
-	close_fd(p_fd[1], __FILE__, __LINE__);
-
-	// execute
+	redirection_center(pipeline->cmd_block->redirect);
+	ft_close(p_fd[0], __FILE__, __LINE__);
+	ft_close(p_fd[1], __FILE__, __LINE__);
 	ft_execute(pipeline->cmd_block->cmd, data);
 	exit(0);
 }
 
-void	parent_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i, pid_t cpid)
+void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 {
-	(void)(pipeline);
 	if (i == 0)
 	{
-		close_fd(p_fd[1], __FILE__, __LINE__);
+		ft_close(p_fd[1], __FILE__, __LINE__);
 		data->prev_fd = p_fd[0];
 	}
 	else if (i == data->process_number - 1)
 	{
-		close_fd(p_fd[1], __FILE__, __LINE__);
-		close_fd(data->prev_fd, __FILE__, __LINE__);
+		ft_close(p_fd[1], __FILE__, __LINE__);
+		ft_close(data->prev_fd, __FILE__, __LINE__);
 		data->prev_fd = p_fd[0];
 	}
 	else
 	{
-		close_fd(p_fd[0], __FILE__, __LINE__);
-		close_fd(p_fd[1], __FILE__, __LINE__);
+		ft_close(p_fd[0], __FILE__, __LINE__);
+		ft_close(p_fd[1], __FILE__, __LINE__);
 	}
 	data->pid_set[i] = cpid;
 }
