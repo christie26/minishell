@@ -286,6 +286,64 @@ void	create_tokens(t_list **tokens, char *str)
 	// 조합후 str++ 을 한 번더 해주니 다음 회차에서는 그 다음문자부터 검사하기 때문에
 	// <a와 같이 오퍼레이터와 문자가 합쳐져있는 경우에는 <를 건너뛰고 a부터 읽어버려서
 	// 맨 앞의 <가 word와 딸려나오는 문제가 있음
+	// substr_offset 을 설정하는 타이밍이 중요한듯
+
+	while (1)
+	{
+		while (*str)
+		{
+			if (is_metacharacter(*str))
+			{
+				if (is_opt)
+				{
+					if (ft_strchr("<>", is_opt) && is_opt == *str)
+						// <<, >> 조합을 했을때 플래그의 역할이 애매해진다
+						// 현재 플래그는 읽은 문자 이전까지만 잘라낸다
+						// 플래그 반전이 일어날때는 다음 문자를 읽지 않는다
+						// substr_offset이 이상하게 세팅되버림
+					{
+						is_opt = 0;
+						str++;
+						// 여기서 str을 하나 증가시켜서 현재문자까지 포함해서
+						// 잘라낼수있도록 한다
+						break ;
+						// 반복문을 빠져나감으로써 토큰화가 진행된다
+						// 다만 이 밖에서 토큰화와 동시에 다음문자를
+						// 검사하기위한 str++이 진행되기 때문에
+						// '>>' '>b' 에서 두번째 문장의 >는 검사를 건너뛰고
+						// b부터 검사를 해버려서 같이 word로 잘려버리고 만다...
+						// '초기화 상태' 를 뜻하는 플래그값이 필요하다고 생각함
+						// -1을 아직 설정되지 않은 상태로...?
+						//
+						//
+						// 오퍼레이터 플래그가 켜져있는 상태에서
+						// 따옴표를 만나면 조건문을 어떻게 할것인지...?
+						// 아직 따옴표 조건을 추가하지 않은 상태인데도 벌써 혼잡스러움
+						// bash의 조건문을 추론하기보다는
+						// 메뉴얼에서 설명하는 동작만 따라하는걸로... (ex 뭐 대충 토큰화를 한다...)
+					}
+				}
+				else
+				{
+					//
+				}
+			}
+			else
+			{
+				if (is_opt)
+				{
+					//
+				}
+				else
+				{
+					//
+				}
+			}
+			token_str = ft_substr(substr_offset, 0, str - substr_offset);
+			new_node = ft_lstnew(token_str);
+			ft_lstadd_back(tokens, new_node);
+		}
+	}
 }
 
 void print_tokens(void *content)
