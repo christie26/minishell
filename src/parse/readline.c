@@ -38,46 +38,103 @@ int is_blank(char c)
 	return (c == 32 || c == 9 || c == 10);
 }
 
+int is_operator_char(char c)
+{
+	return (ft_strchr("|&;()<>", c) > 0);
+}
+
 int is_metacharacter(char c)
 {
-	return (is_blank(c) || ft_strchr("|&;()<>", c));
+	return (is_blank(c) || is_operator_char(c));
 }
-// get number of tokens 
-// white space          ' '
-// redirection operator  <, >, <<, >> 
-// pipe                  '|'
 
-// operator             &&, ||
-
-int		validate_tokens(t_list *tokens)
+int is_quote(char c)
 {
-	char *str;
+	return (c == '\'' || c == '\"');
+}
 
-	str = (tokens->content);
-	if (ft_strlen(str) == 1 && ft_strncmp(str, "|", 1) == 0)
-		return (0);
-	str = ft_lstlast(tokens)->content;
-	if (ft_strlen(str) == 1 && ft_strncmp(str, "|", 1) == 0)
-		return (0);
-	// 파이프로 시작하거나 파이프로 끝나는 경우 에러
+int		get_word_token(t_list **tokens, char **str)
+{
+	/*
 
-	// while (tokens)
-	// {
-	// 	str = (tokens->content);
+		호출조건
+		- 메타캐릭터가 아닐것
+		- 널문자가 아닐것
 
-	// 	if (ft_strlen(str) == 1)
-	// 	{
-	// 		if (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0)
-	// 		//
-	// 	}
-	// 	else if (ft_strlen(str) == 2)
-	// 	{
-	// 		if (ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0)
-	// 		//
-	// 	}
+	*/
 
-	// 	tokens = tokens->next;
-	// }
+	char *substr_offset;
+	char open_quote;
+	char *token_str;
+	t_list *new_node;
+
+	substr_offset = *str;
+	open_quote = '\0';
+	while (**str)
+	{
+		if (open_quote == '\0')
+		{
+			if (is_metacharacter(**str))
+				break ;
+			else if (is_quote(**str))
+				open_quote = **str;
+		}
+		else if (open_quote && open_quote == **str)
+			open_quote = '\0';
+		++*str;
+	}
+	token_str = ft_substr(substr_offset, 0, *str - substr_offset);
+	new_node = ft_lstnew(token_str);
+	ft_lstadd_back(tokens, new_node);
+	return (1);
+}
+
+int get_operator_token(t_list **tokens, char **str)
+{
+	/*
+
+		호출조건
+		- 메타캐릭터일것
+		- 따옴표가 아닐것
+		- 널문자가 아닐것
+
+	*/
+
+	char *substr_offset;
+	char keep_opt;
+	char *token_str;
+	t_list *new_node;
+
+	substr_offset = *str;
+	keep_opt = '\0';
+	while (**str)
+	{
+		if (!is_operator_char(**str)) // 공백은 포함되지 않는다
+			break ;
+		// 조합가능한지 검사
+		// 결과에따라 break ;
+		if (keep_opt == '\0')
+			keep_opt = **str;
+		else if (keep_opt == **str)
+		{
+			++*str; // substr을 위해 str을 증가시킨다
+			break ;
+		}
+		else
+		{
+			keep_opt = **str; // 이후의 오퍼레이터와 조합 검사를 위해 keep opt를 갱신, 잘라내는건 이전 문자까지만
+			break ;
+		}
+		++*str;
+		// 적어놓고보니 operator는 어차피 많아봤자
+		// 한 글자 더 보는건데 while문을 돌리기엔
+		// if문이 굉장히 비효율적으로 나온다... (잘 합쳐지지 않는다는 소리)
+		// 어차피 과제에서는 redirection operator 만 연속해서 두개받는데...
+		// redirection operator, control operator, word 이렇게 구분할까...
+	}
+	token_str = ft_substr(substr_offset, 0, *str - substr_offset);
+	new_node = ft_lstnew(token_str);
+	ft_lstadd_back(tokens, new_node);
 	return (1);
 }
 
@@ -85,264 +142,21 @@ void	create_tokens(t_list **tokens, char *str)
 {
 	/*
 
-		1. 문자는 공백을 기준으로 분할이됨
-		2. 따옴표로 감싸있는 애들은 분할이 진행되지 않음
-		3. 문자열끼리 공백없이 함쳐져있으면 하나의 문자열로 인식됨
-		4. 리다이렉션 문자가 나오면 리다이렉션 문자만 따로 잘라서 인식 (파이프 포함)
-		(리다이렉션이나 파이프같은 오퍼레이터는 따옴표가 없으면 따로 잘라서 인식)
-		(하지만 이 오퍼레이터도 따옴표가 더 우선순위가 높음을 주의)
-		5. 오퍼레이터가 공백없이 문자 도중에 나오는것도 의식할것
+		입력값을 하나씩 순회
+		현재 입력이 word인지 operator인지에 따라 get 함수 호출
+		get 함수 내에서는 해당 토큰에서 유효한 입력까지만 잘라냄
+		str의 주소값을 보내서 get 함수이후에 다음 문자를 볼수있도록 구성
 
 	*/
-	
-	char *token_str;
-	t_list *new_node;
 
-	// while (*str)
-	// {
-	// 	while (*str == 32 || *str == 9 || *str == 10)
-	// 		str++;
-
-	// 	if (*str == '<' || *str == '>')
-	// 	{
-	// 		if ((*(str + 1) == '<' || *(str + 1) == '>'))
-	// 		{
-	// 			if (*str == *(str + 1))
-	// 			{
-	// 				token_str = ft_substr(str, 0, 2);
-	// 				str += 2;
-	// 			}
-	// 			// else
-	// 				//error
-	// 				// ft_err_msg("Syntax error with <>\n", __FILE__, __LINE__);
-	// 		}
-	// 		else
-	// 		{
-	// 			token_str = ft_substr(str, 0, 1);
-	// 			str++;
-	// 		}
-
-	// 		new_node = ft_lstnew(token_str);
-	// 		ft_lstadd_back(tokens, new_node);
-	// 	}
-	// 	else if (*str == '|')
-	// 	{
-	// 		// if (*(str + 1) == '|')
-	// 			// error
-	// 		token_str = ft_substr(str, 0, 1);
-	// 		str++;
-
-	// 		new_node = ft_lstnew(token_str);
-	// 		ft_lstadd_back(tokens, new_node);
-	// 	}
-	// 	else
-	// 	{
-	// 		char *substr_offset = str;
-	// 		char open_quote = '\0';
-
-	// 		while (*str != '\0')
-	// 		{
-	// 			if (*str == '\'' || *str == '\"')
-	// 			{
-	// 				if (open_quote == '\0')
-	// 					open_quote = *str;
-	// 				else if (open_quote == *str)
-	// 					open_quote = '\0';
-	// 			}
-	// 			else if (*str == 32 || *str == 9 || *str == 10 || *str == '<' || *str == '>' || *str == '|')
-	// 			{
-	// 				if (open_quote == '\0')
-	// 					break;
-	// 			}
-	// 			str++;
-	// 		}
-	// 		token_str = ft_substr(substr_offset, 0, str - substr_offset);
-	// 		new_node = ft_lstnew(token_str);
-	// 		ft_lstadd_back(tokens, new_node);
-	// 	}
-	// }
-	
-	int is_opt = is_metacharacter(*str);
-	// ft_printf("start c: %c\n", *str);
-	char *idx = str;
-	char *substr_offset = str;
 	while (*str)
 	{
-		ft_printf("cur idx: %d\n", str - idx);
-		ft_printf("cur c: %c\n", *str);
-		/*
-
-			if *str == opt
-				if is_opt
-					str++
-				else
-					is_opt = 1;
-				- 오퍼레이터를 읽고있었다면 계속 읽는다
-				- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
-			else
-				if is_opt
-					is_opt = 0;
-				else
-					str++
-				- 문자를 읽고있었다면 계속 읽는다
-				- 그렇지 않으면 플래그를 세우고 조건문을 다시 한바퀴 돌린다
-			
-			이렇게 하면 플래그에 따라서 읽었던것까지 잘라주고
-			다른 타입의 토큰이 나와도 무조건적으로 다음 문자를 보지않게된다
-			다른 타입의 토큰이 나올때 예외처리를 신경쓰지 않아도 된다
-			그냥 플래그를 확인하고 플래그에 따른 동작만 수행한다
-
-			is_opt는 플래그 역할도 수행하지만 이전에 읽은 opt에 대한
-			정보를 담는 역할도 한다
-
-		*/
-
-		// 플래그 반전이 나타나면 여태까지 읽은 입력을 토큰화
-		// 오퍼레이터가 연속해서 나타날경우에 조합검사
-		// 조합이 가능하던 불가능하던 토큰화는 이루어짐
-		// 전자는 현재문자 포함해서 토큰화 후 플래그 초기화
-		// 후자는 현재문자 제외해서 토큰화
-		
-		// if (is_metacharacter(*str) && is_opt == 0 || !is_metacharacter(*str) && is_opt)
-		// {
-		// 	break ;
-		// }
-
-		// ft_printf("c: %c\n", *str);
-		if (is_metacharacter(*str))
-		{
-			if (is_opt)
-			{
-				if (ft_strchr("<>", is_opt) && is_opt == *str) // 리다이렉션은 중복해서 두개까지 조합가능하다, 킵해놓은게 리다이렉션이고 같은 문자라면...
-				{
-					ft_printf("combine opt\n");
-					is_opt = 0; // 플래그 초기화, 여기까지를 토큰의 최대조합으로 보겠다는 뜻 이후로는 뭐가오던 새로 해석
-					str++; // 항상 이전에 읽은곳까지만 잘라내기 때문에, 여기서는 조합을 위해 현재까지 잘라내니 문자열주소를 한번 더 밀어줘야한다
-				}
-				else
-				{
-					ft_printf("diff opt\n");
-					is_opt = *str; // 리다이렉션이 아니면 킵해놓을 필요가없음, 조합이 없기 때문
-				}
-				
-				token_str = ft_substr(substr_offset, 0, str - substr_offset);
-				new_node = ft_lstnew(token_str);
-				ft_lstadd_back(tokens, new_node);
-
-				if (is_opt == 0)
-				{
-					// str++;
-					substr_offset = str;
-				}
-				else
-				{
-					substr_offset = str;
-					str++;
-				}
-			}
-			else // 플래그반전, 읽어놨던 단어를 토큰화
-			{
-				ft_printf("flag swtich word to token\n");
-				is_opt = *str;
-
-				token_str = ft_substr(substr_offset, 0, str - substr_offset);
-				new_node = ft_lstnew(token_str);
-				ft_lstadd_back(tokens, new_node);
-
-				substr_offset = str;
-				str++;
-			}
-		}
-		else // 메타캐릭터가 아닐때
-		{
-			if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
-			{
-				ft_printf("flag swtich opt to token\n");
-				is_opt = 0;
-
-				token_str = ft_substr(substr_offset, 0, str - substr_offset);
-				new_node = ft_lstnew(token_str);
-				ft_lstadd_back(tokens, new_node);
-
-				substr_offset = str;
-				str++;
-			}
-			else
-				str++;
-		}
-	}
-	token_str = ft_substr(substr_offset, 0, str - substr_offset);
-	new_node = ft_lstnew(token_str);
-	ft_lstadd_back(tokens, new_node);
-	
-	// 공통된 부분
-	// while문에서 입력 읽기
-	// 각 조건별로 while문이 존재?
-	// break를 걸고 밖에 나와서 토큰 만들어주기
-	// 보고있는 현재 문자는 제외 하는 이유 -> 풀래그 반전시키는 다른 토큰이거나 널문자라서
-	// 반전이라고 무조건 만들면 안되는 이유 -> 오퍼레이션 결합시에도 반전되서, 킵해놓거나 읽언놓은게 없는 상태
-	// is_opt == 0 이 여태 읽어놓은 입력이 있는지 아니면 조합 직후인지 알 수 있는 방법이...?
-	//
-	// 조합후 str++ 을 한 번더 해주니 다음 회차에서는 그 다음문자부터 검사하기 때문에
-	// <a와 같이 오퍼레이터와 문자가 합쳐져있는 경우에는 <를 건너뛰고 a부터 읽어버려서
-	// 맨 앞의 <가 word와 딸려나오는 문제가 있음
-	// substr_offset 을 설정하는 타이밍이 중요한듯
-
-	while (1)
-	{
-		while (*str)
-		{
-			if (is_metacharacter(*str))
-			{
-				if (is_opt)
-				{
-					if (ft_strchr("<>", is_opt) && is_opt == *str)
-						// <<, >> 조합을 했을때 플래그의 역할이 애매해진다
-						// 현재 플래그는 읽은 문자 이전까지만 잘라낸다
-						// 플래그 반전이 일어날때는 다음 문자를 읽지 않는다
-						// substr_offset이 이상하게 세팅되버림
-					{
-						is_opt = 0;
-						str++;
-						// 여기서 str을 하나 증가시켜서 현재문자까지 포함해서
-						// 잘라낼수있도록 한다
-						break ;
-						// 반복문을 빠져나감으로써 토큰화가 진행된다
-						// 다만 이 밖에서 토큰화와 동시에 다음문자를
-						// 검사하기위한 str++이 진행되기 때문에
-						// '>>' '>b' 에서 두번째 문장의 >는 검사를 건너뛰고
-						// b부터 검사를 해버려서 같이 word로 잘려버리고 만다...
-						// '초기화 상태' 를 뜻하는 플래그값이 필요하다고 생각함
-						// -1을 아직 설정되지 않은 상태로...?
-						//
-						//
-						// 오퍼레이터 플래그가 켜져있는 상태에서
-						// 따옴표를 만나면 조건문을 어떻게 할것인지...?
-						// 아직 따옴표 조건을 추가하지 않은 상태인데도 벌써 혼잡스러움
-						// bash의 조건문을 추론하기보다는
-						// 메뉴얼에서 설명하는 동작만 따라하는걸로... (ex 뭐 대충 토큰화를 한다...)
-					}
-				}
-				else
-				{
-					//
-				}
-			}
-			else
-			{
-				if (is_opt)
-				{
-					//
-				}
-				else
-				{
-					//
-				}
-			}
-			token_str = ft_substr(substr_offset, 0, str - substr_offset);
-			new_node = ft_lstnew(token_str);
-			ft_lstadd_back(tokens, new_node);
-		}
+		if (is_blank(*str))
+			str++;
+		else if (is_operator_char(*str))
+			get_operator_token(tokens, &str);
+		else
+			get_word_token(tokens, &str);
 	}
 }
 
