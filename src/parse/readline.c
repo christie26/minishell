@@ -163,10 +163,13 @@ void	create_tokens(t_list **tokens, char *str)
 	// }
 	
 	int is_opt = is_metacharacter(*str);
-	ft_printf("is_opt: %d\n", *str);
+	// ft_printf("start c: %c\n", *str);
+	char *idx = str;
 	char *substr_offset = str;
 	while (*str)
 	{
+		ft_printf("cur idx: %d\n", str - idx);
+		ft_printf("cur c: %c\n", *str);
 		/*
 
 			if *str == opt
@@ -226,9 +229,16 @@ void	create_tokens(t_list **tokens, char *str)
 				new_node = ft_lstnew(token_str);
 				ft_lstadd_back(tokens, new_node);
 
-				substr_offset = str;
-				str++;
-				
+				if (is_opt == 0)
+				{
+					// str++;
+					substr_offset = str;
+				}
+				else
+				{
+					substr_offset = str;
+					str++;
+				}
 			}
 			else // 플래그반전, 읽어놨던 단어를 토큰화
 			{
@@ -243,7 +253,7 @@ void	create_tokens(t_list **tokens, char *str)
 				str++;
 			}
 		}
-		else
+		else // 메타캐릭터가 아닐때
 		{
 			if (is_opt) // 플래그반전, 킵해놨던 오퍼레이터를 토큰화
 			{
@@ -264,6 +274,18 @@ void	create_tokens(t_list **tokens, char *str)
 	token_str = ft_substr(substr_offset, 0, str - substr_offset);
 	new_node = ft_lstnew(token_str);
 	ft_lstadd_back(tokens, new_node);
+	
+	// 공통된 부분
+	// while문에서 입력 읽기
+	// 각 조건별로 while문이 존재?
+	// break를 걸고 밖에 나와서 토큰 만들어주기
+	// 보고있는 현재 문자는 제외 하는 이유 -> 풀래그 반전시키는 다른 토큰이거나 널문자라서
+	// 반전이라고 무조건 만들면 안되는 이유 -> 오퍼레이션 결합시에도 반전되서, 킵해놓거나 읽언놓은게 없는 상태
+	// is_opt == 0 이 여태 읽어놓은 입력이 있는지 아니면 조합 직후인지 알 수 있는 방법이...?
+	//
+	// 조합후 str++ 을 한 번더 해주니 다음 회차에서는 그 다음문자부터 검사하기 때문에
+	// <a와 같이 오퍼레이터와 문자가 합쳐져있는 경우에는 <를 건너뛰고 a부터 읽어버려서
+	// 맨 앞의 <가 word와 딸려나오는 문제가 있음
 }
 
 void print_tokens(void *content)
