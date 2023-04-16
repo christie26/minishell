@@ -66,7 +66,7 @@ int		get_word_token(t_list **tokens, char **str)
 	char *substr_offset;
 	char open_quote;
 	char *token_str;
-	t_list *new_node;
+	t_list *new_token;
 
 	substr_offset = *str;
 	open_quote = '\0';
@@ -84,8 +84,8 @@ int		get_word_token(t_list **tokens, char **str)
 		++*str;
 	}
 	token_str = ft_substr(substr_offset, 0, *str - substr_offset);
-	new_node = ft_lstnew(token_str);
-	ft_lstadd_back(tokens, new_node);
+	new_token = ft_lstnew(token_str);
+	ft_lstadd_back(tokens, new_token);
 	return (1);
 }
 
@@ -103,7 +103,7 @@ int get_operator_token(t_list **tokens, char **str)
 	char *substr_offset;
 	char keep_opt;
 	char *token_str;
-	t_list *new_node;
+	t_list *new_token;
 
 	substr_offset = *str;
 	keep_opt = '\0';
@@ -131,10 +131,14 @@ int get_operator_token(t_list **tokens, char **str)
 		// if문이 굉장히 비효율적으로 나온다... (잘 합쳐지지 않는다는 소리)
 		// 어차피 과제에서는 redirection operator 만 연속해서 두개받는데...
 		// redirection operator, control operator, word 이렇게 구분할까...
+
+		// 아니면 개별 토큰화를 하고
+		// 토큰을 읽으면서 하나의 오퍼레이터로 합칠까...?
+		// bash에서는 이미 합쳐진 토큰으로서 에러를 뱉는걸 보면 그건 아닌거같고...
 	}
 	token_str = ft_substr(substr_offset, 0, *str - substr_offset);
-	new_node = ft_lstnew(token_str);
-	ft_lstadd_back(tokens, new_node);
+	new_token = ft_lstnew(token_str);
+	ft_lstadd_back(tokens, new_token);
 	return (1);
 }
 
@@ -151,12 +155,12 @@ void	create_tokens(t_list **tokens, char *str)
 
 	while (*str)
 	{
-		if (is_blank(*str))
-			str++;
+		if (!is_metacharacter(*str))
+			get_word_token(tokens, &str);
 		else if (is_operator_char(*str))
 			get_operator_token(tokens, &str);
 		else
-			get_word_token(tokens, &str);
+			str++;
 	}
 }
 
@@ -266,17 +270,11 @@ t_pipeline	*my_parse(char *str)
 	ft_lstiter(tokens, print_tokens);
 
 	(void)(pipe_list);
-	// 토큰을 해석하면서 트리에 넣는 함수들
-	// 단계별로 함수들이 다름
-
-	// 무조건적으로 토큰화를 하고
-	// 1차적으로 토큰을 읽으면서 오류 검사를 할지
-	// 토큰화를 하면서 오류 검사를 할지
 
 	if ((*((char *)(tokens->content)) == '|') || (*((char *)(ft_lstlast(tokens)->content)) == '|')) // 첫번째나 마지막이 파이프인 경우 에러
 	{
-		ft_printf("Error\n");
-		exit(1);
+		ft_printf("unexpected token\n");
+		return (0);
 	}
 	
 	while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
@@ -338,7 +336,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
-	// (void)pipeline_list;
+	(void)pipeline_list;
 	(void)envp;
 
     while (1)
@@ -346,7 +344,8 @@ int main(int argc, char *argv[], char *envp[])
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res);
-		print_tree(pipeline_list);
+		
+		// print_tree(pipeline_list);
 		// mini_execute(pipeline_list, envp);
 
 		free(res);
