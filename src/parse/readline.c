@@ -40,7 +40,8 @@ int is_blank(char c)
 
 int is_operator_char(char c)
 {
-	return (ft_strchr("|&;()<>", c) > 0);
+	// return (ft_strchr("|&;()<>", c) > 0);
+	return (ft_strchr("|<>", c) > 0);
 }
 
 int is_metacharacter(char c)
@@ -133,28 +134,6 @@ void print_tokens(void *content)
 	ft_putendl_fd(content, 1);
 }
 
-t_cmd_block *create_cmd_block(t_list **tokens, char *str)
-{
-	t_cmd_block *new_cmd_block;
-	t_list *tokens;
-
-	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
-	if (!new_cmd_block)
-		return (NULL);
-		
-	// tokens 해석하며 cmd_block 채워넣기
-	// while (tokens)
-	// {
-	// 	if (ft_strchr("<>", *(char *)tokens->content))
-	// 		// create redirect and addback
-	// 	else
-	// 		// quote remove and cmd addback
-	// 	tokens = tokens->next;
-	// }
-
-	return (new_cmd_block);
-}
-
 void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
 {
 	t_list *cur_token;
@@ -222,6 +201,24 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 	}
 }
 
+t_cmd_block *create_cmd_block(t_list **tokens)
+{
+	t_cmd_block *new_cmd_block;
+
+	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
+	if (!new_cmd_block)
+		return (NULL);
+	get_redirections(tokens, &new_cmd_block);
+	get_cmds(tokens, &new_cmd_block);
+	if (new_cmd_block->redirect == NULL && new_cmd_block->cmd == NULL)
+	{
+		ft_printf("unexpected token: \'|\'\n");
+		free(new_cmd_block);
+		return (NULL);
+	}
+	return (new_cmd_block);
+}
+
 t_pipeline	*my_parse(char *str)
 {
 	t_pipeline	*pipe_list = NULL;
@@ -266,6 +263,28 @@ t_pipeline	*my_parse(char *str)
 
 	while (tokens)
 	{
+		t_pipeline *new_pipeline;
+		t_cmd_block *new_cmd_block;
+		new_cmd_block = create_cmd_block(&tokens);
+		if (!new_cmd_block)
+			return (NULL);
+		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
+		if (!new_pipeline)
+			return (NULL);
+		ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
+
+		if (tokens && (*(char *)(tokens->content)) == '|')
+		{
+			t_list *cur_token;
+			t_list *next_token;
+
+			cur_token = tokens;
+			next_token = cur_token->next;
+			ft_lstdel_node(&tokens, cur_token, free);
+			cur_token = next_token;
+			next_token = cur_token->next;
+		}
+
 		tokens = tokens->next;
 	}
 
