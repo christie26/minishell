@@ -100,42 +100,14 @@ int get_operator_token(t_list **tokens, char **str)
 
 	*/
 
-	char *substr_offset;
-	char keep_opt;
-	char *token_str;
-	t_list *new_token;
-
+	char	*substr_offset;
+	char	*token_str;
+	t_list	*new_token;
+	
 	substr_offset = *str;
-	keep_opt = '\0';
-	while (**str)
-	{
-		if (!is_operator_char(**str)) // 공백은 포함되지 않는다
-			break ;
-		// 조합가능한지 검사
-		// 결과에따라 break ;
-		if (keep_opt == '\0')
-			keep_opt = **str;
-		else if (keep_opt == **str)
-		{
-			++*str; // substr을 위해 str을 증가시킨다
-			break ;
-		}
-		else
-		{
-			keep_opt = **str; // 이후의 오퍼레이터와 조합 검사를 위해 keep opt를 갱신, 잘라내는건 이전 문자까지만
-			break ;
-		}
+	++*str;
+	if (**str && (*(*str - 1) == **str && ft_strchr("<>", **str)))
 		++*str;
-		// 적어놓고보니 operator는 어차피 많아봤자
-		// 한 글자 더 보는건데 while문을 돌리기엔
-		// if문이 굉장히 비효율적으로 나온다... (잘 합쳐지지 않는다는 소리)
-		// 어차피 과제에서는 redirection operator 만 연속해서 두개받는데...
-		// redirection operator, control operator, word 이렇게 구분할까...
-
-		// 아니면 개별 토큰화를 하고
-		// 토큰을 읽으면서 하나의 오퍼레이터로 합칠까...?
-		// bash에서는 이미 합쳐진 토큰으로서 에러를 뱉는걸 보면 그건 아닌거같고...
-	}
 	token_str = ft_substr(substr_offset, 0, *str - substr_offset);
 	new_token = ft_lstnew(token_str);
 	ft_lstadd_back(tokens, new_token);
@@ -144,15 +116,6 @@ int get_operator_token(t_list **tokens, char **str)
 
 void	create_tokens(t_list **tokens, char *str)
 {
-	/*
-
-		입력값을 하나씩 순회
-		현재 입력이 word인지 operator인지에 따라 get 함수 호출
-		get 함수 내에서는 해당 토큰에서 유효한 입력까지만 잘라냄
-		str의 주소값을 보내서 get 함수이후에 다음 문자를 볼수있도록 구성
-
-	*/
-
 	while (*str)
 	{
 		if (!is_metacharacter(*str))
@@ -170,7 +133,7 @@ void print_tokens(void *content)
 	ft_putendl_fd(content, 1);
 }
 
-t_cmd_block *create_cmd_block(char *str)
+t_cmd_block *create_cmd_block(t_list **tokens, char *str)
 {
 	t_cmd_block *new_cmd_block;
 	t_list *tokens;
@@ -178,8 +141,6 @@ t_cmd_block *create_cmd_block(char *str)
 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
 	if (!new_cmd_block)
 		return (NULL);
-	create_tokens(&tokens, str);
-	ft_lstiter(tokens, print_tokens);
 		
 	// tokens 해석하며 cmd_block 채워넣기
 	// while (tokens)
@@ -267,41 +228,47 @@ t_pipeline	*my_parse(char *str)
 	t_list		*tokens = NULL;
 
 	create_tokens(&tokens, str);
-	ft_lstiter(tokens, print_tokens);
+	// ft_lstiter(tokens, print_tokens);
 
-	(void)(pipe_list);
+	// (void)(pipe_list);
 
-	if ((*((char *)(tokens->content)) == '|') || (*((char *)(ft_lstlast(tokens)->content)) == '|')) // 첫번째나 마지막이 파이프인 경우 에러
-	{
-		ft_printf("unexpected token\n");
-		return (0);
-	}
+	// if ((*((char *)(tokens->content)) == '|') || (*((char *)(ft_lstlast(tokens)->content)) == '|')) // 첫번째나 마지막이 파이프인 경우 에러
+	// {
+	// 	ft_printf("unexpected token\n");
+	// 	return (0);
+	// }
 	
-	while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
+	// while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
+	// {
+	// 	t_pipeline *new_pipeline;
+	// 	t_cmd_block *new_cmd_block;
+
+	// 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
+	// 	get_redirections(&tokens, &new_cmd_block);
+		
+	// 	get_cmds(&tokens, &new_cmd_block);
+		
+	// 	new_pipeline = ft_pipeline_lstnew(new_cmd_block);
+	// 	ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
+
+	// 	if (tokens && (*(char *)(tokens->content)) == '|')
+	// 	{
+	// 		t_list *cur_token;
+	// 		t_list *next_token;
+
+	// 		cur_token = tokens;
+	// 		next_token = cur_token->next;
+	// 		ft_lstdel_node(&tokens, cur_token, free);
+	// 		cur_token = next_token;
+	// 		next_token = cur_token->next;
+	// 	}
+	// }
+
+	while (tokens)
 	{
-		t_pipeline *new_pipeline;
-		t_cmd_block *new_cmd_block;
-
-		new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
-		get_redirections(&tokens, &new_cmd_block);
-		
-		get_cmds(&tokens, &new_cmd_block);
-		
-		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
-		ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
-
-		if (tokens && (*(char *)(tokens->content)) == '|')
-		{
-			t_list *cur_token;
-			t_list *next_token;
-
-			cur_token = tokens;
-			next_token = cur_token->next;
-			ft_lstdel_node(&tokens, cur_token, free);
-			cur_token = next_token;
-			next_token = cur_token->next;
-		}
+		tokens = tokens->next;
 	}
+
 	return (pipe_list);
 }
 
