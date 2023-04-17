@@ -13,6 +13,26 @@ int	get_process_number(t_pipeline *pipeline)
 	return (i);
 }
 
+void	set_exit_status(int exit_status)
+{
+	int 	status;
+	char	*value;
+	char	*key_value;
+
+	if (WIFEXITED(exit_status))
+		status = WEXITSTATUS(exit_status);
+	else if (WIFSIGNALED(exit_status))
+		status = WTERMSIG(exit_status);
+	else
+		status = WSTOPSIG(exit_status);
+	value = ft_itoa(status);
+	ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
+	key_value = ft_strjoin("?=", value);
+	free(value);
+	ft_err_msg_exit(!key_value, MALLOC_ERROR, __FILE__, __LINE__);
+	add_var_update(key_value, my_env);
+}
+
 int	execute_center(t_data *data, t_pipeline *pipeline)
 {
 	int		i;
@@ -22,8 +42,7 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 
 	i = 0;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
-		if (ft_builtin(pipeline->cmd_block->cmd, my_env))
-			return (1);
+		return (ft_builtin(pipeline->cmd_block->cmd, get_env()));
 	while (i < data->process_number)
 	{
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
@@ -42,9 +61,7 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 		waitpid(data->pid_set[i], &exit_status, 0);
 		i++;
 	}
-	printf("last exit status is %d\n", exit_status);
-	// how can I put it to '$?' ?
-	// ft_export ? 
+	set_exit_status(exit_status);
 	return (0);
 }
 

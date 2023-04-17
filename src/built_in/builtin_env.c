@@ -1,5 +1,27 @@
 #include "built_in.h"
 
+char	**get_env(void)
+{
+	int		i;
+	int		number;
+	char	**tmp_env;
+
+	i = 0;
+	while (my_env[i])
+		i++;
+	number = i;
+	tmp_env = malloc(sizeof(char *) * (number + 1));
+	ft_err_msg_exit(!tmp_env, MALLOC_ERROR, __FILE__, __LINE__);
+	i = 0;
+	while (i < number)
+	{
+		if (ft_strncmp(my_env[i], "?=", 2))
+				tmp_env[i] = my_env[i];
+		i++;
+	}
+	return (tmp_env);
+}
+
 char	**init_envp(char **envp)
 {
 	int		i;
@@ -44,5 +66,22 @@ char	*get_value(char *key, char **env)
 		free(test_key);
 		env++;
 	}
+	return (0);
+}
+
+int	ft_env(char *cmd, char **options, char **env)
+{
+	options++;
+	if (*options)
+	{
+		ft_err_msg(1, "We don't need arguments", __FILE__, __LINE__);
+		return (1);
+	}
+	while (*env)
+	{
+		ft_putendl_fd(*env, 1);
+		env++;
+	}
+	(void)(cmd);
 	return (0);
 }

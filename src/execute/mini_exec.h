@@ -27,6 +27,8 @@ char	*check_access(char *cmd, char **path);
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
 void	redirection_center(t_redirect *redirect);
+char	**get_env(void);
+
 
 // utils
 void	ft_close(int fd, char *file, int line);
@@ -34,5 +36,8 @@ void	ft_close(int fd, char *file, int line);
 // built-in
 int		ft_builtin(char **argv, char **env);
 int		is_builtin(char *cmd);
+// int		ft_export(char *cmd, char **options, char **env);
+void	add_var_update(char *key_value, char **env);
+
 
 #endif

@@ -19,7 +19,7 @@ void	ft_execute(char **options, t_data *data)
 			ft_err_msg_exit(1, CMD_ERROR, __FILE__, __LINE__);
 			return ;
 		}
-		if (execve(cmd, options, my_env) == -1)
+		if (execve(cmd, options, get_env()) == -1)
 			ft_err_sys_exit(1, __FILE__, __LINE__);
 	}
 }
