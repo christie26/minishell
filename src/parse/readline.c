@@ -160,7 +160,12 @@ void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
 			ft_lstdel_node(tokens, cur_token, free);
 			cur_token = next_token;
 			next_token = cur_token->next;
-
+			
+			if (cur_token && ft_strchr("<>", *(char *)(cur_token->content)))
+			{
+				ft_printf("unexpected token \'%s\'", cur_token->content);
+				return;
+			}
 			t_redirect *new_redirect = ft_redirect_lstnew(type, (char *)(cur_token->content));
 			ft_redirect_lstadd_back(&((*cmd_block)->redirect), new_redirect);
 
