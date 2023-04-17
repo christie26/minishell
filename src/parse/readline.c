@@ -235,7 +235,7 @@ t_pipeline	*my_parse(char *str)
 
 	create_tokens(&tokens, str);
 	if (!tokens)
-		return (NULL);
+		return (NULL); // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
 	while (1)
 	{
 		t_pipeline *new_pipeline;
