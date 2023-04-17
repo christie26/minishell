@@ -36,7 +36,7 @@ void	ft_err_msg_exit(int condition, char *error_message, char *file, int line)
 	exit(EXIT_FAILURE);	
 }
 
-void	ft_err_sys(int condition, char *file, int line)
+void	ft_err_sys_exit(int condition, char *file, int line)
 {
 	if (!condition)
 		return ;
