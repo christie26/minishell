@@ -54,6 +54,7 @@ int	ft_echo(char *cmd, char **options, char **env)
 		ft_putchar_fd('\n', 1);
 	(void)(cmd);
 	(void)(env);
+	printf("$? = %s\n", get_value("?", my_env));
 	return (0);
 }
 
