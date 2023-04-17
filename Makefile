@@ -10,7 +10,8 @@ SRCS_PARSE		=	readline.c \
 					pipeline_list_utils.c \
 					redirect_list_utils.c
 
-SRCS_BUILT		=	built_in.c
+SRCS_BUILT		=	built_in.c \
+					ft_export.c
 
 # add path as their usage
 DIR_EXEC		= execute/

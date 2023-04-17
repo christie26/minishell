@@ -1,9 +1,10 @@
-
 #ifndef MODEL_H
 
 # define MODEL_H
 
 # include <unistd.h>
+
+char    **my_env;
 
 typedef struct s_redirect {
     int					type;
@@ -21,16 +22,10 @@ typedef struct s_pipeline {
     struct s_pipeline	*next;
 } 	t_pipeline;
 
-// typedef struct s_envp {
-//     char	*key;
-//     char	*value;
-// }   t_envp;
-
 typedef struct s_data {
     int     process_number;
     pid_t   *pid_set;
     int     prev_fd;
-    char    **env;
     char    **path;
 }   t_data;
 

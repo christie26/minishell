@@ -39,8 +39,15 @@ int ft_echo(char *cmd, char **options, char **env)
 
 int ft_cd(char *cmd, char **options, char **env)
 {
+	char	*home;
+
 	options++;
-	ft_err_sys(!*options, __FILE__, __LINE__);
+	if (!*options || !ft_strcmp(*options, "~"))
+	{
+		home = get_value("HOME", my_env);
+		ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
+		free(home);
+	}
 	ft_err_sys(chdir(*options) == -1, __FILE__, __LINE__);
     (void)(cmd);
     (void)(env);
@@ -59,24 +66,6 @@ int ft_pwd(char *cmd, char **options, char **env)
 	return (0);
 }
 
-int ft_export(char *cmd, char **options, char **env)
-{
-    printf("execute export\n");
-    (void)(cmd);
-    (void)(options);
-    (void)(env);
-	return (0);
-}
-
-int ft_unset(char *cmd, char **options, char **env)
-{
-    printf("execute unset\n");
-    (void)(cmd);
-    (void)(options);
-    (void)(env);
-	return (0);
-}
-
 int ft_env(char *cmd, char **options, char **env)
 {
 	options++;
@@ -85,7 +74,6 @@ int ft_env(char *cmd, char **options, char **env)
 		ft_err_msg(1, "We don't need arguments", __FILE__, __LINE__);
 		return (1);
 	}
-	// ft_err_msg((int)(*options), "We don't need arguments", __FILE__, __LINE__);
 	while (*env)
 	{
 		ft_putendl_fd(*env, 1);
@@ -111,7 +99,6 @@ int ft_builtin(char	**argv, char **env)
 	char	*cmd;
 
 	cmd = argv[0];
-
 	if (!ft_strcmp(cmd, "echo"))
 		return (ft_echo(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "cd")) 

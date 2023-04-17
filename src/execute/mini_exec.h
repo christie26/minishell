@@ -13,8 +13,9 @@
 # include "libft.h"
 # include "get_next_line.h"
 # include "../model.h"
+# include "../error.h"
 
-int		mini_execute(t_pipeline *pipeline, char **env);
+int		mini_execute(t_pipeline *pipeline);
 void	heredoc_center(t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
 

@@ -3,13 +3,11 @@
 void	ft_execute(char **options, t_data *data)
 {
 	char	*cmd;
-	char	**env;
 
 	cmd = ft_strdup(options[0]);
-	env = data->env;
 	if (is_builtin(cmd))
 	{
-		if (ft_builtin(options, data->env))
+		if (ft_builtin(options, my_env))
 		{
 			free(cmd);
 			exit(EXIT_FAILURE);
@@ -18,9 +16,10 @@ void	ft_execute(char **options, t_data *data)
 	else
 	{
 		cmd = check_access(cmd, data->path);
-		ft_err_msg(!cmd, "Invalid command !", __FILE__, __LINE__);
-		if (execve(cmd, options, env) == -1)
-			ft_err_sys(1, __FILE__, __LINE__);
+		ft_err_msg_exit(!cmd, "Invalid command !", __FILE__, __LINE__);
+		printf("%p\n", my_env);
+		if (execve(cmd, options, my_env) == -1)
+			ft_err_sys_exit(1, __FILE__, __LINE__);
 	}
 }
 
@@ -28,11 +27,11 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
 	if (i != 0)
 		if (dup2(data->prev_fd, 0) == -1)
-			ft_err_sys(1, __FILE__, __LINE__);
+			ft_err_sys_exit(1, __FILE__, __LINE__);
 	if (i != data->process_number - 1)
 	{
 		if (dup2(p_fd[1], 1) == -1)
-			ft_err_sys(1, __FILE__, __LINE__);
+			ft_err_sys_exit(1, __FILE__, __LINE__);
 		data->prev_fd = p_fd[0];
 	}
 	redirection_center(pipeline->cmd_block->redirect);

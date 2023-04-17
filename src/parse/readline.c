@@ -417,13 +417,14 @@ int main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	// (void)pipeline_list;
 
+	my_env = init_envp(envp);
     while (1)
     {
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res);
 		// print_tree(pipeline_list);
-		mini_execute(pipeline_list, envp);
+		mini_execute(pipeline_list);
 
 		free(res);
 		// while (*res)

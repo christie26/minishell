@@ -23,15 +23,15 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	i = 0;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
 	{
-		if (ft_builtin(pipeline->cmd_block->cmd, data->env))
+		if (ft_builtin(pipeline->cmd_block->cmd, my_env))
 			return (1);
 		i++;
 	}
 	while (i < data->process_number)
 	{
-		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
+		ft_err_sys_exit(pipe(p_fd) == -1, __FILE__, __LINE__);
 		cpid = fork();
-		ft_err_sys(cpid == -1, __FILE__, __LINE__);
+		ft_err_sys_exit(cpid == -1, __FILE__, __LINE__);
 		if (cpid == 0)
 			child_process(data, pipeline, p_fd, i);
 		else
@@ -51,13 +51,12 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 	return (0);
 }
 
-int	mini_execute(t_pipeline *pipeline, char **env)
+int	mini_execute(t_pipeline *pipeline)
 {
 	t_data	data;
 
 	data.process_number = get_process_number(pipeline);
-	data.env = env;
-	data.path = get_path(env);
+	data.path = get_path(my_env);
 	data.pid_set = malloc(sizeof(pid_t) * data.process_number);
 	if (!data.pid_set)
 		return (1);
