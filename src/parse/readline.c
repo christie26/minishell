@@ -185,16 +185,15 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 	size_t cnt = 0;
 	size_t idx = 0;
 	t_list *cur_token;
-	t_list *next_token;
 
 	if (!tokens || !*tokens)
 		return;
 	cur_token = *tokens;
-	while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	// while (cur_token && ((*(char *)(cur_token->content)) != '|')) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	while (cur_token && ft_strcmp(cur_token->content, "|")) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
 	{
-		next_token = cur_token->next;
 		cnt++;
-		cur_token = next_token;
+		cur_token = cur_token->next;
 	}
 
 	if (cnt == 0)
@@ -205,10 +204,9 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 	cur_token = *tokens;
 	while (idx < cnt)
 	{
-		next_token = cur_token->next;
 		(*cmd_block)->cmd[idx++] = (char *)(cur_token->content);
 		ft_lstdel_node(tokens, cur_token, NULL); // 문자열이 cmd안에서 쓰여야 하니 살려둔다
-		cur_token = next_token;
+		cur_token = cur_token->next;
 	}
 }
 
@@ -236,6 +234,8 @@ t_pipeline	*my_parse(char *str)
 	t_list		*tokens = NULL;
 
 	create_tokens(&tokens, str);
+	if (!tokens)
+		return (NULL);
 	while (1)
 	{
 		t_pipeline *new_pipeline;
