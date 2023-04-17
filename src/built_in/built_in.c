@@ -45,8 +45,11 @@ int ft_cd(char *cmd, char **options, char **env)
 	if (!*options || !ft_strcmp(*options, "~"))
 	{
 		home = get_value("HOME", my_env);
+		if (!home)
+			return (ft_err_msg(1, HOME_ERROR, __FILE__, __LINE__));
 		ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
 		free(home);
+		return (0);
 	}
 	ft_err_sys(chdir(*options) == -1, __FILE__, __LINE__);
     (void)(cmd);

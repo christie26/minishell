@@ -1,5 +1,6 @@
 #include "./mini_exec.h"
 
+// only use when I want to exit
 void	ft_close(int fd, char *file, int line)
 {
 	int	ret;

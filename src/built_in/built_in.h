@@ -6,6 +6,7 @@
 
 # include "../../libft/includes/libft.h"
 # include "../model.h"
+# include "../error.h"
 
 // built-in files
 int     ft_echo(char *cmd, char **options, char **env);
