@@ -170,6 +170,9 @@ void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
 		}
 		cur_token = next_token;
 	}
+
+	// redirect operator 이후에 오는 word가 operator가 아닌지 체크
+	// operator 라면 unexpected token 출력
 }
 
 void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
@@ -189,6 +192,9 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 		cur_token = next_token;
 	}
 
+	if (cnt == 0)
+		return;
+
 	(*cmd_block)->cmd = (char **)calloc(cnt + 1, sizeof(char *)); // NULL 포인터가 필요한 이중배열이기때문에 +1만큼 생성
 
 	cur_token = *tokens;
@@ -205,7 +211,7 @@ t_cmd_block *create_cmd_block(t_list **tokens)
 {
 	t_cmd_block *new_cmd_block;
 
-	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
+	new_cmd_block = ft_calloc(1, sizeof(t_cmd_block));
 	if (!new_cmd_block)
 		return (NULL);
 	get_redirections(tokens, &new_cmd_block);
@@ -225,47 +231,13 @@ t_pipeline	*my_parse(char *str)
 	t_list		*tokens = NULL;
 
 	create_tokens(&tokens, str);
-	// ft_lstiter(tokens, print_tokens);
-
-	// (void)(pipe_list);
-
-	// if ((*((char *)(tokens->content)) == '|') || (*((char *)(ft_lstlast(tokens)->content)) == '|')) // 첫번째나 마지막이 파이프인 경우 에러
-	// {
-	// 	ft_printf("unexpected token\n");
-	// 	return (0);
-	// }
-	
-	// while (tokens) // pipe 기준으로 구분되는 pipeline 구조체의 리스트를 만든다
-	// {
-	// 	t_pipeline *new_pipeline;
-	// 	t_cmd_block *new_cmd_block;
-
-	// 	new_cmd_block = (t_cmd_block *)ft_calloc(1, sizeof(t_cmd_block));
-	// 	get_redirections(&tokens, &new_cmd_block);
-		
-	// 	get_cmds(&tokens, &new_cmd_block);
-		
-	// 	new_pipeline = ft_pipeline_lstnew(new_cmd_block);
-	// 	ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
-
-	// 	if (tokens && (*(char *)(tokens->content)) == '|')
-	// 	{
-	// 		t_list *cur_token;
-	// 		t_list *next_token;
-
-	// 		cur_token = tokens;
-	// 		next_token = cur_token->next;
-	// 		ft_lstdel_node(&tokens, cur_token, free);
-	// 		cur_token = next_token;
-	// 		next_token = cur_token->next;
-	// 	}
-	// }
-
-	while (tokens)
+	while (1)
 	{
 		t_pipeline *new_pipeline;
 		t_cmd_block *new_cmd_block;
+
 		new_cmd_block = create_cmd_block(&tokens);
+		
 		if (!new_cmd_block)
 			return (NULL);
 		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
@@ -273,21 +245,17 @@ t_pipeline	*my_parse(char *str)
 			return (NULL);
 		ft_pipeline_lstadd_back(&pipe_list, new_pipeline);
 
-		if (tokens && (*(char *)(tokens->content)) == '|')
+		if (tokens == NULL) // 마지막이면 종료
+			break ;
+
+		if ((*(char *)(tokens->content)) == '|') // 파이프면 파이프 지우고 계속
 		{
-			t_list *cur_token;
-			t_list *next_token;
+			t_list *temp_token;
 
-			cur_token = tokens;
-			next_token = cur_token->next;
-			ft_lstdel_node(&tokens, cur_token, free);
-			cur_token = next_token;
-			next_token = cur_token->next;
+			temp_token = tokens->next;
+			ft_lstdel_node(&tokens, tokens, free);
 		}
-
-		tokens = tokens->next;
 	}
-
 	return (pipe_list);
 }
 
@@ -331,7 +299,7 @@ int main(int argc, char *argv[], char *envp[])
 
 		pipeline_list = my_parse(res);
 		
-		// print_tree(pipeline_list);
+		print_tree(pipeline_list);
 		// mini_execute(pipeline_list, envp);
 
 		free(res);
