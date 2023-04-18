@@ -255,10 +255,11 @@ t_pipeline	*my_parse(char *str)
 
 		if ((*(char *)(tokens->content)) == '|') // 파이프면 파이프 지우고 계속
 		{
-			t_list *temp_token;
+			t_list *next_token;
 
-			temp_token = tokens->next;
+			next_token = tokens->next;
 			ft_lstdel_node(&tokens, tokens, free);
+			tokens = next_token;
 		}
 	}
 	return (pipe_list);
