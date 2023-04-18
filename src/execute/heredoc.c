@@ -1,5 +1,21 @@
-
 #include "./mini_exec.h"
+
+void	heredoc_unlink(t_pipeline *pipeline)
+{
+	t_redirect	*redirect;
+
+	while (pipeline)
+	{
+		redirect = pipeline->cmd_block->redirect;
+		while (redirect)
+		{
+			if (redirect->type == 2)
+				unlink(redirect->filename);
+			redirect = redirect->next;
+		}
+		pipeline = pipeline->next;
+	}
+}
 
 char	*random_name(void)
 {
@@ -8,7 +24,7 @@ char	*random_name(void)
 	int		j;
 
 	tmp_file = (char *)malloc(sizeof(char) * 2);
-	ft_err_msg(!tmp_file, "Fail to malloc();", __FILE__, __LINE__);
+	ft_err_msg_exit(!tmp_file, MALLOC_ERROR, __FILE__, __LINE__);
 	i = '1';
 	while (i++ < '~')
 	{
@@ -25,7 +41,7 @@ char	*random_name(void)
 	return (0);
 }
 
-void	here_doc(t_redirect *redirect)
+void	heredoc_open(t_redirect *redirect)
 {
 	char	*buf;
 	char	*tmp_file;
@@ -33,7 +49,7 @@ void	here_doc(t_redirect *redirect)
 	size_t	len;
 
 	tmp_file = random_name();
-	ft_err_msg(!tmp_file, "Fail to find random file name", __FILE__, __LINE__);
+	ft_err_msg_exit(!tmp_file, "Fail to find random file name", __FILE__, __LINE__);
 	fd = open(tmp_file, O_CREAT | O_WRONLY, 0644);
 	ft_err_sys(fd == -1, __FILE__, __LINE__);
 	len = ft_strlen(redirect->filename);
@@ -41,29 +57,30 @@ void	here_doc(t_redirect *redirect)
 	while (ft_strncmp(buf, redirect->filename, len) || buf[len] != '\n')
 	{
 		// add expand part here !!
-		write(fd, buf, ft_strlen(buf));
+		if (write(fd, buf, ft_strlen(buf)) == -1)
+			ft_err_sys(1, __FILE__, __LINE__);
 		free(buf);
 		buf = get_next_line(STDIN_FILENO);
 	}
 	free(buf);
-	close_fd(fd, __FILE__, __LINE__);
+	ft_close(fd, __FILE__, __LINE__);
 	redirect->filename = tmp_file;
 }
 
 //여러개 들어오면 하나씩 처리 
-void    heredoc_center(t_pipeline *pipeline)
+void	heredoc_center(t_pipeline *pipeline)
 {
-    t_redirect *redirect;
+	t_redirect	*redirect;
 
-    while (pipeline)
-    {
-        redirect = pipeline->cmd_block->redirect;
-        while(redirect)
-        {
-            if (redirect->type == 2)
-                here_doc(redirect);
-            redirect = redirect->next;
-        }
-        pipeline = pipeline->next;
-    }
+	while (pipeline)
+	{
+		redirect = pipeline->cmd_block->redirect;
+		while (redirect)
+		{
+			if (redirect->type == 2)
+				heredoc_open(redirect);
+			redirect = redirect->next;
+		}
+		pipeline = pipeline->next;
+	}
 }
