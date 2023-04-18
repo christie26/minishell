@@ -4,7 +4,7 @@
 
 # include <unistd.h>
 
-// char    **my_env;
+int short_exit_status;
 
 typedef struct s_redirect {
     int					type;

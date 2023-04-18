@@ -3,6 +3,7 @@
 int	ft_cd(char *cmd, char **options, char **env)
 {
 	char	*home;
+	int		return_value;
 
 	options++;
 	if (!*options || !ft_strcmp(*options, "~"))
@@ -10,13 +11,12 @@ int	ft_cd(char *cmd, char **options, char **env)
 		home = get_value("HOME", env);
 		if (!home)
 			return (ft_err_msg(1, HOME_ERROR, __FILE__, __LINE__));
-		ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
+		return_value = ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
 		free(home);
-		return (0);
+		return (return_value);
 	}
-	ft_err_sys(chdir(*options) == -1, __FILE__, __LINE__);
 	(void)(cmd);
-	return (0);
+	return (ft_err_sys(chdir(*options) == -1, __FILE__, __LINE__));
 }
 
 int	ft_pwd(char *cmd, char **options, char **env)
@@ -60,9 +60,26 @@ int	ft_echo(char *cmd, char **options, char **env)
 
 int	ft_exit(char *cmd, char **options, char **env)
 {
-	exit(0);
+	int	i;
+
+	i = 0;
+	while (options[i])
+		i++;
+	if (i > 2)
+	{
+		ft_err_msg(1, "too many arguments", __FILE__, __LINE__);
+		return (1);
+	}
+	else if (i == 1)
+		exit(short_exit_status);
+	options++;
+	if (!ft_strisnum(*options))
+	{
+		ft_err_msg(1, "numeric argument required", __FILE__, __LINE__);
+		exit(255);
+	}
+	exit(ft_atoi(*options));
 	(void)(cmd);
-	(void)(options);
 	(void)(env);
 	return (0);
 }

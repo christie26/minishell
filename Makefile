@@ -38,8 +38,8 @@ NAME		= ./mini
 LIBFT		= ./libft/libft.a
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
-LDFLAGS		= -fsanitize=address
+CFLAGS		= -Wall -Wextra -Werror -g
+LDFLAGS		= -fsanitize=address -g
 RM			= rm -f
 
 all:		${NAME}
