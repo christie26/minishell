@@ -15,16 +15,17 @@ int	check_input(char *input)
 			count++;
 		i++;
 	}
+	// "=" error 
 	if (count != 1)
-		return (ft_err_msg(1, "Invalud input", __FILE__, __LINE__));
+		return (ft_err_msg(1, "Invalid input", __FILE__, __LINE__));
 	return (0);
 }
 
-void	update_myvar(char **new_env)
-{
-	free(my_env);
-	my_env = new_env;
-}
+// void	update_myvar(char **new_env)
+// {
+// 	free(my_env);
+// 	my_env = new_env;
+// }
 
 int	if_key_exist(char *key_value, char **env)
 {
@@ -75,7 +76,7 @@ void	add_var_update(char *key_value, char **env)
 	new_env[i] = ft_strdup(key_value);
 	ft_err_msg_exit(!new_env[i], MALLOC_ERROR, __FILE__, __LINE__);
 	new_env[i + 1] = 0;
-	update_myvar(new_env);
+	env = new_env;
 }
 
 int	ft_export(char *cmd, char **options, char **env)

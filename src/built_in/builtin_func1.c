@@ -7,7 +7,7 @@ int	ft_cd(char *cmd, char **options, char **env)
 	options++;
 	if (!*options || !ft_strcmp(*options, "~"))
 	{
-		home = get_value("HOME", my_env);
+		home = get_value("HOME", env);
 		if (!home)
 			return (ft_err_msg(1, HOME_ERROR, __FILE__, __LINE__));
 		ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
@@ -16,7 +16,6 @@ int	ft_cd(char *cmd, char **options, char **env)
 	}
 	ft_err_sys(chdir(*options) == -1, __FILE__, __LINE__);
 	(void)(cmd);
-	(void)(env);
 	return (0);
 }
 
@@ -38,6 +37,8 @@ int	ft_echo(char *cmd, char **options, char **env)
 
 	options++;
 	endl = 1;
+	if (!*options)
+		return (0);
 	if (!ft_strcmp(*options, "-n"))
 	{
 		options++;
@@ -53,8 +54,7 @@ int	ft_echo(char *cmd, char **options, char **env)
 	if (endl)
 		ft_putchar_fd('\n', 1);
 	(void)(cmd);
-	(void)(env);
-	printf("$? = %s\n", get_value("?", my_env));
+	printf("$? = %s\n", get_value("?", env));
 	return (0);
 }
 

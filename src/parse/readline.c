@@ -410,8 +410,9 @@ t_pipeline	*my_parse(char *str)
 
 int main(int argc, char *argv[], char *envp[])
 {
-    char    *res;
-	t_pipeline *pipeline_list;
+    char		*res;
+	char		**my_env;
+	t_pipeline	*pipeline_list;
 
 	(void)argc;
 	(void)argv;
@@ -424,7 +425,7 @@ int main(int argc, char *argv[], char *envp[])
 
 		pipeline_list = my_parse(res);
 		// print_tree(pipeline_list);
-		mini_execute(pipeline_list);
+		mini_execute(pipeline_list, my_env);
 
 		free(res);
 		// while (*res)

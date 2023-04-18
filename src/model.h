@@ -4,7 +4,7 @@
 
 # include <unistd.h>
 
-char    **my_env;
+// char    **my_env;
 
 typedef struct s_redirect {
     int					type;
@@ -27,6 +27,7 @@ typedef struct s_data {
     pid_t   *pid_set;
     int     prev_fd;
     char    **path;
+    char    **my_env;
 }   t_data;
 
 /*

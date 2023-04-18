@@ -1,13 +1,13 @@
 #include "built_in.h"
 
-char	**get_env(void)
+char	**get_env(char **env)
 {
 	int		i;
 	int		number;
 	char	**tmp_env;
 
 	i = 0;
-	while (my_env[i])
+	while (env[i])
 		i++;
 	number = i;
 	tmp_env = malloc(sizeof(char *) * (number + 1));
@@ -15,8 +15,8 @@ char	**get_env(void)
 	i = 0;
 	while (i < number)
 	{
-		if (ft_strncmp(my_env[i], "?=", 2))
-				tmp_env[i] = my_env[i];
+		if (ft_strncmp(env[i], "?=", 2))
+				tmp_env[i] = env[i];
 		i++;
 	}
 	return (tmp_env);

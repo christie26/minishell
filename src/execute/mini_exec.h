@@ -5,6 +5,8 @@
 # define READ 0
 # define WRITE 1
 
+int exit_status;
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -15,7 +17,7 @@
 # include "../model.h"
 # include "../error.h"
 
-int		mini_execute(t_pipeline *pipeline);
+int		mini_execute(t_pipeline *pipeline, char **env);
 void	heredoc_center(t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
 
@@ -27,7 +29,7 @@ char	*check_access(char *cmd, char **path);
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
 void	redirection_center(t_redirect *redirect);
-char	**get_env(void);
+char	**get_env(char **env);
 
 
 // utils
