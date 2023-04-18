@@ -4,6 +4,8 @@
 
 # include <unistd.h>
 
+int short_exit_status;
+
 typedef struct s_redirect {
     int					type;
     char				*filename;      
@@ -24,8 +26,8 @@ typedef struct s_data {
     int     process_number;
     pid_t   *pid_set;
     int     prev_fd;
-    char    **env;
     char    **path;
+    char    **my_env;
 }   t_data;
 
 /*

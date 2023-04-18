@@ -1,14 +1,19 @@
 # all file
-SRCS_EXEC		=	fake_main.c \
-					mini_exec.c \
+SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
 					utils.c \
-					child_parent.c
+					child_parent.c \
+					redirection.c \
+					heredoc.c
 
-SRCS_PARSE		=	#readline.c \
-					pipeline_list_utils.c
+SRCS_PARSE		=	readline.c \
+					pipeline_list_utils.c \
+					redirect_list_utils.c
 
-SRCS_BUILT		=	built_in.c
+SRCS_BUILT		=	builtin_center.c \
+					builtin_func1.c \
+					builtin_func2.c \
+					builtin_env.c
 
 # add path as their usage
 DIR_EXEC		= execute/
@@ -33,8 +38,8 @@ NAME		= ./mini
 LIBFT		= ./libft/libft.a
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
-LDFLAGS		= -fsanitize=address
+CFLAGS		= -Wall -Wextra -Werror -g
+LDFLAGS		= -fsanitize=address -g
 RM			= rm -f
 
 all:		${NAME}
@@ -44,8 +49,6 @@ all:		${NAME}
 
 $(NAME): 	$(OBJS) $(LIBFT)
 			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)
-# $(NAME): 	$(OBJS_PARSE) $(LIBFT)
-# $(CC) $(CFLAGS) $(OBJS_PARSE) -L./libft -lft -lreadline -o $(NAME)
 
 $(LIBFT):
 			make -j3 -C ./libft all

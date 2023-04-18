@@ -1,4 +1,7 @@
+test_and_learn/
 *.DS_Store
 *.o
 *.a
 .vscode/*
+mini
+**/a.out
