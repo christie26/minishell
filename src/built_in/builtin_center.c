@@ -12,11 +12,13 @@
 
 #include "./built_in.h"
 
-int	ft_builtin(char	**argv, char **env)
+int	ft_builtin(char	**argv, t_data *data)
 {
 	char	*cmd;
+	char	**env;
 
 	cmd = argv[0];
+	env = data->my_env;
 	if (!ft_strcmp(cmd, "echo"))
 		return (ft_echo(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "cd"))
@@ -24,7 +26,7 @@ int	ft_builtin(char	**argv, char **env)
 	else if (!ft_strcmp(cmd, "pwd"))
 		return (ft_pwd(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "export"))
-		return (ft_export(cmd, argv, env));
+		return (ft_export(argv, data));
 	else if (!ft_strcmp(cmd, "unset"))
 		return (ft_unset(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "env"))

@@ -17,7 +17,6 @@ int exit_status;
 # include "../model.h"
 # include "../error.h"
 
-int		mini_execute(t_pipeline *pipeline, char **env);
 void	heredoc_center(t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
 
@@ -36,9 +35,8 @@ char	**get_env(char **env);
 void	ft_close(int fd, char *file, int line);
 
 // built-in
-int		ft_builtin(char **argv, char **env);
+int		ft_builtin(char **argv, t_data *data);
 int		is_builtin(char *cmd);
-// int		ft_export(char *cmd, char **options, char **env);
 void	add_var_update(char *key_value, char **env);
 
 

@@ -411,21 +411,21 @@ t_pipeline	*my_parse(char *str)
 int main(int argc, char *argv[], char *envp[])
 {
     char		*res;
-	char		**my_env;
 	t_pipeline	*pipeline_list;
+	t_data		data;
 
 	(void)argc;
 	(void)argv;
 	// (void)pipeline_list;
 
-	my_env = init_envp(envp);
+	data.my_env = init_envp(envp);
     while (1)
     {
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res);
 		// print_tree(pipeline_list);
-		mini_execute(pipeline_list, my_env);
+		mini_execute(pipeline_list, &data);
 
 		free(res);
 		// while (*res)

@@ -26,7 +26,7 @@ t_redirect	*ft_redirect_lstlast(t_redirect *redirect_lst);
 void		ft_redirect_lstadd_back(t_redirect **redirect_lst, t_redirect *new);
 void		ft_redirect_lstclear(t_redirect **redirect_lst);
 
-int         mini_execute(t_pipeline *pipeline, char **env);
+int         mini_execute(t_pipeline *pipeline, t_data *data);
 char		**init_envp(char **envp);
 
 #endif

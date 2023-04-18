@@ -71,16 +71,19 @@ char	*get_value(char *key, char **env)
 
 int	ft_env(char *cmd, char **options, char **env)
 {
+	int	i;
+
 	options++;
 	if (*options)
 	{
 		ft_err_msg(1, "We don't need arguments", __FILE__, __LINE__);
 		return (1);
 	}
-	while (*env)
+	i = 0;
+	while (env[i])
 	{
-		ft_putendl_fd(*env, 1);
-		env++;
+		ft_putendl_fd(env[i], 1);
+		i++;
 	}
 	(void)(cmd);
 	return (0);

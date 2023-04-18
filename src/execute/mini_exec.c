@@ -13,7 +13,7 @@ int	get_process_number(t_pipeline *pipeline)
 	return (i);
 }
 
-void	set_exit_status(int exit_status, t_data *data)
+void	set_exit_status(t_data *data)
 {
 	int 	status;
 	char	*value;
@@ -26,7 +26,7 @@ void	set_exit_status(int exit_status, t_data *data)
 	else
 		status = WSTOPSIG(exit_status);
 	value = ft_itoa(status);
-	printf("exit status=%d\nstatus=%d\n", exit_status, status);
+	// printf("exit status=%d\nstatus=%d\n", exit_status, status);
 	ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
 	key_value = ft_strjoin("?=", value);
 	free(value);
@@ -42,7 +42,7 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 
 	i = 0;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
-		return (ft_builtin(pipeline->cmd_block->cmd, get_env(data->my_env)));
+		return (ft_builtin(pipeline->cmd_block->cmd, data));
 	while (i < data->process_number)
 	{
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
@@ -61,23 +61,18 @@ int	execute_center(t_data *data, t_pipeline *pipeline)
 		waitpid(data->pid_set[i], &exit_status, 0);
 		i++;
 	}
-	// printf("exit = %d\n", exit_status);
-	set_exit_status(exit_status, data);
+	set_exit_status(data);
 	return (0);
 }
 
-int	mini_execute(t_pipeline *pipeline, char **env)
+int	mini_execute(t_pipeline *pipeline, t_data *data)
 {
-	t_data	data;
-
-	data.process_number = get_process_number(pipeline);
-	data.path = get_path(env);
-	data.my_env = env;
-	data.pid_set = malloc(sizeof(pid_t) * data.process_number);
-	if (!data.pid_set)
-		return (1);
+	data->process_number = get_process_number(pipeline);
+	data->path = get_path(data->my_env);
+	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
+	ft_err_msg_exit(!data->pid_set, MALLOC_ERROR, __FILE__, __LINE__);
 	heredoc_center(pipeline);
-	execute_center(&data, pipeline);
+	execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
 	return (0);
 }

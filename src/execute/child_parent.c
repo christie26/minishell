@@ -8,7 +8,7 @@ void	ft_execute(char **options, t_data *data)
 	ft_err_msg_exit(!cmd, MALLOC_ERROR, __FILE__, __LINE__);
 	if (is_builtin(cmd))
 	{
-		if (ft_builtin(options, data->my_env))
+		if (ft_builtin(options, data))
 			exit(EXIT_FAILURE);
 	}
 	else
@@ -16,7 +16,7 @@ void	ft_execute(char **options, t_data *data)
 		cmd = check_access(cmd, data->path);
 		if (!cmd)
 		{
-			ft_err_msg_exit(1, CMD_ERROR, __FILE__, __LINE__);
+			ft_err_msg(1, CMD_ERROR, __FILE__, __LINE__);
 			exit_status = 127;
 			return ;
 		}
@@ -40,8 +40,7 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 	ft_close(p_fd[0], __FILE__, __LINE__);
 	ft_close(p_fd[1], __FILE__, __LINE__);
 	ft_execute(pipeline->cmd_block->cmd, data);
-	// exit(0);
-	exit(127);
+	exit(exit_status);
 }
 
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)

@@ -12,7 +12,7 @@
 int		ft_echo(char *cmd, char **options, char **env);
 int		ft_cd(char *cmd, char **options, char **env);
 int		ft_pwd(char *cmd, char **options, char **env);
-int		ft_export(char *cmd, char **options, char **env);
+int		ft_export(char **options, t_data *data);
 int		ft_unset(char *cmd, char **options, char **env);
 int		ft_env(char *cmd, char **options, char **env);
 int		ft_exit(char *cmd, char **options, char **env);
