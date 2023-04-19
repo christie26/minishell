@@ -33,6 +33,50 @@ void print_tree(t_pipeline *pipeline_list)
 	}
 }
 
+void expand_from_env(char **str)
+{
+	char *var_key;
+	char *substr_offset;
+
+	var_key = ft_strchr(*str, '$');
+	while (var_key)
+	{
+		substr_offset = ++var_key;
+		while (ft_isalpha(*var_key))
+			var_key++;
+		var_key = ft_strchr(*str, '$');
+	}
+}
+
+void expand_check(t_pipeline *pipeline_list)
+{
+	t_cmd_block *cur_cmd_block;
+	t_redirect *cur_redirect;
+	char **cur_cmd;
+
+	while (pipeline_list)
+	{
+		cur_cmd_block = pipeline_list->cmd_block;
+		cur_redirect = cur_cmd_block->redirect;
+		while (cur_redirect)
+		{
+			if (cur_redirect->type != 2)
+			{
+				cur_redirect->filename; // 얘를 확장검사, here_doc 이면 패스
+			}
+			cur_redirect = cur_redirect->next;
+		}
+		cur_cmd = cur_cmd_block->cmd;
+		while (cur_cmd)
+		{
+			*cur_cmd++; // 얘도 확장검사
+		}
+		// 수정해야하는 애들은 더블포인터로 넘겨야함 -> 변수의 값이 바뀔수 있기 때문
+
+		pipeline_list = pipeline_list->next;
+	}
+}
+
 int is_blank(char c)
 {
 	return (c == 32 || c == 9 || c == 10);
@@ -40,7 +84,6 @@ int is_blank(char c)
 
 int is_operator_char(char c)
 {
-	// return (ft_strchr("|&;()<>", c) > 0);
 	return (ft_strchr("|<>", c) > 0);
 }
 
@@ -265,30 +308,6 @@ t_pipeline	*my_parse(char *str)
 	return (pipe_list);
 }
 
-/*
-	파이프 구분이 잘 되었다면
-	파이프를 기준으로 앞뒤 문자열을 잘라서
-	해당 문자열을 기준으로 하나의 pipe 구조체를 작성
-	|| |||| 와 같이 여러 파이프가 연속해서 들어오거나
-	" ' 같이 하나의 따옴표만 들어올 경우는 잠시 보류
-
-	해당 문자열에서 리다이렉션이 발견되면 리다이렉션 lst_addback
-	그럼 이전에 만든 t_redirection은...? -> 내용부분만 잘라내서 void* content에 넣기
-	기존의 lst 타입 활용하면 libft함수를 사용할수있음
-
-	리다이렉션 이외의 문자열은 split을 사용해서 char **로 저장
-	리다이렉션들부터 먼저 처리!
-
-	리다이렉션은 (방향) (파일이름) 과 같은 단순한 형태만 우선 고려하기로...
-*/
-/*
-	spilt을 사용해서 pipe단위로 문자열을 긁어냄
-	그 char **문자열이 null이 될때까지 순회하며 list 구조체 생성
-	pipe 단위에서도 구조체가 그냥 list쓰면 될것같음
-	void* content에 cmd_block만 넣기
-*/
-
-
 int main(int argc, char *argv[], char *envp[])
 {
     char		*res;
@@ -306,6 +325,7 @@ int main(int argc, char *argv[], char *envp[])
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res);
+		expand_check(pipeline_list);
 
 		// print_tree(pipeline_list);
 		mini_execute(pipeline_list, &data);
