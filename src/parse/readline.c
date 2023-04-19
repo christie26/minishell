@@ -48,33 +48,46 @@ void expand_from_env(char **str)
 	}
 }
 
-void expand_check(t_pipeline *pipeline_list)
+// void expand_check(t_pipeline *pipeline_list)
+// {
+// 	t_cmd_block *cur_cmd_block;
+// 	t_redirect *cur_redirect;
+// 	char **cur_cmd;
+
+// 	while (pipeline_list)
+// 	{
+// 		cur_cmd_block = pipeline_list->cmd_block;
+// 		cur_redirect = cur_cmd_block->redirect;
+// 		while (cur_redirect)
+// 		{
+// 			if (cur_redirect->type != 2)
+// 			{
+// 				cur_redirect->filename; // 얘를 확장검사, here_doc 이면 패스, ambiguous redirect 처리를 하려면 여기도 두개 이상의 word를 가질수 있어야 한다...
+// 			}
+// 			cur_redirect = cur_redirect->next;
+// 		}
+// 		cur_cmd = cur_cmd_block->cmd;
+// 		while (cur_cmd)
+// 		{
+// 			*cur_cmd++; // 얘도 확장검사
+// 		}
+// 		// 수정해야하는 애들은 더블포인터로 넘겨야함 -> 변수의 값이 바뀔수 있기 때문
+
+// 		pipeline_list = pipeline_list->next;
+// 	}
+// 	// 이미 tree로 된 상태보다는 t_list를 사용하는 토큰 상태에서 확장을 시도하는편이 더 편한것같다
+// 	// token 에서 tree로 만들어줄때 확장 시도할것
+// 	// redirect는 here doc 빼고 확장
+// }
+
+void expand_check(t_list **tokens)
 {
-	t_cmd_block *cur_cmd_block;
-	t_redirect *cur_redirect;
-	char **cur_cmd;
+	// list를 사용하면 중간에 끼워놓기도 편하다
+	// 토큰화를 하고 -> 확장을 하고 -> 트리로 만든다
+	// 이런 순서로 진행하기로...
+	// redirect 토큰을 읽고 그 다음 확장에서 char **의 사이즈가 두개 이상이면 에러
 
-	while (pipeline_list)
-	{
-		cur_cmd_block = pipeline_list->cmd_block;
-		cur_redirect = cur_cmd_block->redirect;
-		while (cur_redirect)
-		{
-			if (cur_redirect->type != 2)
-			{
-				cur_redirect->filename; // 얘를 확장검사, here_doc 이면 패스
-			}
-			cur_redirect = cur_redirect->next;
-		}
-		cur_cmd = cur_cmd_block->cmd;
-		while (cur_cmd)
-		{
-			*cur_cmd++; // 얘도 확장검사
-		}
-		// 수정해야하는 애들은 더블포인터로 넘겨야함 -> 변수의 값이 바뀔수 있기 때문
-
-		pipeline_list = pipeline_list->next;
-	}
+	
 }
 
 int is_blank(char c)
