@@ -45,7 +45,7 @@ void	set_exit_status(t_data *data, int short_exit_status)
 	key_value = ft_strjoin("?=", value);
 	free(value);
 	ft_err_msg_exit(!key_value, MALLOC_ERROR, __FILE__, __LINE__);
-	add_var_update(key_value, data);
+	add_variable(key_value, data);
 }
 
 int	execute_center(t_data *data, t_pipeline *pipeline)

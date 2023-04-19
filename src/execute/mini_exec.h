@@ -35,7 +35,7 @@ void	ft_close(int fd, char *file, int line);
 // built-in
 int		ft_builtin(char **argv, t_data *data);
 int		is_builtin(char *cmd);
-void	add_var_update(char *key_value, t_data *data);
+void	add_variable(char *key_value, t_data *data);
 
 
 #endif
