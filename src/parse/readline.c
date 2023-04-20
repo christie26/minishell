@@ -98,24 +98,48 @@ int	is_expandable(char *word)
 {
 	char *expand_idf;
 	char *open_brace;
-	char *close_brace;
 
 	expand_idf = ft_strchr(word, '$');
 	open_brace = '\0';
 	if (expand_idf && ft_strlen(expand_idf) > 1) // 확장 표시자가 있고, 뒤에 변수이름으로 간주될수있는 추가 단어가 있다면, 일단 괄호와 따옴표는 모두 짝이 맞춰져있다는 전제
 	{
 		open_brace = (*(expand_idf + 1) == '{'); // 중괄호 사용여부
+		// 중괄호를 사용했다면 중괄호가 닫힐때까지 읽어본다
+		// 도중에 알파벳이 아닌 다른 문자가 있다면 에러
+		// 중괄호를 사용했다면 알파벳이 아닌 다른 문자가 나올때까지
+		// 이름으로 해석한다
+		char *str = expand_idf + open_brace + 1;
 		if (open_brace)
 		{
-			open_brace = ft_strchar(expand_idf, '{');
-			close_brace = ft_strchr(expand_idf, '}');
-			char *key = ft_substr(open_brace, 1, close_brace - open_brace - 2);
-			if (ft_strchr(key, '\'') || ft_strchr(key, '\"'))
+			while (*str)
 			{
-				//
+				if (!ft_isalpha(*str))
+				{
+					if (*str != '}')
+						return (1);
+					else
+						return (0);
+				}
+				str++;
 			}
 		}
+		else
+		{
+			while (*str && !ft_isalpha(*str))
+				str++;
+			return (1);
+		}
+		while (*str)
+		{
+			if (!ft_isalpha(*str))
+			{
+				if (!open_brace || open_brace && *str == '}')
+					return (1);
+			}
+			str++;
+		}
 	}
+	return (0);
 }
 
 void expand_check(t_list *tokens, char **my_env)
