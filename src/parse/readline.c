@@ -80,7 +80,7 @@ void expand_from_env(char **str)
 // 	// redirect는 here doc 빼고 확장
 // }
 
-void expand_check(t_list **tokens)
+void expand_check(t_list *tokens, char **my_env)
 {
 	// list를 사용하면 중간에 끼워놓기도 편하다
 	// 토큰화를 하고 -> 확장을 하고 -> 트리로 만든다
@@ -94,6 +94,34 @@ void expand_check(t_list **tokens)
 	// 여기서 토큰이 늘었다 줄었다 할수있는건 확장 후에 따옴표 제거하면서
 	// 단어 분할이 일어나는가에 따라 달라짐
 	// 그럼 확장 따로 분할 따로?
+	//
+	// 리스트 변수의 값 자체를 바꾸는게 아니라
+	// 포인터 변수를 참조했을때의 멤버 변수를 변경하는것이니 단일포인터로...?
+
+	// 확장값이 앞, 뒤에 있는경우는 생각하지 말고
+	// 중간에 있는경우를 생각해보면
+	// ( 앞부분 $확장변수 뒷부분 ) 이렇게 나눠지게 된다
+	// 이걸 원래 문자열로 만들려면 이 세개를 strjoin을 수행해야하나...?
+	//
+	// 일단 환경변수 이름만 있는 문자열을 상정하고 만든다면... -> 일단 성공?
+
+	while (tokens)
+	{
+		char *key = ft_strchr(tokens->content, '$');
+		while (key)
+		{
+			char *substr_offset = ++key;
+			char open_brace = (*key == '{');
+			while (key && ft_isalpha(*key) && !(open_brace && *key == '}'))
+				key++;
+			key = ft_substr(substr_offset, 0, key - substr_offset);
+			char *value = get_value(key, my_env);
+			free(tokens->content);
+			tokens->content = value;
+			key = ft_strchr(tokens->content, '$');
+		}
+		tokens = tokens->next;
+	}
 }
 
 int is_blank(char c)
@@ -290,7 +318,7 @@ t_cmd_block *create_cmd_block(t_list **tokens)
 	return (new_cmd_block);
 }
 
-t_pipeline	*my_parse(char *str)
+t_pipeline	*my_parse(char *str, char **my_env)
 {
 	t_pipeline	*pipe_list = NULL;
 	t_list		*tokens = NULL;
@@ -298,6 +326,7 @@ t_pipeline	*my_parse(char *str)
 	create_tokens(&tokens, str);
 	if (!tokens)
 		return (NULL); // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
+	expand_check(tokens, my_env);
 	while (1)
 	{
 		t_pipeline *new_pipeline;
@@ -343,11 +372,11 @@ int main(int argc, char *argv[], char *envp[])
     {
 		res = readline("yo shell$ ");
 
-		pipeline_list = my_parse(res);
-		expand_check(pipeline_list);
+		pipeline_list = my_parse(res, data.my_env);
+		// expand_check(pipeline_list);
 
-		// print_tree(pipeline_list);
-		mini_execute(pipeline_list, &data);
+		print_tree(pipeline_list);
+		// mini_execute(pipeline_list, &data);
 
 		free(res);
 		// while (*res)
