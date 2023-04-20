@@ -80,6 +80,20 @@ void expand_from_env(char **str)
 // 	// redirect는 here doc 빼고 확장
 // }
 
+/*
+
+	is_expandable -  확장가능한 부분이 있는지 문법검사 수행
+	if ture
+	$ 문자를 찾아서 해당 문자 이전까지 substr로 저장 (s1, pre_word)
+	$ 문자 이후로 키값이 되는 부분을 읽어냄, value를 문자열 변수에 저장 (s2, expanded_word) -> 문자열값은 증가되어있음
+	키값 이후 (괄호까지 밀어낸)의 문자열을 substr로 저장 (s3, post_word)
+	이 세개의 문자열을 순서대로 strjoin으로 합침
+	맨위로 돌아가서 다시 확장가능한지 검사, 반복
+	
+	더이상 확장이 불가능하면 다음 토큰으로 이동하여 검사
+
+*/
+
 void expand_check(t_list *tokens, char **my_env)
 {
 	// list를 사용하면 중간에 끼워놓기도 편하다
