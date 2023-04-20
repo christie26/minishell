@@ -89,10 +89,34 @@ void expand_from_env(char **str)
 	키값 이후 (괄호까지 밀어낸)의 문자열을 substr로 저장 (s3, post_word)
 	이 세개의 문자열을 순서대로 strjoin으로 합침
 	맨위로 돌아가서 다시 확장가능한지 검사, 반복
-	
+
 	더이상 확장이 불가능하면 다음 토큰으로 이동하여 검사
 
 */
+
+int	is_expandable(char *word)
+{
+	char *expand_idf;
+	char *open_brace;
+	char *close_brace;
+
+	expand_idf = ft_strchr(word, '$');
+	open_brace = '\0';
+	if (expand_idf && ft_strlen(expand_idf) > 1) // 확장 표시자가 있고, 뒤에 변수이름으로 간주될수있는 추가 단어가 있다면, 일단 괄호와 따옴표는 모두 짝이 맞춰져있다는 전제
+	{
+		open_brace = (*(expand_idf + 1) == '{'); // 중괄호 사용여부
+		if (open_brace)
+		{
+			open_brace = ft_strchar(expand_idf, '{');
+			close_brace = ft_strchr(expand_idf, '}');
+			char *key = ft_substr(open_brace, 1, close_brace - open_brace - 2);
+			if (ft_strchr(key, '\'') || ft_strchr(key, '\"'))
+			{
+				//
+			}
+		}
+	}
+}
 
 void expand_check(t_list *tokens, char **my_env)
 {
