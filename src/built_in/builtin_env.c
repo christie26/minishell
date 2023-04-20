@@ -19,11 +19,9 @@ char	**get_env(char **env)
 		if (!ft_strncmp(env[j], "?=", 2))
 		{
 			j++;
-			continue;
+			continue ;
 		}
-		tmp_env[i] = env[j];
-		i++;
-		j++;
+		tmp_env[i++] = env[j++];
 	}
 	tmp_env[i] = 0;
 	tmp_env[j] = 0;

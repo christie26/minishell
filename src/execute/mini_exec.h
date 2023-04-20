@@ -28,7 +28,6 @@ void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
 void	redirection_center(t_redirect *redirect);
 char	**get_env(char **env);
 
-
 // utils
 void	ft_close(int fd, char *file, int line);
 
@@ -36,6 +35,5 @@ void	ft_close(int fd, char *file, int line);
 int		ft_builtin(char **argv, t_data *data);
 int		is_builtin(char *cmd);
 void	add_variable(char *key_value, t_data *data);
-
 
 #endif
