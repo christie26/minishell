@@ -104,18 +104,38 @@ void expand_check(t_list *tokens, char **my_env)
 	// 이걸 원래 문자열로 만들려면 이 세개를 strjoin을 수행해야하나...?
 	//
 	// 일단 환경변수 이름만 있는 문자열을 상정하고 만든다면... -> 일단 성공?
+	// $표시와 {} 괄호는 삭제되어야 하기때문에 substr을 잘 해야한다
+	// 값을 찾을수없으면 빈문자열로 치환 -> 나중에 따옴표 제거때 사라짐
+	// 빈문자열로만 만들어진 word token이 있다면 이 토큰은 삭제됨 -> 나중에 전부 이어붙이거나 할때 strlen으로 검사
+	//
+	// 이제 변수가 연속해서 오거나 기존 문자열 안에 있거나 하는 경우 치환하고 합쳐주기...
+	// $랑 {}는 빠진 기존의 문자열과 합쳐야함
+	// $를 찾았다면 이전 문자열을 substr로 잘라내서 보관
+	//
+	// $만 쓰면 치환이 이루어지지 않음
+	// ${}만 쓰면 에러....
+	//
+	// $var1$var2 라면 앞에서 치환하고 붙이고 뒤에서 치환하고 붙이고
+	// 그냥 확장가능한지 검사를 하고
+	// 확장이 가능하다면 result라는 문자열변수를 하나 만들것인지...?
+	// 그냥 하나의 문자열에서 더이상 확장이 불가능할때까지 계속해서
+	// 같은 문자열로 작업을 반복?
 
 	while (tokens)
 	{
 		char *key = ft_strchr(tokens->content, '$');
 		while (key)
 		{
-			char *substr_offset = ++key;
-			char open_brace = (*key == '{');
-			while (key && ft_isalpha(*key) && !(open_brace && *key == '}'))
+			++key;
+			if (*key == '{')
+				++key;
+			char *substr_offset = key;
+			while (key && ft_isalpha(*key))
 				key++;
 			key = ft_substr(substr_offset, 0, key - substr_offset);
 			char *value = get_value(key, my_env);
+			if (value == NULL)
+				value = ft_strdup("");
 			free(tokens->content);
 			tokens->content = value;
 			key = ft_strchr(tokens->content, '$');
