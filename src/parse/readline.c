@@ -96,104 +96,82 @@ void expand_from_env(char **str)
 
 int	is_expandable(char *word)
 {
-	char *expand_idf;
+	char *check;
 
-	expand_idf = ft_strchr(word, '$');
-	if (expand_idf) // 확장 표시자가 있고, 뒤에 변수이름으로 간주될수있는 추가 단어가 있다면, 일단 괄호와 따옴표는 모두 짝이 맞춰져있다는 전제
-	{
-		if (ft_isalnum(*(expand_idf + 1)) || *(expand_idf + 1) == '{')
-			return (1);
-		/*
-
-			중괄호를 사용하여 변수이름을 제한하는 경우
-			중괄호 안에 다른 특수문자가 있으면 에러가 발생
-			이 함수는 단순히 확장 가능한지에 대해서만 체크하므로
-			단순 $표시인지 확장표시인지에 대해서만 체크하고
-			변수 이름을 추출해내는 함수에서 에러처리...?
-
-			확장가능한데 변수 이름을 추출하지 못했다면
-			에러라고 봐도 되지 않을까...
-
-			- 달러문자를 찾는다
-			- 다음문자가 뭔지 본다
-			- 중괄호라면 OK, 아니라면 확장하지 않음 (달러 그대로 표시됨)
-			즉 달러 다음문자가 알파벳+숫자거나 중괄호라면 OK
-
-			여기서는 확장을 할지 그대로 표시할지에 대해서만 검사한다
-
-			아니면 여기서 '확장가능, 불가능, 에러' 를 확인할것인지...?
-
-		*/
-	}
-	return (0);
+	check = ft_strchr(word, '$');
+	if (check == NULL || !ft_isalnum(*(check + 1)))
+		return (0);
+	return (1);
 }
 
-char *get_key_from_word(char *word)
-{
-	//
-}
+// char *get_key_from_word(char *word)
+// {
+// 	//
+// }
 
 void expand_check(t_list *tokens, char **my_env)
 {
-	// list를 사용하면 중간에 끼워놓기도 편하다
-	// 토큰화를 하고 -> 확장을 하고 -> 트리로 만든다
-	// 이런 순서로 진행하기로...
-	// redirect 토큰을 읽고 그 다음 확장에서 char **의 사이즈가 두개 이상이면 에러
-	//
-	// 포인터의 주소값으로 보내면 해당 토큰의 값 자체만 여기서 바꾼다
-	// 확장이 되었을 경우에 기존의 포인터의 값을 새로 expand 된 리스트로 바꾸고
-	// 기존의 포인터의 next 만 잘 이어붙인다
-	// 기존의 포인터는 free 시킴
-	// 여기서 토큰이 늘었다 줄었다 할수있는건 확장 후에 따옴표 제거하면서
-	// 단어 분할이 일어나는가에 따라 달라짐
-	// 그럼 확장 따로 분할 따로?
-	//
-	// 리스트 변수의 값 자체를 바꾸는게 아니라
-	// 포인터 변수를 참조했을때의 멤버 변수를 변경하는것이니 단일포인터로...?
-
-	// 확장값이 앞, 뒤에 있는경우는 생각하지 말고
-	// 중간에 있는경우를 생각해보면
-	// ( 앞부분 $확장변수 뒷부분 ) 이렇게 나눠지게 된다
-	// 이걸 원래 문자열로 만들려면 이 세개를 strjoin을 수행해야하나...?
-	//
-	// 일단 환경변수 이름만 있는 문자열을 상정하고 만든다면... -> 일단 성공?
-	// $표시와 {} 괄호는 삭제되어야 하기때문에 substr을 잘 해야한다
-	// 값을 찾을수없으면 빈문자열로 치환 -> 나중에 따옴표 제거때 사라짐
-	// 빈문자열로만 만들어진 word token이 있다면 이 토큰은 삭제됨 -> 나중에 전부 이어붙이거나 할때 strlen으로 검사
-	//
-	// 이제 변수가 연속해서 오거나 기존 문자열 안에 있거나 하는 경우 치환하고 합쳐주기...
-	// $랑 {}는 빠진 기존의 문자열과 합쳐야함
-	// $를 찾았다면 이전 문자열을 substr로 잘라내서 보관
-	//
-	// $만 쓰면 치환이 이루어지지 않음
-	// ${}만 쓰면 에러....
-	//
-	// $var1$var2 라면 앞에서 치환하고 붙이고 뒤에서 치환하고 붙이고
-	// 그냥 확장가능한지 검사를 하고
-	// 확장이 가능하다면 result라는 문자열변수를 하나 만들것인지...?
-	// 그냥 하나의 문자열에서 더이상 확장이 불가능할때까지 계속해서
-	// 같은 문자열로 작업을 반복?
+	char *pre_word;
+	char *expanded_word;
+	char *post_word;
+	char *substr_offset;
 
 	while (tokens)
 	{
-		char *key = ft_strchr(tokens->content, '$');
-		while (key)
+		while (is_expandable(tokens->content))
 		{
-			++key;
-			if (*key == '{')
-				++key;
-			char *substr_offset = key;
-			while (key && ft_isalpha(*key))
-				key++;
-			key = ft_substr(substr_offset, 0, key - substr_offset);
-			char *value = get_value(key, my_env);
-			if (value == NULL)
-				value = ft_strdup("");
+			char *word = tokens->content;
+
+			substr_offset = word;
+			word = ft_strchr(word, '$');
+			pre_word = ft_substr(substr_offset, 0, word - substr_offset);
+
+			substr_offset = ++word;
+			while (ft_isalnum(*word))
+				word++;
+			char *key = ft_substr(substr_offset, 0, word - substr_offset);
+			expanded_word = get_value(key, my_env);
+			free(key);
+			
+			if (!expanded_word)
+				expanded_word = ft_strdup("");
+
+			substr_offset = word;
+			while (*word)
+				word++;
+			post_word = ft_substr(substr_offset, 0, word - substr_offset);
+
+			char *result = ft_strjoin(pre_word, expanded_word);
+			result = ft_strjoin(result, post_word);
+
+			free(pre_word);
+			free(expanded_word);
+			free(post_word);
+
 			free(tokens->content);
-			tokens->content = value;
-			key = ft_strchr(tokens->content, '$');
+			tokens->content = result;
+			
 		}
 		tokens = tokens->next;
+
+		// char *key = ft_strchr(tokens->content, '$');
+		// while (key)
+		// {
+		// 	++key;
+		// 	if (*key == '{')
+		// 		++key;
+		// 	char *substr_offset = key;
+		// 	while (key && ft_isalpha(*key))
+		// 		key++;
+		// 	key = ft_substr(substr_offset, 0, key - substr_offset);
+		// 	char *value = get_value(key, my_env);
+		// 	if (value == NULL)
+		// 		value = ft_strdup("");
+		// 	free(tokens->content);
+		// 	tokens->content = value;
+		// 	key = ft_strchr(tokens->content, '$');
+		// }
+		// tokens = tokens->next;
 	}
 }
 
