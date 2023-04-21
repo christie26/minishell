@@ -420,8 +420,8 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	create_tokens(&tokens, str);
 	if (!tokens)
 		return (NULL); // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
-	ft_lstiter(tokens, print_tokens);
-	// expand_check(tokens, my_env);
+	// ft_lstiter(tokens, print_tokens);
+	expand_check(tokens, my_env);
 	(void)my_env;
 
 	while (1)
@@ -470,10 +470,9 @@ int main(int argc, char *argv[], char *envp[])
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res, data.my_env);
-		// expand_check(pipeline_list);
 
-		print_tree(pipeline_list);
-		// mini_execute(pipeline_list, &data);
+		// print_tree(pipeline_list);
+		mini_execute(pipeline_list, &data);
 
 		free(res);
 		// while (*res)
