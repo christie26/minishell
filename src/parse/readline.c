@@ -33,160 +33,6 @@ void print_tree(t_pipeline *pipeline_list)
 	}
 }
 
-void expand_from_env(char **str)
-{
-	char *var_key;
-	char *substr_offset;
-
-	var_key = ft_strchr(*str, '$');
-	while (var_key)
-	{
-		substr_offset = ++var_key;
-		while (ft_isalpha(*var_key))
-			var_key++;
-		var_key = ft_strchr(*str, '$');
-	}
-}
-
-// void expand_check(t_pipeline *pipeline_list)
-// {
-// 	t_cmd_block *cur_cmd_block;
-// 	t_redirect *cur_redirect;
-// 	char **cur_cmd;
-
-// 	while (pipeline_list)
-// 	{
-// 		cur_cmd_block = pipeline_list->cmd_block;
-// 		cur_redirect = cur_cmd_block->redirect;
-// 		while (cur_redirect)
-// 		{
-// 			if (cur_redirect->type != 2)
-// 			{
-// 				cur_redirect->filename; // 얘를 확장검사, here_doc 이면 패스, ambiguous redirect 처리를 하려면 여기도 두개 이상의 word를 가질수 있어야 한다...
-// 			}
-// 			cur_redirect = cur_redirect->next;
-// 		}
-// 		cur_cmd = cur_cmd_block->cmd;
-// 		while (cur_cmd)
-// 		{
-// 			*cur_cmd++; // 얘도 확장검사
-// 		}
-// 		// 수정해야하는 애들은 더블포인터로 넘겨야함 -> 변수의 값이 바뀔수 있기 때문
-
-// 		pipeline_list = pipeline_list->next;
-// 	}
-// 	// 이미 tree로 된 상태보다는 t_list를 사용하는 토큰 상태에서 확장을 시도하는편이 더 편한것같다
-// 	// token 에서 tree로 만들어줄때 확장 시도할것
-// 	// redirect는 here doc 빼고 확장
-// }
-
-/*
-
-	is_expandable -  확장가능한 부분이 있는지 문법검사 수행
-	if ture
-	$ 문자를 찾아서 해당 문자 이전까지 substr로 저장 (s1, pre_word)
-	$ 문자 이후로 키값이 되는 부분을 읽어냄, value를 문자열 변수에 저장 (s2, expanded_word) -> 문자열값은 증가되어있음
-	키값 이후 (괄호까지 밀어낸)의 문자열을 substr로 저장 (s3, post_word)
-	이 세개의 문자열을 순서대로 strjoin으로 합침
-	맨위로 돌아가서 다시 확장가능한지 검사, 반복
-
-	더이상 확장이 불가능하면 다음 토큰으로 이동하여 검사
-
-*/
-
-int	is_expandable(char *word)
-{
-	char *check;
-
-	check = ft_strchr(word, '$');
-	if (check == NULL || (!ft_isalnum(*(check + 1)) && *(check + 1) != '{')) // 여는 중괄호가 아닌 특수문자
-		return (0);
-	return (1);
-}
-
-// char *get_key_from_word(char *word)
-// {
-// 	//
-// }
-
-void expand_check(t_list *tokens, char **my_env)
-{
-	char *pre_word;
-	char *expanded_word;
-	char *post_word;
-	char *substr_offset;
-
-	while (tokens)
-	{
-		while (is_expandable(tokens->content))
-		{
-			char *word = tokens->content;
-
-			substr_offset = word;
-			word = ft_strchr(word, '$');
-			pre_word = ft_substr(substr_offset, 0, word - substr_offset);
-
-			int brace = (*(++word) == '{');
-			word += brace;
-			substr_offset = word;
-			
-			while (ft_isalnum(*word))
-				word++;
-
-			if (brace && (*word != '}' || word - substr_offset == 0))
-			{
-				free(pre_word);
-				ft_printf("bad substitution\n");
-				exit(1);
-			}
-			
-			char *key = ft_substr(substr_offset, 0, word - substr_offset);
-			expanded_word = get_value(key, my_env);
-			free(key);
-			
-			if (!expanded_word)
-				expanded_word = ft_strdup("");
-
-			word += brace;
-			substr_offset = word;
-			while (*word)
-				word++;
-			post_word = ft_substr(substr_offset, 0, word - substr_offset);
-
-			char *result = ft_strjoin(pre_word, expanded_word);
-			result = ft_strjoin(result, post_word);
-
-			free(pre_word);
-			free(expanded_word);
-			free(post_word);
-
-			free(tokens->content);
-			tokens->content = result;
-			
-		}
-		tokens = tokens->next;
-
-		// char *key = ft_strchr(tokens->content, '$');
-		// while (key)
-		// {
-		// 	++key;
-		// 	if (*key == '{')
-		// 		++key;
-		// 	char *substr_offset = key;
-		// 	while (key && ft_isalpha(*key))
-		// 		key++;
-		// 	key = ft_substr(substr_offset, 0, key - substr_offset);
-		// 	char *value = get_value(key, my_env);
-		// 	if (value == NULL)
-		// 		value = ft_strdup("");
-		// 	free(tokens->content);
-		// 	tokens->content = value;
-		// 	key = ft_strchr(tokens->content, '$');
-		// }
-		// tokens = tokens->next;
-	}
-}
-
 int is_blank(char c)
 {
 	return (c == 32 || c == 9 || c == 10);
@@ -380,6 +226,187 @@ t_cmd_block *create_cmd_block(t_list **tokens)
 	}
 	return (new_cmd_block);
 }
+
+void expand_from_env(char **str)
+{
+	char *var_key;
+	char *substr_offset;
+
+	var_key = ft_strchr(*str, '$');
+	while (var_key)
+	{
+		substr_offset = ++var_key;
+		while (ft_isalpha(*var_key))
+			var_key++;
+		var_key = ft_strchr(*str, '$');
+	}
+}
+
+// void expand_check(t_pipeline *pipeline_list)
+// {
+// 	t_cmd_block *cur_cmd_block;
+// 	t_redirect *cur_redirect;
+// 	char **cur_cmd;
+
+// 	while (pipeline_list)
+// 	{
+// 		cur_cmd_block = pipeline_list->cmd_block;
+// 		cur_redirect = cur_cmd_block->redirect;
+// 		while (cur_redirect)
+// 		{
+// 			if (cur_redirect->type != 2)
+// 			{
+// 				cur_redirect->filename; // 얘를 확장검사, here_doc 이면 패스, ambiguous redirect 처리를 하려면 여기도 두개 이상의 word를 가질수 있어야 한다...
+// 			}
+// 			cur_redirect = cur_redirect->next;
+// 		}
+// 		cur_cmd = cur_cmd_block->cmd;
+// 		while (cur_cmd)
+// 		{
+// 			*cur_cmd++; // 얘도 확장검사
+// 		}
+// 		// 수정해야하는 애들은 더블포인터로 넘겨야함 -> 변수의 값이 바뀔수 있기 때문
+
+// 		pipeline_list = pipeline_list->next;
+// 	}
+// 	// 이미 tree로 된 상태보다는 t_list를 사용하는 토큰 상태에서 확장을 시도하는편이 더 편한것같다
+// 	// token 에서 tree로 만들어줄때 확장 시도할것
+// 	// redirect는 here doc 빼고 확장
+// }
+
+/*
+
+	is_expandable -  확장가능한 부분이 있는지 문법검사 수행
+	if ture
+	$ 문자를 찾아서 해당 문자 이전까지 substr로 저장 (s1, pre_word)
+	$ 문자 이후로 키값이 되는 부분을 읽어냄, value를 문자열 변수에 저장 (s2, expanded_word) -> 문자열값은 증가되어있음
+	키값 이후 (괄호까지 밀어낸)의 문자열을 substr로 저장 (s3, post_word)
+	이 세개의 문자열을 순서대로 strjoin으로 합침
+	맨위로 돌아가서 다시 확장가능한지 검사, 반복
+
+	더이상 확장이 불가능하면 다음 토큰으로 이동하여 검사
+
+*/
+
+int	is_expandable(char *word)
+{
+	// char *check;
+
+	// check = ft_strchr(word, '$');
+	// if (check == NULL || (!ft_isalnum(*(check + 1)) && *(check + 1) != '{')) // 여는 중괄호가 아닌 특수문자
+	// 	return (0);
+	// return (1);
+
+	char *check;
+	int open_quote;
+	
+	check = word;
+	open_quote = 0;
+	while (*check)
+	{
+		if (is_quote(*check))
+		{
+			if (open_quote && open_quote == *check)
+				open_quote = 0;
+			else
+				open_quote = *check;
+		}
+		else if (*check == '$' && (!open_quote || open_quote == '\"'))
+		{
+			if (*(check + 1) && (ft_isalnum(*(check + 1)) || *(check + 1) == '{'))
+				return (1);
+		}
+		check++;
+	}
+	return (0);
+}
+
+void expand_check(t_list *tokens, char **my_env)
+{
+	char *pre_word;
+	char *expanded_word;
+	char *post_word;
+	char *substr_offset;
+
+	while (tokens)
+	{
+		while (is_expandable(tokens->content))
+		{
+			char *word = tokens->content;
+
+			substr_offset = word;
+			word = ft_strchr(word, '$');
+			pre_word = ft_substr(substr_offset, 0, word - substr_offset);
+
+			int brace = (*(++word) == '{');
+			word += brace;
+			substr_offset = word;
+			
+			while (ft_isalnum(*word))
+				word++;
+
+			if (brace && (*word != '}' || word - substr_offset == 0))
+			{
+				free(pre_word);
+				ft_printf("bad substitution\n");
+				exit(1);
+			}
+			
+			char *key = ft_substr(substr_offset, 0, word - substr_offset);
+			expanded_word = get_value(key, my_env);
+			free(key);
+			
+			if (!expanded_word)
+				expanded_word = ft_strdup("");
+
+			word += brace;
+			substr_offset = word;
+			while (*word)
+				word++;
+			post_word = ft_substr(substr_offset, 0, word - substr_offset);
+
+			char *result = ft_strjoin(pre_word, expanded_word);
+			result = ft_strjoin(result, post_word);
+
+			free(pre_word);
+			free(expanded_word);
+			free(post_word);
+
+			free(tokens->content);
+			tokens->content = result;
+			
+		}
+		tokens = tokens->next;
+
+		// char *key = ft_strchr(tokens->content, '$');
+		// while (key)
+		// {
+		// 	++key;
+		// 	if (*key == '{')
+		// 		++key;
+		// 	char *substr_offset = key;
+		// 	while (key && ft_isalpha(*key))
+		// 		key++;
+		// 	key = ft_substr(substr_offset, 0, key - substr_offset);
+		// 	char *value = get_value(key, my_env);
+		// 	if (value == NULL)
+		// 		value = ft_strdup("");
+		// 	free(tokens->content);
+		// 	tokens->content = value;
+		// 	key = ft_strchr(tokens->content, '$');
+		// }
+		// tokens = tokens->next;
+	}
+}
+
+/*
+
+	따옴표가 열려있으면 짝맞추기를 안해도됨?
+	말그대로 리터럴이 되어버리고
+	따옴표 안에서는 특별한 의미를 잃어버리기 때문 -> 확장포함
+	그럼 확장의 주도권을 따옴표 제거가 가져야 하나?
+
+*/
 
 t_pipeline	*my_parse(char *str, char **my_env)
 {

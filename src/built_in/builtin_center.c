@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in.c                                         :+:      :+:    :+:   */
+/*   builtin_center.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoonsele <yoonsele@student.42.kr>          +#+  +:+       +#+        */
+/*   By: yonghyle <yonghyle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:47:00 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/03/24 21:49:19 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/04/21 20:04:49 by yonghyle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ int	ft_builtin(char	**argv, t_data *data)
 		return (ft_unset(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "env"))
 		return (ft_env(cmd, argv, env));
-	else if (!ft_strcmp(cmd, "exit"))
-		return (ft_exit(cmd, argv, env));
+	// else if (!ft_strcmp(cmd, "exit"))
+		// return (ft_exit(cmd, argv, env));
 	else
 		return (0);
 }
