@@ -308,7 +308,7 @@ int	is_expandable(char *word)
 		{
 			if (open_quote && open_quote == *check)
 				open_quote = 0;
-			else
+			else if (!open_quote)
 				open_quote = *check;
 		}
 		else if (*check == '$' && (!open_quote || open_quote == '\"'))
