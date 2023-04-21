@@ -4,7 +4,7 @@
 
 # include <unistd.h>
 
-int short_exit_status;
+extern int short_exit_status;
 
 typedef struct s_redirect {
     int					type;
