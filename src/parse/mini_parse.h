@@ -13,6 +13,7 @@
 # include "ft_printf.h"
 # include "get_next_line.h"
 # include "../model.h"
+# include "../built_in/built_in.h"
 
 t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
 int			ft_pipeline_lstsize(t_pipeline *pipeline_lst);
