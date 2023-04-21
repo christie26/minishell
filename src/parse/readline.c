@@ -97,49 +97,40 @@ void expand_from_env(char **str)
 int	is_expandable(char *word)
 {
 	char *expand_idf;
-	char *open_brace;
 
 	expand_idf = ft_strchr(word, '$');
-	open_brace = '\0';
-	if (expand_idf && ft_strlen(expand_idf) > 1) // 확장 표시자가 있고, 뒤에 변수이름으로 간주될수있는 추가 단어가 있다면, 일단 괄호와 따옴표는 모두 짝이 맞춰져있다는 전제
+	if (expand_idf) // 확장 표시자가 있고, 뒤에 변수이름으로 간주될수있는 추가 단어가 있다면, 일단 괄호와 따옴표는 모두 짝이 맞춰져있다는 전제
 	{
-		open_brace = (*(expand_idf + 1) == '{'); // 중괄호 사용여부
-		// 중괄호를 사용했다면 중괄호가 닫힐때까지 읽어본다
-		// 도중에 알파벳이 아닌 다른 문자가 있다면 에러
-		// 중괄호를 사용했다면 알파벳이 아닌 다른 문자가 나올때까지
-		// 이름으로 해석한다
-		char *str = expand_idf + open_brace + 1;
-		if (open_brace)
-		{
-			while (*str)
-			{
-				if (!ft_isalpha(*str))
-				{
-					if (*str != '}')
-						return (1);
-					else
-						return (0);
-				}
-				str++;
-			}
-		}
-		else
-		{
-			while (*str && !ft_isalpha(*str))
-				str++;
+		if (ft_isalnum(*(expand_idf + 1)) || *(expand_idf + 1) == '{')
 			return (1);
-		}
-		while (*str)
-		{
-			if (!ft_isalpha(*str))
-			{
-				if (!open_brace || open_brace && *str == '}')
-					return (1);
-			}
-			str++;
-		}
+		/*
+
+			중괄호를 사용하여 변수이름을 제한하는 경우
+			중괄호 안에 다른 특수문자가 있으면 에러가 발생
+			이 함수는 단순히 확장 가능한지에 대해서만 체크하므로
+			단순 $표시인지 확장표시인지에 대해서만 체크하고
+			변수 이름을 추출해내는 함수에서 에러처리...?
+
+			확장가능한데 변수 이름을 추출하지 못했다면
+			에러라고 봐도 되지 않을까...
+
+			- 달러문자를 찾는다
+			- 다음문자가 뭔지 본다
+			- 중괄호라면 OK, 아니라면 확장하지 않음 (달러 그대로 표시됨)
+			즉 달러 다음문자가 알파벳+숫자거나 중괄호라면 OK
+
+			여기서는 확장을 할지 그대로 표시할지에 대해서만 검사한다
+
+			아니면 여기서 '확장가능, 불가능, 에러' 를 확인할것인지...?
+
+		*/
 	}
 	return (0);
+}
+
+char *get_key_from_word(char *word)
+{
+	//
 }
 
 void expand_check(t_list *tokens, char **my_env)
