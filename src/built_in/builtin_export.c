@@ -9,29 +9,40 @@ int	check_input(char *input)
 	count = 0;
 	if (!input)
 		return (ft_err_msg(1, "No input", __FILE__, __LINE__));
+	if (input[0] == '=')
+		return (ft_err_msg(1, "not a valid identifier", __FILE__, __LINE__));
 	while (input[i])
 	{
 		if (input[i] == '=')
 			count++;
 		i++;
 	}
-	// "=" error 
 	if (count != 1)
 		return (ft_err_msg(1, "Invalid input", __FILE__, __LINE__));
 	return (0);
 }
 
-// void	update_myvar(char **new_env)
-// {
-// 	free(my_env);
-// 	my_env = new_env;
-// }
+int	key_exist(char *key, t_data *data, int len)
+{
+	int		index_env;
+	char	**env;
+
+	env = data->my_env;
+	index_env = 0;
+	while (env[index_env])
+	{
+		if (!ft_strncmp(key, env[index_env], len) && env[index_env][len] == '=')
+			return (index_env);
+		index_env++;
+	}
+	return (-1);
+}
 
 int	if_key_exist(char *key_value, t_data *data)
 {
-	int		i;
-	int		index_env;
 	char	**env;
+	int		index_env;
+	int		i;
 
 	env = data->my_env;
 	i = 0;
@@ -41,21 +52,17 @@ int	if_key_exist(char *key_value, t_data *data)
 			break ;
 		i++;
 	}
-	index_env = 0;
-	while (env[index_env])
+	index_env = key_exist(key_value, data, i);
+	if (index_env != -1)
 	{
-		if (!ft_strncmp(key_value, env[index_env], i + 1))
-		{
-			free(env[index_env]);
-			env[index_env] = key_value;
-			return (1);
-		}
-		index_env++;
+		free(env[index_env]);
+		env[index_env] = key_value;
+		return (1);
 	}
 	return (0);
 }
 
-void	add_var_update(char *key_value, t_data *data)
+void	add_variable(char *key_value, t_data *data)
 {
 	char	**env;
 	char	**new_env;
@@ -80,16 +87,8 @@ void	add_var_update(char *key_value, t_data *data)
 	new_env[i] = ft_strdup(key_value);
 	ft_err_msg_exit(!new_env[i], MALLOC_ERROR, __FILE__, __LINE__);
 	new_env[i + 1] = 0;
-	// free(env);
 	data->my_env = new_env;
-}
-
-int count_var(char **env)
-{
-	int i = 0;
-	while (env[i])
-		i++;
-	return (i);
+	free(env);
 }
 
 int	ft_export(char **options, t_data *data)
@@ -97,17 +96,6 @@ int	ft_export(char **options, t_data *data)
 	options++;
 	if (check_input(*options))
 		return (1);
-	printf("var = %d\n", count_var(data->my_env));
-	add_var_update(*options, data);
-	printf("var = %d\n", count_var(data->my_env));
-	return (0);
-}
-
-int	ft_unset(char *cmd, char **options, char **env)
-{
-	printf("execute unset\n");
-	(void)(cmd);
-	(void)(options);
-	(void)(env);
+	add_variable(*options, data);
 	return (0);
 }

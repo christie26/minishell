@@ -49,7 +49,7 @@ void	heredoc_open(t_redirect *redirect)
 	size_t	len;
 
 	tmp_file = random_name();
-	ft_err_msg_exit(!tmp_file, "Fail to find random file name", __FILE__, __LINE__);
+	ft_err_msg_exit(!tmp_file, TMP_FILE_ERROR, __FILE__, __LINE__);
 	fd = open(tmp_file, O_CREAT | O_WRONLY, 0644);
 	ft_err_sys(fd == -1, __FILE__, __LINE__);
 	len = ft_strlen(redirect->filename);
@@ -67,7 +67,6 @@ void	heredoc_open(t_redirect *redirect)
 	redirect->filename = tmp_file;
 }
 
-//여러개 들어오면 하나씩 처리 
 void	heredoc_center(t_pipeline *pipeline)
 {
 	t_redirect	*redirect;
