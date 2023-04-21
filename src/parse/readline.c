@@ -99,7 +99,7 @@ int	is_expandable(char *word)
 	char *check;
 
 	check = ft_strchr(word, '$');
-	if (check == NULL || !ft_isalnum(*(check + 1)))
+	if (check == NULL || (!ft_isalnum(*(check + 1)) && *(check + 1) != '{')) // 여는 중괄호가 아닌 특수문자
 		return (0);
 	return (1);
 }
@@ -126,9 +126,20 @@ void expand_check(t_list *tokens, char **my_env)
 			word = ft_strchr(word, '$');
 			pre_word = ft_substr(substr_offset, 0, word - substr_offset);
 
-			substr_offset = ++word;
+			int brace = (*(++word) == '{');
+			word += brace;
+			substr_offset = word;
+			
 			while (ft_isalnum(*word))
 				word++;
+
+			if (brace && (*word != '}' || word - substr_offset == 0))
+			{
+				free(pre_word);
+				ft_printf("bad substitution\n");
+				exit(1);
+			}
+			
 			char *key = ft_substr(substr_offset, 0, word - substr_offset);
 			expanded_word = get_value(key, my_env);
 			free(key);
@@ -136,6 +147,7 @@ void expand_check(t_list *tokens, char **my_env)
 			if (!expanded_word)
 				expanded_word = ft_strdup("");
 
+			word += brace;
 			substr_offset = word;
 			while (*word)
 				word++;
