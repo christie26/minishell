@@ -465,8 +465,8 @@ int main(int argc, char *argv[], char *envp[])
 		pipeline_list = my_parse(res, data.my_env);
 		// expand_check(pipeline_list);
 
-		print_tree(pipeline_list);
-		// mini_execute(pipeline_list, &data);
+		// print_tree(pipeline_list);
+		mini_execute(pipeline_list, &data);
 
 		free(res);
 		// while (*res)

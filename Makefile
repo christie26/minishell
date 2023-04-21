@@ -1,5 +1,5 @@
 # all file
-SRCS_EXEC		=	#mini_exec.c \
+SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
 					utils.c \
 					child_parent.c \
