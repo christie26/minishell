@@ -186,6 +186,7 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 	size_t cnt = 0;
 	size_t idx = 0;
 	t_list *cur_token;
+	t_list *next_token;
 
 	if (!tokens || !*tokens)
 		return;
@@ -205,9 +206,10 @@ void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
 	cur_token = *tokens;
 	while (idx < cnt)
 	{
+		next_token = cur_token->next;
 		(*cmd_block)->cmd[idx++] = (char *)(cur_token->content);
 		ft_lstdel_node(tokens, cur_token, NULL); // 문자열이 cmd안에서 쓰여야 하니 살려둔다
-		cur_token = cur_token->next;
+		cur_token = next_token;
 	}
 }
 
@@ -229,20 +231,20 @@ t_cmd_block *create_cmd_block(t_list **tokens)
 	return (new_cmd_block);
 }
 
-void expand_from_env(char **str)
-{
-	char *var_key;
-	char *substr_offset;
+// void expand_from_env(char **str)
+// {
+// 	char *var_key;
+// 	char *substr_offset;
 
-	var_key = ft_strchr(*str, '$');
-	while (var_key)
-	{
-		substr_offset = ++var_key;
-		while (ft_isalpha(*var_key))
-			var_key++;
-		var_key = ft_strchr(*str, '$');
-	}
-}
+// 	var_key = ft_strchr(*str, '$');
+// 	while (var_key)
+// 	{
+// 		substr_offset = ++var_key;
+// 		while (ft_isalpha(*var_key))
+// 			var_key++;
+// 		var_key = ft_strchr(*str, '$');
+// 	}
+// }
 
 // void expand_check(t_pipeline *pipeline_list)
 // {
@@ -418,7 +420,10 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	create_tokens(&tokens, str);
 	if (!tokens)
 		return (NULL); // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
-	expand_check(tokens, my_env);
+	ft_lstiter(tokens, print_tokens);
+	// expand_check(tokens, my_env);
+	(void)my_env;
+
 	while (1)
 	{
 		t_pipeline *new_pipeline;
@@ -467,8 +472,8 @@ int main(int argc, char *argv[], char *envp[])
 		pipeline_list = my_parse(res, data.my_env);
 		// expand_check(pipeline_list);
 
-		// print_tree(pipeline_list);
-		mini_execute(pipeline_list, &data);
+		print_tree(pipeline_list);
+		// mini_execute(pipeline_list, &data);
 
 		free(res);
 		// while (*res)
