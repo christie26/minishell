@@ -5,5 +5,6 @@
 # define MALLOC_ERROR "Fail to malloc"
 # define CMD_ERROR "command not found"
 # define HOME_ERROR "Home not set"
+# define TMP_FILE_ERROR "Fail to make tmp file"
 
 #endif

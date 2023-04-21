@@ -28,7 +28,7 @@ int	ft_builtin(char	**argv, t_data *data)
 	else if (!ft_strcmp(cmd, "export"))
 		return (ft_export(argv, data));
 	else if (!ft_strcmp(cmd, "unset"))
-		return (ft_unset(cmd, argv, env));
+		return (ft_unset(argv, data));
 	else if (!ft_strcmp(cmd, "env"))
 		return (ft_env(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "exit"))

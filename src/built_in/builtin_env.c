@@ -19,11 +19,9 @@ char	**get_env(char **env)
 		if (!ft_strncmp(env[j], "?=", 2))
 		{
 			j++;
-			continue;
+			continue ;
 		}
-		tmp_env[i] = env[j];
-		i++;
-		j++;
+		tmp_env[i++] = env[j++];
 	}
 	tmp_env[i] = 0;
 	tmp_env[j] = 0;
@@ -56,6 +54,7 @@ char	*get_value(char *key, char **env)
 {
 	char	*env_line;
 	char	*test_key;
+	char	*value;
 	int		i;
 
 	while (*env)
@@ -69,12 +68,16 @@ char	*get_value(char *key, char **env)
 		if (ft_strcmp(test_key, key) == 0)
 		{
 			free(test_key);
-			return (ft_substr(env_line, i + 1, ft_strlen(env_line)));
+			value = ft_substr(env_line, i + 1, ft_strlen(env_line));
+			ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
+			return (value);
 		}
 		free(test_key);
 		env++;
 	}
-	return (0);
+	value = ft_strdup("");
+	ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
+	return (value);
 }
 
 int	ft_env(char *cmd, char **options, char **env)

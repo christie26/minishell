@@ -12,7 +12,8 @@ SRCS_PARSE		=	readline.c \
 
 SRCS_BUILT		=	builtin_center.c \
 					builtin_func1.c \
-					builtin_func2.c \
+					builtin_export.c \
+					builtin_unset.c \
 					builtin_env.c
 
 # add path as their usage
