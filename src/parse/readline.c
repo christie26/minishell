@@ -403,6 +403,23 @@ void expand_check(t_list *tokens, char **my_env)
 	}
 }
 
+void quote_removal()
+{
+	/*
+	
+		export a="123 456""789 abc"
+
+		cat $a -> cat 123 456789 abc
+		cat "$a" -> cat "123 456789 abc"
+
+		마지막에 표시할때도 가장 겉의 따옴표를 없애야 하는데
+		입력받을때도 따옴표로 붙어있던애들은 같이 받아줘야함...
+		대체 어느타이밍에서 따옴표를 지워야 하는지?
+		
+
+	*/
+}
+
 /*
 
 	따옴표가 열려있으면 짝맞추기를 안해도됨?
