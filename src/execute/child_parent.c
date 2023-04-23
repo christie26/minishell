@@ -4,19 +4,11 @@ void	ft_execute(char **options, t_data *data)
 {
 	char	*cmd;
 
-	cmd = ft_strdup(options[0]);
-	ft_err_msg_exit(!cmd, MALLOC_ERROR, __FILE__, __LINE__);
+	cmd = options[0];
 	if (is_builtin(cmd))
 		exit(ft_builtin(options, data));
 	else
 	{
-		cmd = check_access(cmd, data->path);
-		if (!cmd)
-		{
-			ft_err_msg(1, CMD_ERROR, __FILE__, __LINE__);
-			short_exit_status = 127;
-			return ;
-		}
 		if (execve(cmd, options, get_env(data->my_env)) == -1)
 			ft_err_sys_exit(1, __FILE__, __LINE__);
 	}
