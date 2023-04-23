@@ -45,6 +45,7 @@ t_pipeline	*my_parse(char *str, char **my_env)
 		return (NULL); // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
 	// ft_lstiter(tokens, print_tokens);
 	expand_check(tokens, my_env);
+	quote_remove_check(tokens);
 	(void)my_env;
 
 	while (1)

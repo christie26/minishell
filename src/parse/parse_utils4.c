@@ -96,7 +96,6 @@ void expand_check(t_list *tokens, char **my_env)
 			tokens->content = result;
 			
 		}
-		tokens->content = quote_removal(tokens->content);
 		tokens = tokens->next;
 	}
 
@@ -106,71 +105,158 @@ void expand_check(t_list *tokens, char **my_env)
 	// 거의 모든 연산들이 한글자씩 순서대로 읽어나가면서 처리하는듯한 그림이 그려진다
 }
 
-char *quote_removal(char *str)
+void quote_remove_check(t_list *tokens)
 {
-	/*
-	
-		export a="123 456""789 abc"
+	while (tokens)
+	{
+		quote_removal(tokens);
+		tokens = tokens->next;
+	}
+}
 
-		cat $a -> cat 123 456789 abc
-		cat "$a" -> cat "123 456789 abc"
-
-		마지막에 표시할때도 가장 겉의 따옴표를 없애야 하는데
-		입력받을때도 따옴표로 붙어있던애들은 같이 받아줘야함...
-		대체 어느타이밍에서 따옴표를 지워야 하는지?
-
-	*/
-
+void quote_removal(t_list *token)
+{
+	char *str = token->content;
 	char open_quote;
-	size_t len = 0;
-
+	
 	open_quote = 0;
 	char *serch = str;
+	int word_cnt = 0;
 
+	while (*serch && !open_quote && is_blank(*serch))
+		serch++;
 	while (*serch)
 	{
-		if (!open_quote && is_blank(*serch))
-			break;
-		else if (!open_quote && is_quote(*serch))
+		while (*serch && (open_quote || !is_blank(*serch)))
 		{
-			open_quote = *serch;
+			if (!open_quote && is_quote(*serch))
+				open_quote = *serch;
+			else if (open_quote && (open_quote == *serch))
+				open_quote = 0;
 			serch++;
 		}
-		else if (open_quote && (open_quote == *serch))
-		{
-			open_quote = 0;
+		while (*serch && !open_quote && is_blank(*serch))
 			serch++;
-		}
-		else
-		{
-			len++;
-			serch++;
-		}
+
+		word_cnt++;
 	}
+	// ft_printf("word cnt: %d\n", word_cnt);
 
-	char *result = ft_calloc(1, len + 1);
+	//-------------------
 
-	open_quote = 0;
-	serch = str;
-	char *result_ptr = result;
+	char **words = malloc(sizeof(char *) * word_cnt);
 
-	while (*serch)
-	{
-		if (!open_quote && is_blank(*serch))
-			break;
-		else if (!open_quote && is_quote(*serch))
-		{
-			open_quote = *serch;
-			serch++;
-		}
-		else if (open_quote && (open_quote == *serch))
-		{
-			open_quote = 0;
-			serch++;
-		}
-		else
-			*result_ptr++ = *serch++;
-	}
+	size_t len;
+	int i = 0;
+
 	
-	return (result);
+	while (i < word_cnt)
+	{
+		serch = str;
+		len = 0;
+		open_quote = 0;
+		
+		while (*serch && (!open_quote && is_blank(*serch)))
+			serch++;
+		
+		while (*serch)
+		{
+			while (*serch && (!open_quote && is_blank(*serch)))
+				break;
+			
+			if (!open_quote && is_quote(*serch))
+			{
+				open_quote = *serch;
+				serch++;
+			}
+			else if (open_quote && (open_quote == *serch))
+			{
+				open_quote = 0;
+				serch++;
+			}
+			else
+			{
+				len++;
+				serch++;
+			}
+		}
+
+		char *result = ft_calloc(1, len + 1);
+
+		open_quote = 0;
+		char *result_ptr = result;
+
+		while (*str && (!open_quote && is_blank(*serch)))
+			str++;
+		
+		while (*str)
+		{
+			if (!open_quote && is_blank(*str))
+				break;
+			else if (!open_quote && is_quote(*str))
+			{
+				open_quote = *str;
+				str++;
+			}
+			else if (open_quote && (open_quote == *str))
+			{
+				open_quote = 0;
+				str++;
+			}
+			else
+				*result_ptr++ = *str++;
+		}
+
+		words[i] = result;
+		// ft_printf("words[%d]: %s\n", i, words[i]);
+		++i;
+
+		while (*str && (!open_quote && is_blank(*str)))
+			str++;
+	}
+
+	// free(token->content);
+	token->content = words[0];
+
+	if (word_cnt > 1)
+	{
+		i = 1;
+		while (i < word_cnt)
+		{
+			t_list *next_token = token->next;
+			t_list *new_token;
+			new_token = ft_lstnew(words[i++]);
+			token->next = new_token;
+			new_token->next = next_token;
+			token = new_token;
+		}
+	}
+
+	/*
+	
+		아직은 따옴표 제거도중 하나의 단어만 골라내게 만듬
+		따옴표 제거후 여러 토큰으로 나뉜다면 어떤식으로 추가수정할것인지?
+		우선 get_word_token의 활용방안을 모색한다
+
+		node1 - node2 - node3
+
+		위와 같은 구조에서 node2에서 따옴표 제거가 이루어지고
+		토큰의 수에 변동이 생겼다고 가정한다면 (word splitting)
+		
+		node1 - node2 (word1) (word2) (word3) - node3
+
+		node2의 content는 word1가 대체하고
+		추가로 word가 필요한만큼 node들을 만들어서 연결후
+		node2의 next 였던 node3를 잘 연결시켜준다...?
+
+		node1 - node2 - word2 - word3 - node3
+
+		그냥 get_word_token써서 리스트 쭉 뽑아내고
+		첫번째꺼만 content 교체후 free하고 나머지는 이어붙여주기? <-- 이게 더 나아보임
+		content 교체후 next가 null인지 체크하면 될것같음
+
+		get_word_token은 따옴표를 제거하지 않는다...
+
+	*/
+	
 }

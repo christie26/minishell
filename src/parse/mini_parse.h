@@ -39,7 +39,8 @@ t_cmd_block *create_cmd_block(t_list **tokens);
 // parse_utils4.c
 int	is_expandable(char *word);
 void expand_check(t_list *tokens, char **my_env);
-char *quote_removal(char *str);
+void quote_remove_check(t_list *tokens);
+void quote_removal(t_list *token);
 
 // pipeline_list_utils.c
 t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
