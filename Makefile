@@ -7,6 +7,10 @@ SRCS_EXEC		=	mini_exec.c \
 					heredoc.c
 
 SRCS_PARSE		=	readline.c \
+					parse_utils1.c \
+					parse_utils2.c \
+					parse_utils3.c \
+					parse_utils4.c \
 					pipeline_list_utils.c \
 					redirect_list_utils.c
 
