@@ -49,14 +49,14 @@ void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 	}
 	else if (i == data->process_number - 1)
 	{
+		ft_close(p_fd[0], __FILE__, __LINE__);
 		ft_close(p_fd[1], __FILE__, __LINE__);
-		ft_close(data->prev_fd, __FILE__, __LINE__);
-		data->prev_fd = p_fd[0];
 	}
 	else
 	{
-		ft_close(p_fd[0], __FILE__, __LINE__);
 		ft_close(p_fd[1], __FILE__, __LINE__);
+		ft_close(data->prev_fd, __FILE__, __LINE__);
+		data->prev_fd = p_fd[0];
 	}
 	data->pid_set[i] = cpid;
 }

@@ -54,6 +54,8 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 			child_process(data, pipeline, p_fd, i);
 		else
 			parent_process(data, p_fd, i, cpid);
+		if (short_exit_status == 127)
+			return ;
 		pipeline = pipeline->next;
 	}
 	i = -1;
@@ -71,7 +73,14 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	ft_err_msg_exit(!data->pid_set, MALLOC_ERROR, __FILE__, __LINE__);
 	heredoc_center(pipeline);
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
+	{
+		int saved_stdin = dup(STDIN_FILENO);
+		int saved_stdout = dup(STDOUT_FILENO);
+		redirection_center(pipeline->cmd_block->redirect);
 		set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
+		dup2(saved_stdin, STDIN_FILENO);
+		dup2(saved_stdout, STDOUT_FILENO);
+	}
 	else
 		execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
