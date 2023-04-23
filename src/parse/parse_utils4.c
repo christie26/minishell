@@ -96,6 +96,7 @@ void expand_check(t_list *tokens, char **my_env)
 			tokens->content = result;
 			
 		}
+		tokens->content = quote_removal(tokens->content);
 		tokens = tokens->next;
 	}
 
@@ -105,7 +106,7 @@ void expand_check(t_list *tokens, char **my_env)
 	// 거의 모든 연산들이 한글자씩 순서대로 읽어나가면서 처리하는듯한 그림이 그려진다
 }
 
-void quote_removal()
+char *quote_removal(char *str)
 {
 	/*
 	
@@ -117,7 +118,59 @@ void quote_removal()
 		마지막에 표시할때도 가장 겉의 따옴표를 없애야 하는데
 		입력받을때도 따옴표로 붙어있던애들은 같이 받아줘야함...
 		대체 어느타이밍에서 따옴표를 지워야 하는지?
-		
 
 	*/
+
+	char open_quote;
+	size_t len = 0;
+
+	open_quote = 0;
+	char *serch = str;
+
+	while (*serch)
+	{
+		if (!open_quote && is_blank(*serch))
+			break;
+		else if (!open_quote && is_quote(*serch))
+		{
+			open_quote = *serch;
+			serch++;
+		}
+		else if (open_quote && (open_quote == *serch))
+		{
+			open_quote = 0;
+			serch++;
+		}
+		else
+		{
+			len++;
+			serch++;
+		}
+	}
+
+	char *result = ft_calloc(1, len + 1);
+
+	open_quote = 0;
+	serch = str;
+	char *result_ptr = result;
+
+	while (*serch)
+	{
+		if (!open_quote && is_blank(*serch))
+			break;
+		else if (!open_quote && is_quote(*serch))
+		{
+			open_quote = *serch;
+			serch++;
+		}
+		else if (open_quote && (open_quote == *serch))
+		{
+			open_quote = 0;
+			serch++;
+		}
+		else
+			*result_ptr++ = *serch++;
+	}
+	
+	return (result);
 }
