@@ -35,6 +35,7 @@ void	create_tokens(t_list **tokens, char *str);
 void get_redirections(t_list **tokens, t_cmd_block **cmd_block);
 void get_cmds(t_list **tokens, t_cmd_block **cmd_block);
 t_cmd_block *create_cmd_block(t_list **tokens);
+void free_cmd_block(t_cmd_block *cmd_block);
 
 // parse_utils4.c
 int	is_expandable(char *word);
