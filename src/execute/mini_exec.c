@@ -13,28 +13,33 @@ int	get_process_number(t_pipeline *pipeline)
 	return (i);
 }
 
-int	get_short_exit(int exit_status)
+int	cmd_valid_check(t_pipeline *pipeline, t_data *data)
 {
-	if (WIFEXITED(exit_status))
-		short_exit_status = WEXITSTATUS(exit_status);
-	else if (WIFSIGNALED(exit_status))
-		short_exit_status = WTERMSIG(exit_status);
-	else
-		short_exit_status = WSTOPSIG(exit_status);
-	return (short_exit_status);
-}
+	int 	i;
+	char	*cmd;
 
-void	set_exit_status(t_data *data, int short_exit_status)
-{
-	char	*value;
-	char	*key_value;
-
-	value = ft_itoa(short_exit_status);
-	ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
-	key_value = ft_strjoin("?=", value);
-	free(value);
-	ft_err_msg_exit(!key_value, MALLOC_ERROR, __FILE__, __LINE__);
-	add_variable(key_value, data);
+	i = 0;
+	while (i < data->process_number)
+	{
+		cmd = pipeline->cmd_block->cmd[0];
+		if (is_builtin(cmd))
+		{
+			i++;
+			pipeline = pipeline->next;
+			continue ;
+		}
+		cmd = check_access(cmd, data->path);
+		if (!cmd)
+		{
+			ft_err_msg(1, CMD_ERROR, __FILE__, __LINE__);
+			short_exit_status = 127;
+			return (1);
+		}
+		pipeline->cmd_block->cmd[0] = cmd;
+		i++;
+		pipeline = pipeline->next;
+	}
+	return (0);		
 }
 
 void	execute_center(t_data *data, t_pipeline *pipeline)
@@ -45,6 +50,8 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = -1;
+	if (cmd_valid_check(pipeline, data))
+		return ;
 	while (++i < data->process_number)
 	{
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
