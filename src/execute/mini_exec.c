@@ -50,8 +50,8 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = -1;
-	if (cmd_valid_check(pipeline, data))
-		return ;
+	// if (cmd_valid_check(pipeline, data))
+		// return ;
 	while (++i < data->process_number)
 	{
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);

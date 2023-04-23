@@ -9,7 +9,7 @@ int	ft_cd(char *cmd, char **options, char **env)
 	if (!*options || !ft_strcmp(*options, "~"))
 	{
 		home = get_value("HOME", env);
-		if (!home)
+		if (!ft_strcmp(home, ""))
 			return (ft_err_msg(1, HOME_ERROR, __FILE__, __LINE__));
 		return_value = ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
 		free(home);
