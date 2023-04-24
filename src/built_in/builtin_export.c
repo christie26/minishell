@@ -95,9 +95,20 @@ void	add_variable(char *key_value, t_data *data)
 
 int	ft_export(char **options, t_data *data)
 {
+	int	return_value;
+
+	return_value = 0;
 	options++;
-	if (check_input(*options))
-		return (1);
-	add_variable(*options, data);
-	return (0);
+	while (*options)
+	{
+		if (check_input(*options))
+		{
+			options++;
+			return_value = 1;
+			continue ;
+		}
+		add_variable(*options, data);
+		options++;
+	}
+	return (return_value);
 }
