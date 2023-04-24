@@ -20,7 +20,7 @@ int	ft_builtin(char	**argv, t_data *data)
 	cmd = argv[0];
 	env = data->my_env;
 	if (!ft_strcmp(cmd, "echo"))
-		return (ft_echo(cmd, argv, env));
+		return (ft_echo(argv, env));
 	else if (!ft_strcmp(cmd, "cd"))
 		return (ft_cd(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "pwd"))

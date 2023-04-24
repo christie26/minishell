@@ -42,6 +42,7 @@ int	if_key_exist(char *key_value, t_data *data)
 {
 	char	**env;
 	int		index_env;
+	char	*tmp ;
 	int		i;
 
 	env = data->my_env;
@@ -55,8 +56,9 @@ int	if_key_exist(char *key_value, t_data *data)
 	index_env = key_exist(key_value, data, i);
 	if (index_env != -1)
 	{
-		free(env[index_env]);
+		tmp = env[index_env];
 		env[index_env] = key_value;
+		free(tmp);
 		return (1);
 	}
 	return (0);

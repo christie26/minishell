@@ -13,35 +13,6 @@ int	get_process_number(t_pipeline *pipeline)
 	return (i);
 }
 
-int	cmd_valid_check(t_pipeline *pipeline, t_data *data)
-{
-	int 	i;
-	char	*cmd;
-
-	i = 0;
-	while (i < data->process_number)
-	{
-		cmd = pipeline->cmd_block->cmd[0];
-		if (is_builtin(cmd))
-		{
-			i++;
-			pipeline = pipeline->next;
-			continue ;
-		}
-		cmd = check_access(cmd, data->path);
-		if (!cmd)
-		{
-			ft_err_msg(1, CMD_ERROR, __FILE__, __LINE__);
-			short_exit_status = 127;
-			return (1);
-		}
-		pipeline->cmd_block->cmd[0] = cmd;
-		i++;
-		pipeline = pipeline->next;
-	}
-	return (0);		
-}
-
 void	execute_center(t_data *data, t_pipeline *pipeline)
 {
 	int		i;
@@ -50,8 +21,6 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = -1;
-	// if (cmd_valid_check(pipeline, data))
-		// return ;
 	while (++i < data->process_number)
 	{
 		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
@@ -74,6 +43,9 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 
 int	mini_execute(t_pipeline *pipeline, t_data *data)
 {
+	int	saved_stdin;
+	int	saved_stdout;
+
 	data->process_number = get_process_number(pipeline);
 	data->path = get_path(data->my_env);
 	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
@@ -81,8 +53,8 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	heredoc_center(pipeline);
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
 	{
-		int saved_stdin = dup(STDIN_FILENO);
-		int saved_stdout = dup(STDOUT_FILENO);
+		saved_stdin = dup(STDIN_FILENO);
+		saved_stdout = dup(STDOUT_FILENO);
 		redirection_center(pipeline->cmd_block->redirect);
 		set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
 		dup2(saved_stdin, STDIN_FILENO);
