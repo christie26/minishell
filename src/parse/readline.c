@@ -43,8 +43,57 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	create_tokens(&tokens, str);
 	if (!tokens)
 		return (NULL); // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
+
+	t_list		*tokens_iter = tokens;
+	int is_here_doc = 0;
+	while (tokens_iter)
+	{
+
+		if (ft_strcmp(tokens_iter->content, "<") == 0 || ft_strcmp(tokens_iter->content, "<<") == 0 || \
+		ft_strcmp(tokens_iter->content, ">") == 0 || ft_strcmp(tokens_iter->content, ">>") == 0 || \
+		ft_strcmp(tokens_iter->content, "|") == 0)
+		{
+			is_here_doc = (ft_strcmp(tokens_iter->content, "<<") == 0);
+			tokens_iter = tokens_iter->next;
+			continue;
+		}
+		if (is_here_doc)
+		{
+			is_here_doc = 0;
+			tokens_iter = tokens_iter->next;
+			continue;
+		}
+
+		char *content = get_expanded_string(tokens_iter->content, my_env);;
+		if (tokens_iter == NULL)
+		{
+			ft_lstclear(&tokens, free);
+			ft_pipeline_lstclear(&pipe_list);
+			return (NULL);
+		}
+		free(tokens_iter->content);
+		tokens_iter->content = content;
+		tokens_iter = tokens_iter->next;
+	}
+
 	// ft_lstiter(tokens, print_tokens);
-	expand_check(tokens, my_env);
+
+	// 확장 후 따옴표가 없는 확장결과에 대해서 추가 분할이 이루어지는지?
+	// 이 부분이 제일 까다로울수 있다, 토큰으로써 추가하면 next를 타고들어갈때
+	// 분할로 추가된 내부 word를 다시 추가로 확장할수있음;
+	// 이미 확장이 이루어진 결과물에 대해서는 추가로 확장하지 않는다!
+
+	tokens_iter = tokens;
+	while (tokens_iter)
+	{
+		char *content = get_quote_removed_string(tokens_iter->content);;
+		free(tokens_iter->content);
+		tokens_iter->content = content;
+		tokens_iter = tokens_iter->next;
+	}
+
+	// ft_lstiter(tokens, print_tokens);
+
 	(void)my_env;
 
 	while (1)
@@ -88,16 +137,20 @@ int main(int argc, char *argv[], char *envp[])
 	(void)envp;
 
 	data.my_env = init_envp(envp);
+	set_exit_status(&data, 0);
     while (1)
     {
 		res = readline("yo shell$ ");
 
 		pipeline_list = my_parse(res, data.my_env);
-		add_history(res); // 나중에 유효성검사후 추가 삭제 제어를 검토할것
+		if (pipeline_list)
+		{
+			add_history(res); // 나중에 유효성검사후 추가 삭제 제어를 검토할것
 
-		// print_tree(pipeline_list);
-		mini_execute(pipeline_list, &data);
+			// print_tree(pipeline_list);
 
+			mini_execute(pipeline_list, &data);
+		}
 		free(res);
 		// while (*res)
 			// ft_printf("c: %d\n", *res++);
