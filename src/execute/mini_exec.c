@@ -68,7 +68,7 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	data->path = get_path(data->my_env);
 	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
 	ft_err_msg_exit(!data->pid_set, MALLOC_ERROR, __FILE__, __LINE__);
-	heredoc_center(pipeline);
+	heredoc_center(pipeline, data->my_env);
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
 		only_builtin(data, pipeline);
 	else
