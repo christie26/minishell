@@ -11,6 +11,7 @@ SRCS_PARSE		=	readline.c \
 					parse_utils2.c \
 					parse_utils3.c \
 					parse_utils4.c \
+					parse_utils5.c \
 					pipeline_list_utils.c \
 					redirect_list_utils.c
 

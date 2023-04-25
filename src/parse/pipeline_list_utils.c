@@ -67,7 +67,7 @@ void	ft_pipeline_lstclear(t_pipeline **pipeline_lst)
 		while (cur_pipeline)
 		{
 			next_pipeline = cur_pipeline->next;
-			// cur_pipeline->cmd_block;// cmd_block free 함수
+			free_cmd_block(cur_pipeline->cmd_block);
 			free(cur_pipeline);
 			cur_pipeline = next_pipeline;
 		}

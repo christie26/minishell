@@ -96,3 +96,19 @@ t_cmd_block *create_cmd_block(t_list **tokens)
 	}
 	return (new_cmd_block);
 }
+
+void free_cmd_block(t_cmd_block *cmd_block)
+{
+	if (cmd_block->redirect)
+		ft_redirect_lstclear(&cmd_block->redirect);
+	if (cmd_block->cmd)
+	{
+		char **cmds = cmd_block->cmd;
+		while (*cmds)
+		{
+			free(*cmds);
+			cmds++;
+		}
+		free(cmd_block->cmd);
+	}
+}
