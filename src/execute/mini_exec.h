@@ -15,7 +15,7 @@
 # include "../model.h"
 # include "../error.h"
 
-void	heredoc_center(t_pipeline *pipeline);
+void	heredoc_center(t_pipeline *pipeline, char **env);
 void	heredoc_unlink(t_pipeline *pipeline);
 
 // get path
@@ -38,5 +38,8 @@ void	free_path(char **path);
 int		ft_builtin(char **argv, t_data *data);
 int		is_builtin(char *cmd);
 void	add_variable(char *key_value, t_data *data);
+
+// expand part
+char *get_expanded_string(char *str, char **my_env);
 
 #endif

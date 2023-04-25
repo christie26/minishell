@@ -44,9 +44,10 @@ char	*random_name(void)
 	return (0);
 }
 
-void	heredoc_open(t_redirect *redirect)
+void	heredoc_open(t_redirect *redirect, char **env)
 {
 	char	*buf;
+	char	*expanded;
 	char	*tmp_file;
 	int		fd;
 	size_t	len;
@@ -59,8 +60,8 @@ void	heredoc_open(t_redirect *redirect)
 	buf = get_next_line(STDIN_FILENO);
 	while (ft_strncmp(buf, redirect->filename, len) || buf[len] != '\n')
 	{
-		// add expand part here !!
-		if (write(fd, buf, ft_strlen(buf)) == -1)
+		expanded = get_expanded_string(buf, env);
+		if (write(fd, expanded, ft_strlen(expanded)) == -1)
 			ft_err_sys(1, __FILE__, __LINE__);
 		free(buf);
 		buf = get_next_line(STDIN_FILENO);
@@ -70,7 +71,7 @@ void	heredoc_open(t_redirect *redirect)
 	redirect->filename = tmp_file;
 }
 
-void	heredoc_center(t_pipeline *pipeline)
+void	heredoc_center(t_pipeline *pipeline, char **env)
 {
 	t_redirect	*redirect;
 
@@ -80,7 +81,7 @@ void	heredoc_center(t_pipeline *pipeline)
 		while (redirect)
 		{
 			if (redirect->type == 2)
-				heredoc_open(redirect);
+				heredoc_open(redirect, env);
 			redirect = redirect->next;
 		}
 		pipeline = pipeline->next;
