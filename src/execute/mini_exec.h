@@ -32,6 +32,7 @@ char	**get_env(char **env);
 void	ft_close(int fd, char *file, int line);
 int		get_short_exit(int exit_status);
 void	set_exit_status(t_data *data, int short_exit_status);
+void	free_path(char **path);
 
 // built-in
 int		ft_builtin(char **argv, t_data *data);

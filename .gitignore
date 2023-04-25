@@ -4,4 +4,5 @@ test_and_learn/
 *.a
 .vscode/*
 mini
+minishell
 **/a.out

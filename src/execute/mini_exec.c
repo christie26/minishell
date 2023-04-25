@@ -67,5 +67,6 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	else
 		execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
+	free_path(data->path);
 	return (return_value);
 }

@@ -1,5 +1,18 @@
 #include "./mini_exec.h"
 
+void	free_path(char **path)
+{
+	int i;
+
+	i = 0;
+	while (path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	free(path);
+}
+
 void	ft_close(int fd, char *file, int line)
 {
 	int	ret;

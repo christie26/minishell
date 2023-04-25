@@ -91,6 +91,7 @@ void	add_variable(char *key_value, t_data *data)
 	new_env[i + 1] = 0;
 	data->my_env = new_env;
 	free(env);
+	free(key_value);
 }
 
 int	ft_export(char **options, t_data *data)
