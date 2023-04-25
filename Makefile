@@ -7,11 +7,11 @@ SRCS_EXEC		=	mini_exec.c \
 					heredoc.c
 
 SRCS_PARSE		=	readline.c \
-					parse_utils1.c \
-					parse_utils2.c \
-					parse_utils3.c \
-					parse_utils4.c \
-					parse_utils5.c \
+					parse_simple_check.c \
+					parse_token.c \
+					parse_expand.c \
+					parse_quote_remove.c \
+					parse_tree.c \
 					pipeline_list_utils.c \
 					redirect_list_utils.c
 
@@ -40,7 +40,7 @@ SRCS			:= $(addprefix $(SRC_DIR), $(SRCS))
 OBJS			:= $(SRCS:%.c=%.o)
 
 
-NAME		= ./mini
+NAME		= ./minishell
 LIBFT		= ./libft/libft.a
 
 CC			= cc

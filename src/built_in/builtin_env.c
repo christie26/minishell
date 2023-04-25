@@ -79,9 +79,7 @@ char	*get_value(char *key, char **env)
 int	ft_env(char *cmd, char **options, char **env)
 {
 	int		i;
-	char	**print_env;
 
-	print_env = get_env(env);
 	options++;
 	if (*options)
 	{
@@ -89,12 +87,12 @@ int	ft_env(char *cmd, char **options, char **env)
 		return (127);
 	}
 	i = 0;
-	while (print_env[i])
+	while (env[i])
 	{
-		ft_putendl_fd(print_env[i], 1);
+		if (ft_strncmp(env[i], "?=", 2))
+			ft_putendl_fd(env[i], 1);
 		i++;
 	}
-	free(print_env);
 	(void)(cmd);
 	return (0);
 }

@@ -23,16 +23,19 @@ char	*random_name(void)
 	int		i;
 	int		j;
 
-	tmp_file = (char *)malloc(sizeof(char) * 2);
+	tmp_file = (char *)malloc(sizeof(char) * 16);
 	ft_err_msg_exit(!tmp_file, MALLOC_ERROR, __FILE__, __LINE__);
-	i = '1';
-	while (i++ < '~')
+	tmp_file[0] = 0;
+	ft_strlcat(tmp_file, "/tmp/tmp_file", 14);
+	i = '/';
+	while (i++ < '9')
 	{
-		j = '1';
-		while (j++ < '~')
+		j = '/';
+		while (j++ < '9')
 		{
-			tmp_file[0] = i;
-			tmp_file[1] = j;
+			tmp_file[13] = i;
+			tmp_file[14] = j;
+			tmp_file[15] = 0;
 			if (access(tmp_file, F_OK))
 				return (tmp_file);
 		}

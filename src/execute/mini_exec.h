@@ -25,13 +25,14 @@ char	*check_access(char *cmd, char **path);
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
-void	redirection_center(t_redirect *redirect);
+int		redirection_center(t_redirect *redirect);
 char	**get_env(char **env);
 
 // utils
 void	ft_close(int fd, char *file, int line);
 int		get_short_exit(int exit_status);
 void	set_exit_status(t_data *data, int short_exit_status);
+void	free_path(char **path);
 
 // built-in
 int		ft_builtin(char **argv, t_data *data);
