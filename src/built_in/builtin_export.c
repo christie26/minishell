@@ -57,7 +57,7 @@ int	if_key_exist(char *key_value, t_data *data)
 	if (index_env != -1)
 	{
 		tmp = env[index_env];
-		env[index_env] = key_value;
+		env[index_env] = ft_strdup(key_value);
 		free(tmp);
 		return (1);
 	}
@@ -78,7 +78,7 @@ void	add_variable(char *key_value, t_data *data)
 	while (env[i])
 		i++;
 	number = i;
-	new_env = malloc(sizeof(char *) * (number + 1));
+	new_env = malloc(sizeof(char *) * (number + 2));
 	ft_err_msg_exit(!new_env, MALLOC_ERROR, __FILE__, __LINE__);
 	i = 0;
 	while (i < number)
@@ -91,7 +91,6 @@ void	add_variable(char *key_value, t_data *data)
 	new_env[i + 1] = 0;
 	data->my_env = new_env;
 	free(env);
-	free(key_value);
 }
 
 int	ft_export(char **options, t_data *data)

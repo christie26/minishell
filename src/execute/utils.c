@@ -43,4 +43,5 @@ void	set_exit_status(t_data *data, int short_exit_status)
 	free(value);
 	ft_err_msg_exit(!key_value, MALLOC_ERROR, __FILE__, __LINE__);
 	add_variable(key_value, data);
+	free(key_value);
 }
