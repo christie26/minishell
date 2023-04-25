@@ -1,5 +1,18 @@
 #include "./mini_exec.h"
 
+void	free_path(char **path)
+{
+	int	i;
+
+	i = 0;
+	while (path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	free(path);
+}
+
 void	ft_close(int fd, char *file, int line)
 {
 	int	ret;
@@ -30,4 +43,5 @@ void	set_exit_status(t_data *data, int short_exit_status)
 	free(value);
 	ft_err_msg_exit(!key_value, MALLOC_ERROR, __FILE__, __LINE__);
 	add_variable(key_value, data);
+	free(key_value);
 }

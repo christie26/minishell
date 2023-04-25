@@ -39,7 +39,7 @@ SRCS			:= $(addprefix $(SRC_DIR), $(SRCS))
 OBJS			:= $(SRCS:%.c=%.o)
 
 
-NAME		= ./mini
+NAME		= ./minishell
 LIBFT		= ./libft/libft.a
 
 CC			= cc

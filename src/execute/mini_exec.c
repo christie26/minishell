@@ -41,27 +41,39 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	set_exit_status(data, short_exit_status);
 }
 
-int	mini_execute(t_pipeline *pipeline, t_data *data)
+int	only_builtin(t_data *data, t_pipeline *pipeline)
 {
 	int	saved_stdin;
 	int	saved_stdout;
+	int	return_value;
 
+	return_value = 0;
+	saved_stdin = dup(STDIN_FILENO);
+	saved_stdout = dup(STDOUT_FILENO);
+	if (redirection_center(pipeline->cmd_block->redirect))
+		return_value = 1;
+	else
+		set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	return (return_value);
+}
+
+int	mini_execute(t_pipeline *pipeline, t_data *data)
+{
+	int	return_value;
+
+	return_value = 0;
 	data->process_number = get_process_number(pipeline);
 	data->path = get_path(data->my_env);
 	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
 	ft_err_msg_exit(!data->pid_set, MALLOC_ERROR, __FILE__, __LINE__);
 	heredoc_center(pipeline);
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
-	{
-		saved_stdin = dup(STDIN_FILENO);
-		saved_stdout = dup(STDOUT_FILENO);
-		redirection_center(pipeline->cmd_block->redirect);
-		set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
-		dup2(saved_stdin, STDIN_FILENO);
-		dup2(saved_stdout, STDOUT_FILENO);
-	}
+		only_builtin(data, pipeline);
 	else
 		execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
-	return (0);
+	free_path(data->path);
+	return (return_value);
 }
