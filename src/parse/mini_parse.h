@@ -49,6 +49,10 @@ char *get_expanded_word(char **str, char **my_env);
 char *get_non_expanded_word(char **str);
 char *get_expanded_string(char *str, char **my_env);
 
+// parse_utils5.c
+char *get_word_without_quote(char **str);
+char *get_quote_removed_string(char *str);
+
 // pipeline_list_utils.c
 t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
 int			ft_pipeline_lstsize(t_pipeline *pipeline_lst);
