@@ -45,7 +45,9 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 {
 	int	saved_stdin;
 	int	saved_stdout;
+	int	return_value;
 
+	return_value = 0;
 	data->process_number = get_process_number(pipeline);
 	data->path = get_path(data->my_env);
 	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
@@ -55,13 +57,15 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	{
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
-		redirection_center(pipeline->cmd_block->redirect);
-		set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
+		if (redirection_center(pipeline->cmd_block->redirect))
+			return_value = 1;
+		else
+			set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
 		dup2(saved_stdin, STDIN_FILENO);
 		dup2(saved_stdout, STDOUT_FILENO);
 	}
 	else
 		execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
-	return (0);
+	return (return_value);
 }

@@ -25,7 +25,7 @@ char	*check_access(char *cmd, char **path);
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
-void	redirection_center(t_redirect *redirect);
+int		redirection_center(t_redirect *redirect);
 char	**get_env(char **env);
 
 // utils

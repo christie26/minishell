@@ -23,16 +23,19 @@ char	*random_name(void)
 	int		i;
 	int		j;
 
-	tmp_file = (char *)malloc(sizeof(char) * 2);
+	tmp_file = (char *)malloc(sizeof(char) * 12);
 	ft_err_msg_exit(!tmp_file, MALLOC_ERROR, __FILE__, __LINE__);
-	i = '1';
+	tmp_file[0] = 0;
+	ft_strlcat(tmp_file, "~/goinfre", 12);
+	printf("tmp = %s\n", tmp_file);
+	i = '0';
 	while (i++ < '~')
 	{
-		j = '1';
+		j = '0';
 		while (j++ < '~')
 		{
-			tmp_file[0] = i;
-			tmp_file[1] = j;
+			tmp_file[9] = i;
+			tmp_file[10] = j;
 			if (access(tmp_file, F_OK))
 				return (tmp_file);
 		}

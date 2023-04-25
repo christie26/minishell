@@ -31,10 +31,14 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 			ft_err_sys_exit(1, __FILE__, __LINE__);
 		data->prev_fd = p_fd[0];
 	}
-	redirection_center(pipeline->cmd_block->redirect);
-	ft_close(p_fd[0], __FILE__, __LINE__);
-	ft_close(p_fd[1], __FILE__, __LINE__);
-	ft_execute(pipeline->cmd_block->cmd, data);
+	if (!redirection_center(pipeline->cmd_block->redirect))
+	{
+		ft_close(p_fd[0], __FILE__, __LINE__);
+		ft_close(p_fd[1], __FILE__, __LINE__);
+		ft_execute(pipeline->cmd_block->cmd, data);
+	}
+	else
+		short_exit_status = 1;
 	exit(short_exit_status);
 }
 
