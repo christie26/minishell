@@ -9,7 +9,7 @@ int	ft_cd(char *cmd, char **options, char **env)
 	if (!*options || !ft_strcmp(*options, "~"))
 	{
 		home = get_value("HOME", env);
-		if (!home)
+		if (!ft_strcmp(home, ""))
 			return (ft_err_msg(1, HOME_ERROR, __FILE__, __LINE__));
 		return_value = ft_err_sys(chdir(home) == -1, __FILE__, __LINE__);
 		free(home);
@@ -31,7 +31,7 @@ int	ft_pwd(char *cmd, char **options, char **env)
 	return (0);
 }
 
-int	ft_echo(char *cmd, char **options, char **env)
+int	ft_echo(char **options, char **env)
 {
 	int	endl;
 
@@ -44,6 +44,12 @@ int	ft_echo(char *cmd, char **options, char **env)
 		options++;
 		endl = 0;
 	}
+	// We have to move this to 'expand' part
+	if (!ft_strncmp(*options, "$?", 2))
+	{
+		ft_putstr_fd(get_value("?", env), 1);
+		*options += 2;
+	}
 	while (*options)
 	{
 		ft_putstr_fd(*options, 1);
@@ -53,8 +59,6 @@ int	ft_echo(char *cmd, char **options, char **env)
 	}
 	if (endl)
 		ft_putchar_fd('\n', 1);
-	(void)(cmd);
-	printf("$? = %s\n", get_value("?", env));
 	return (0);
 }
 

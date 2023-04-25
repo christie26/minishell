@@ -9,6 +9,12 @@ void	ft_execute(char **options, t_data *data)
 		exit(ft_builtin(options, data));
 	else
 	{
+		cmd = check_access(cmd, data->path);
+		if (!cmd)
+		{
+			short_exit_status = 127;
+			ft_err_msg_exit(1, CMD_ERROR, __FILE__, __LINE__);
+		}
 		if (execve(cmd, options, get_env(data->my_env)) == -1)
 			ft_err_sys_exit(1, __FILE__, __LINE__);
 	}
@@ -34,15 +40,15 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 {
-	if (i == 0)
-	{
-		ft_close(p_fd[1], __FILE__, __LINE__);
-		data->prev_fd = p_fd[0];
-	}
-	else if (i == data->process_number - 1)
+	if (i == data->process_number - 1)
 	{
 		ft_close(p_fd[0], __FILE__, __LINE__);
 		ft_close(p_fd[1], __FILE__, __LINE__);
+	}
+	else if (i == 0)
+	{
+		ft_close(p_fd[1], __FILE__, __LINE__);
+		data->prev_fd = p_fd[0];
 	}
 	else
 	{

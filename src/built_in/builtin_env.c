@@ -42,14 +42,13 @@ char	**init_envp(char **envp)
 	i = 0;
 	while (i < var_number)
 	{
-		new_env[i] = envp[i];
+		new_env[i] = ft_strdup(envp[i]);
 		i++;
 	}
 	new_env[i] = 0;
 	return (new_env);
 }
 
-// put my_env as parameter here
 char	*get_value(char *key, char **env)
 {
 	char	*env_line;
@@ -60,10 +59,7 @@ char	*get_value(char *key, char **env)
 	while (*env)
 	{
 		env_line = *env;
-		i = -1;
-		while (env_line[++i])
-			if (env_line[i] == '=')
-				break ;
+		i = ft_strchr(env_line, '=') - env_line;
 		test_key = ft_substr(env_line, 0, i);
 		if (ft_strcmp(test_key, key) == 0)
 		{
