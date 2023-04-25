@@ -43,6 +43,12 @@ void expand_check(t_list *tokens, char **my_env);
 void quote_remove_check(t_list *tokens);
 void quote_removal(t_list *token);
 
+char *word_list_join(t_list *word_list);
+char *get_key_from_word(char **str);
+char *get_expanded_word(char **str, char **my_env);
+char *get_non_expanded_word(char **str);
+char *get_expanded_string(char *str, char **my_env);
+
 // pipeline_list_utils.c
 t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
 int			ft_pipeline_lstsize(t_pipeline *pipeline_lst);
@@ -60,5 +66,6 @@ void		ft_redirect_lstclear(t_redirect **redirect_lst);
 // with execute
 int         mini_execute(t_pipeline *pipeline, t_data *data);
 char		**init_envp(char **envp);
+void        set_exit_status(t_data *data, int short_exit_status);
 
 #endif

@@ -15,94 +15,27 @@
 
 */
 
-int	is_expandable(char *word)
+char *word_list_join(t_list *word_list)
 {
-	char *check;
-	int open_quote;
-	
-	check = word;
-	open_quote = 0;
-	while (*check)
+	char *result;
+	char *temp;
+	t_list *word_list_iter;
+
+	result = ft_strdup("");
+	if (result == NULL)
+		exit(EXIT_FAILURE);
+	word_list_iter = word_list;
+	while (word_list_iter)
 	{
-		if (is_quote(*check))
-		{
-			if (open_quote && open_quote == *check)
-				open_quote = 0;
-			else if (!open_quote)
-				open_quote = *check;
-		}
-		else if (*check == '$' && (!open_quote || open_quote == '\"'))
-		{
-			if (*(check + 1) && (ft_isalnum(*(check + 1)) || *(check + 1) == '{'))
-				return (1);
-		}
-		check++;
+		temp = result;
+		result = ft_strjoin(result, word_list_iter->content);
+		if (result == NULL)
+			exit(EXIT_FAILURE);
+		free(temp);
+		word_list_iter = word_list_iter->next;
 	}
-	return (0);
-}
-
-void expand_check(t_list *tokens, char **my_env)
-{
-	char *pre_word;
-	char *expanded_word;
-	char *post_word;
-	char *substr_offset;
-
-	while (tokens)
-	{
-		while (is_expandable(tokens->content))
-		{
-			char *word = tokens->content;
-
-			substr_offset = word;
-			word = ft_strchr(word, '$');
-			pre_word = ft_substr(substr_offset, 0, word - substr_offset);
-
-			int brace = (*(++word) == '{');
-			word += brace;
-			substr_offset = word;
-			
-			while (ft_isalnum(*word))
-				word++;
-
-			if (brace && (*word != '}' || word - substr_offset == 0))
-			{
-				free(pre_word);
-				ft_printf("bad substitution\n");
-				exit(1);
-			}
-			
-			char *key = ft_substr(substr_offset, 0, word - substr_offset);
-			expanded_word = get_value(key, my_env);
-			free(key);
-			
-			if (!expanded_word)
-				expanded_word = ft_strdup("");
-
-			word += brace;
-			substr_offset = word;
-			while (*word)
-				word++;
-			post_word = ft_substr(substr_offset, 0, word - substr_offset);
-
-			char *result = ft_strjoin(pre_word, expanded_word);
-			result = ft_strjoin(result, post_word);
-
-			free(pre_word);
-			free(expanded_word);
-			free(post_word);
-
-			free(tokens->content);
-			tokens->content = result;
-			
-		}
-		tokens = tokens->next;
-	}
-
-	// 같은 토큰을 그대로 검사하면 토큰을 확장했을때
-	// 확장한 값에 $변수이름 이 존재할경우 중복해서 확장해버림...
-	// 이 부분도 순서대로 앞에서 읽어나가면서 한번씩만 처리하도록 해야할듯
-	// 거의 모든 연산들이 한글자씩 순서대로 읽어나가면서 처리하는듯한 그림이 그려진다
+	ft_lstclear(&word_list, free);
+	return (result);
 }
 
 void quote_remove_check(t_list *tokens)
@@ -261,68 +194,92 @@ void quote_removal(t_list *token)
 	
 }
 
-char *get_expanded_string(char *str, char **my_env)
+char *get_key_from_word(char **str)
 {
-	/*
+	// 중괄호 사용여부 체크
+	// 중괄호를 사용했다면 bad substitution 체크
+	// 그렇지 않으면 ft_alnum일때만 계속해서 변수이름으로 해석한다
+	int brace;
+	char *substr_offset;
+	char *key;
 
-		확장여부에 따라 플래그처럼 작동
-		확장 이전, 확장, 확장이전, 확장 ...
-		부분 문자열들을 리스트로 생성
-		리스트를 순회하며 하나로 합치는 함수는 따로 작성
+	brace = (**str == '{');
+	if (brace)
+		++*str;
+	substr_offset = *str;
+	while (ft_isalnum(**str))
+		++*str;
+	if (!(brace && **str == '}'))
+	{
+		if (**str == '\0')
+			ft_printf("brace not closed\n");
+		else if (**str != '}')
+			ft_printf("bad substitution\n");
+		return (NULL);
+	}
+	key = ft_substr(substr_offset, 0, *str - substr_offset);
+	if (key == NULL)
+		exit(EXIT_FAILURE);
+	if (brace)
+		++*str;
+	return (key);
+}
 
-	*/
+char *get_expanded_word(char **str, char **my_env)
+{
+	char check;
+	char *key;
+	char *result;
 
-	t_list *word_list;
+	check = *(*str + 1); // 체크할때는 문자 주소가 밀리면 안된다, 맨 마지막 케이스에서 $를 포함해서 단어를 만들어야하기 때문에
+	if (ft_isalnum(check) || check == '{')
+	{
+		ft_printf("check: %c\n", check);
+		++*str;
+		key = get_key_from_word(str);
+		if (key == NULL) // bad substitution or not closed brace
+			return (NULL);
+		result = get_value(key, my_env);
+		free(key);
+		return (result);
+	}
+	else if (check == '?')
+	{
+		++*str;
+		++*str;
+		return (get_value("?", my_env));
+	}
+	else // 문자열 확장이거나 의미없는 특수문자인경우 $포함해서 그냥 출력
+		return (get_non_expanded_word(str));
+
+}
+
+char *get_non_expanded_word(char **str)
+{
 	char open_quote;
 	char *substr_offset;
+	char *word;
 
-	word_list == NULL;
-	substr_offset = str;
+	substr_offset = *str;
 	open_quote = '\0';
-
-	// 확장이 아닌 부분문자열을 만드는 부분
-	// ------------------
-	
-	while (*str)
+	while (**str)
 	{
-		if (!open_quote && is_quote(*str))
-			open_quote = *str;
-		else if (open_quote && open_quote == *str)
+		if (!open_quote && is_quote(**str))
+			open_quote = **str;
+		else if (open_quote && open_quote == **str)
 			open_quote = '\0';
-		if (*str == '$' && open_quote != '\'')
+		if (**str == '$' && open_quote != '\'')
 			break;
-		str++;
+		++*str;
 	}
-	char *word = ft_substr(substr_offset, 0, str - substr_offset);
+	word = ft_substr(substr_offset, 0, *str - substr_offset);
 	if (word == NULL)
 		exit(EXIT_FAILURE);
-	t_list *new_word = ft_lstnew(word);
-	if (new_word == NULL)
-		exit(EXIT_FAILURE);
-	ft_lstadd_back(&word_list, new_word);
-	// ------------------
+	return (word);
+}
 
-
-	// $를 만나고, 작은 따옴표로 열려있지 않은 상태 
-	if (*str == '$' && open_quote != '\'')
-		change_to_value(my_env);	
-	// get_key - 뭐가 뽑혀나왔다 -> get_value의 반환값으로 리스트를 만들어서 추가
-	// 키가 뽑혀나온게 없으면 -> 그냥 리터럴로 출력해야하니까 -> 부분 문자열로 만들어서 추가
-	// 중괄호가 있다면 키값의 유효성을 검사하겠지만 중괄호가 없다면  get_key에 문자열을 반환받을것임
-	// ------------------
-
-
-	while(*str)
-	{
-		if (expanable() && get_key())
-			content = get_value();
-		else
-			content = get_substring();
-		new_token = ft_lstnew(content);
-		if (new_token == NULL)
-			exit(EXIT_FAILURE);
-		ft_lstadd_back(tokens, new_token);
-	}
+char *get_expanded_string(char *str, char **my_env)
+{
 	/*
 		while (*str)
 		{
@@ -334,12 +291,8 @@ char *get_expanded_string(char *str, char **my_env)
 		}
 		리스트 순회하면서 다 이어붙이기
 		반환
-	
 	*/
-}
 
-char *get_expanded_string(char *str, char **my_env)
-{
 	t_list *word_list;
 	t_list *new_word;
 	char *content;
@@ -348,8 +301,17 @@ char *get_expanded_string(char *str, char **my_env)
 	word_list = NULL;
 	while (*str)
 	{
-		if (*str != '$' && get_key_from_word(str))
-			content = get_expanded_word(&str);
+		if (*str == '$')
+		{
+			content = get_expanded_word(&str, my_env);
+			if (content == NULL)
+			{
+				ft_lstclear(&word_list, free);
+				return (NULL);
+			}
+				// bad substitution 처리
+				// malloc 에러는 안에서 exit를 해버리기 떄문
+		}
 		else
 			content = get_non_expanded_word(&str);
 		new_word = ft_lstnew(content);
