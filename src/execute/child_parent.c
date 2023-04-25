@@ -23,8 +23,11 @@ void	ft_execute(char **options, t_data *data)
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
 	if (i != 0)
+	{
 		if (dup2(data->prev_fd, 0) == -1)
 			ft_err_sys_exit(1, __FILE__, __LINE__);
+		ft_close(data->prev_fd, __FILE__, __LINE__);
+	}
 	if (i != data->process_number - 1)
 	{
 		if (dup2(p_fd[1], 1) == -1)
@@ -44,21 +47,18 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 {
-	if (i == data->process_number - 1)
-	{
-		ft_close(p_fd[0], __FILE__, __LINE__);
-		ft_close(p_fd[1], __FILE__, __LINE__);
-	}
-	else if (i == 0)
-	{
-		ft_close(p_fd[1], __FILE__, __LINE__);
+	if (i == 0)
 		data->prev_fd = p_fd[0];
+	else if (i == data->process_number - 1)
+	{
+		ft_close(data->prev_fd, __FILE__, __LINE__);
+		ft_close(p_fd[READ], __FILE__, __LINE__);
 	}
 	else
 	{
-		ft_close(p_fd[1], __FILE__, __LINE__);
 		ft_close(data->prev_fd, __FILE__, __LINE__);
-		data->prev_fd = p_fd[0];
+		data->prev_fd = p_fd[READ];
 	}
+	ft_close((p_fd[WRITE]), __FILE__, __LINE__);
 	data->pid_set[i] = cpid;
 }

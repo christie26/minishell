@@ -2,7 +2,7 @@
 
 void	free_path(char **path)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (path[i])
