@@ -27,8 +27,8 @@ int is_quote(char c);
 
 // parse_utils2.c
 void print_tokens(void *content);
-int		get_word_token(t_list **tokens, char **str);
-int get_operator_token(t_list **tokens, char **str);
+char *get_operator(char **input);
+char *get_word_with_quote(char **input);
 void	create_tokens(t_list **tokens, char *str);
 
 // parse_utils3.c

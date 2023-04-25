@@ -260,3 +260,103 @@ void quote_removal(t_list *token)
 	*/
 	
 }
+
+char *get_expanded_string(char *str, char **my_env)
+{
+	/*
+
+		확장여부에 따라 플래그처럼 작동
+		확장 이전, 확장, 확장이전, 확장 ...
+		부분 문자열들을 리스트로 생성
+		리스트를 순회하며 하나로 합치는 함수는 따로 작성
+
+	*/
+
+	t_list *word_list;
+	char open_quote;
+	char *substr_offset;
+
+	word_list == NULL;
+	substr_offset = str;
+	open_quote = '\0';
+
+	// 확장이 아닌 부분문자열을 만드는 부분
+	// ------------------
+	
+	while (*str)
+	{
+		if (!open_quote && is_quote(*str))
+			open_quote = *str;
+		else if (open_quote && open_quote == *str)
+			open_quote = '\0';
+		if (*str == '$' && open_quote != '\'')
+			break;
+		str++;
+	}
+	char *word = ft_substr(substr_offset, 0, str - substr_offset);
+	if (word == NULL)
+		exit(EXIT_FAILURE);
+	t_list *new_word = ft_lstnew(word);
+	if (new_word == NULL)
+		exit(EXIT_FAILURE);
+	ft_lstadd_back(&word_list, new_word);
+	// ------------------
+
+
+	// $를 만나고, 작은 따옴표로 열려있지 않은 상태 
+	if (*str == '$' && open_quote != '\'')
+		change_to_value(my_env);	
+	// get_key - 뭐가 뽑혀나왔다 -> get_value의 반환값으로 리스트를 만들어서 추가
+	// 키가 뽑혀나온게 없으면 -> 그냥 리터럴로 출력해야하니까 -> 부분 문자열로 만들어서 추가
+	// 중괄호가 있다면 키값의 유효성을 검사하겠지만 중괄호가 없다면  get_key에 문자열을 반환받을것임
+	// ------------------
+
+
+	while(*str)
+	{
+		if (expanable() && get_key())
+			content = get_value();
+		else
+			content = get_substring();
+		new_token = ft_lstnew(content);
+		if (new_token == NULL)
+			exit(EXIT_FAILURE);
+		ft_lstadd_back(tokens, new_token);
+	}
+	/*
+		while (*str)
+		{
+			if 확장가능성이 있다 && 키값이 유효하다 -> get_key()
+				substr = get_value, 문자열은 주소 밀려서 나옴
+			else
+				substr = 일반 부분문자열로 해석해서 만든다, 문자열은 주소 밀려서 나옴
+			lstaddback = lstnew(substr);
+		}
+		리스트 순회하면서 다 이어붙이기
+		반환
+	
+	*/
+}
+
+char *get_expanded_string(char *str, char **my_env)
+{
+	t_list *word_list;
+	t_list *new_word;
+	char *content;
+	char *result;
+
+	word_list = NULL;
+	while (*str)
+	{
+		if (*str != '$' && get_key_from_word(str))
+			content = get_expanded_word(&str);
+		else
+			content = get_non_expanded_word(&str);
+		new_word = ft_lstnew(content);
+		if (new_word == NULL)
+			exit(EXIT_FAILURE);
+		ft_lstadd_back(&word_list, new_word);
+	}
+	result = word_list_join(word_list);
+	return (result);
+}
