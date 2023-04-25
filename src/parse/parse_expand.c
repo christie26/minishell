@@ -79,7 +79,11 @@ char *get_expanded_word(char **str, char **my_env)
 		return (get_value("?", my_env));
 	}
 	else // 문자열 확장이거나 의미없는 특수문자인경우 $포함해서 그냥 출력
+	{
+		if (is_quote(check))
+			++*str; // 따옴표라면 $빼고 따옴표부터
 		return (get_non_expanded_word(str));
+	}
 
 }
 
@@ -91,6 +95,8 @@ char *get_non_expanded_word(char **str)
 
 	substr_offset = *str;
 	open_quote = '\0';
+	if (**str == '$')
+		++*str;
 	while (**str)
 	{
 		if (!open_quote && is_quote(**str))
