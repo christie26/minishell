@@ -10,6 +10,9 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 # include "libft.h"
 # include "get_next_line.h"
 # include "../model.h"

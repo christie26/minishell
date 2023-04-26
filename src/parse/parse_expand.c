@@ -1,6 +1,32 @@
 
 #include "mini_parse.h"
 
+void expand_tokens(t_list *tokens, char** my_env)
+{
+	int is_here_doc;
+	char *content;
+
+	is_here_doc = 0;
+	while (tokens)
+	{
+		if (is_operator_char(*(char *)(tokens->content)) || is_here_doc)
+		{
+			is_here_doc = (ft_strcmp(tokens->content, "<<") == 0);
+			tokens = tokens->next;
+			continue;
+		}
+		content = get_expanded_string(tokens->content, my_env);
+		if (content == NULL) // bad substitution
+		{
+			ft_lstclear(&tokens, free);
+			return;
+		}
+		free(tokens->content);
+		tokens->content = content;
+		tokens = tokens->next;
+	}
+}
+
 char *word_list_join(t_list *word_list)
 {
 	char *result;
@@ -84,7 +110,6 @@ char *get_expanded_word(char **str, char **my_env)
 			++*str; // 따옴표라면 $빼고 따옴표부터
 		return (get_non_expanded_word(str));
 	}
-
 }
 
 char *get_non_expanded_word(char **str)
@@ -115,19 +140,6 @@ char *get_non_expanded_word(char **str)
 
 char *get_expanded_string(char *str, char **my_env)
 {
-	/*
-		while (*str)
-		{
-			if 확장가능성이 있다 && 키값이 유효하다 -> get_key()
-				substr = get_value, 문자열은 주소 밀려서 나옴
-			else
-				substr = 일반 부분문자열로 해석해서 만든다, 문자열은 주소 밀려서 나옴
-			lstaddback = lstnew(substr);
-		}
-		리스트 순회하면서 다 이어붙이기
-		반환
-	*/
-
 	t_list *word_list;
 	t_list *new_word;
 	char *content;
@@ -138,7 +150,7 @@ char *get_expanded_string(char *str, char **my_env)
 		if (*str == '$')
 		{
 			content = get_expanded_word(&str, my_env);
-			if (content == NULL)
+			if (content == NULL) // bad substitution or not closed brace
 			{
 				ft_lstclear(&word_list, free);
 				return (NULL);
