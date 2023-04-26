@@ -58,7 +58,9 @@ void	create_tokens(t_list **tokens, char *input)
 	{
 		while (is_blank(*input))
 			input++;
-		if (!is_metacharacter(*input))
+		if (*input == '\0')
+			break;
+		else if (!is_metacharacter(*input))
 			content = get_word_with_quote(&input);
 		else if (is_operator_char(*input))
 			content = get_operator(&input);

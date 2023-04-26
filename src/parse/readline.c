@@ -76,8 +76,8 @@ int main(int argc, char *argv[], char *envp[])
 		{
 			add_history(res);
 			mini_execute(pipeline_list, &data);
+			ft_pipeline_lstclear(&pipeline_list);
 		}
-		ft_pipeline_lstclear(&pipeline_list);
 		free(res);
     }
 }
