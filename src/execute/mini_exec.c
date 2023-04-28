@@ -75,5 +75,6 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 		execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
 	free_path(data->path);
+	free(data->pid_set);
 	return (return_value);
 }

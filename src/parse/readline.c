@@ -77,7 +77,7 @@ int main(int argc, char *argv[], char *envp[])
 		if (pipeline_list)
 		{
 			add_history(res);
-			// mini_execute(pipeline_list, &data);
+			mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}
 		// system("leaks minishell");
