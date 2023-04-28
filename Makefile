@@ -8,12 +8,14 @@ SRCS_EXEC		=	mini_exec.c \
 
 SRCS_PARSE		=	readline.c \
 					parse_simple_check.c \
-					parse_token.c \
+					new_parse_token.c \
 					parse_expand.c \
 					parse_quote_remove.c \
 					parse_tree.c \
 					pipeline_list_utils.c \
-					redirect_list_utils.c
+					redirect_list_utils.c \
+					token_list_utils
+# parse_token.c \
 
 SRCS_BUILT		=	builtin_center.c \
 					builtin_func1.c \

@@ -46,13 +46,13 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	if (!tokens) // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
 		return (NULL);
 
-	expand_tokens(tokens, my_env);
+	// expand_tokens(tokens, my_env);
 	if (!tokens) // bad substitution or not closed brace
 		return (NULL);
 
-	splitting_tokens(tokens);
+	// splitting_tokens(tokens);
 
-	quote_remove_tokens(tokens);
+	// quote_remove_tokens(tokens);
 
 	create_pipe_list(&pipe_list, &tokens);
 

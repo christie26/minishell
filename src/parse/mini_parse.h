@@ -38,17 +38,25 @@ int is_metacharacter(char c);
 int is_quote(char c);
 
 // parse_token.c
-void print_tokens(void *content);
-char *get_operator(char **input);
-char *get_word_with_quote(char **input);
-void	create_tokens(t_list **tokens, char *str);
+// void print_tokens(void *content);
+// char *get_operator(char **input);
+// char *get_word_with_quote(char **input);
+// void	create_tokens(t_list **tokens, char *str);
+
+// new_parse_token.c
+char *get_operator(char *str, size_t *idx);
+char *get_word_with_quote(char *str, size_t *idx);
+void	create_tokens(t_list **token_list, char *input);
 
 // parse_tree.c
-void create_pipe_list(t_pipeline **pipe_list, t_list **tokens);
-void get_redirections(t_list **tokens, t_cmd_block **cmd_block);
-void get_cmds(t_list **tokens, t_cmd_block **cmd_block);
-t_cmd_block *create_cmd_block(t_list **tokens);
-void free_cmd_block(t_cmd_block *cmd_block);
+// void create_pipe_list(t_pipeline **pipe_list, t_list **tokens);
+// void get_redirections(t_list **tokens, t_cmd_block **cmd_block);
+// void get_cmds(t_list **tokens, t_cmd_block **cmd_block);
+// t_cmd_block *create_cmd_block(t_list **tokens);
+// void free_cmd_block(t_cmd_block *cmd_block);
+
+// new_parse_tree.c
+
 
 // parse_expand.c
 int	is_expandable(char *word);
@@ -84,6 +92,13 @@ int			ft_redirect_lstsize(t_redirect *redirect_lst);
 t_redirect	*ft_redirect_lstlast(t_redirect *redirect_lst);
 void		ft_redirect_lstadd_back(t_redirect **redirect_lst, t_redirect *new);
 void		ft_redirect_lstclear(t_redirect **redirect_lst);
+
+// token_list_utils.c
+t_token	*ft_token_lstnew(int type, char *value);
+int	ft_token_lstsize(t_token *token_lst);
+t_token	*ft_token_lstlast(t_token *token_lst);
+void	ft_token_lstadd_back(t_token **token_lst, t_token *new);
+void	ft_token_lstclear(t_token **token_lst, void (*del)(void *));
 
 // with execute
 int         mini_execute(t_pipeline *pipeline, t_data *data);

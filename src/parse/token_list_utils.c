@@ -57,7 +57,7 @@ void	ft_token_lstadd_back(t_token **token_lst, t_token *new)
 		*token_lst = new;
 }
 
-void	ft_token_lstclear(t_token **token_lst)
+void	ft_token_lstclear(t_token **token_lst, void (*del)(void *))
 {
 	t_token	*cur_token;
 	t_token	*next_token;
@@ -68,8 +68,8 @@ void	ft_token_lstclear(t_token **token_lst)
 		while (cur_token)
 		{
 			next_token = cur_token->next;
-			if (cur_token->type != WORD)
-				free(cur_token->value);
+			if (del)
+				del(cur_token->value);
 			free(cur_token);
 			cur_token = next_token;
 		}
