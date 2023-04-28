@@ -40,6 +40,8 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	t_pipeline	*pipe_list = NULL;
 	t_list		*tokens = NULL;
 
+	(void)my_env;
+
 	create_tokens(&tokens, str);
 	if (!tokens) // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
 		return (NULL);
@@ -75,9 +77,10 @@ int main(int argc, char *argv[], char *envp[])
 		if (pipeline_list)
 		{
 			add_history(res);
-			mini_execute(pipeline_list, &data);
+			// mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}
+		// system("leaks minishell");
 		free(res);
     }
 }

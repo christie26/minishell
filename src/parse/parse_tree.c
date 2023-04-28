@@ -115,11 +115,13 @@ t_cmd_block *create_cmd_block(t_list **tokens)
 
 void free_cmd_block(t_cmd_block *cmd_block)
 {
+	char **cmds;
+
 	if (cmd_block->redirect)
 		ft_redirect_lstclear(&cmd_block->redirect);
 	if (cmd_block->cmd)
 	{
-		char **cmds = cmd_block->cmd;
+		cmds = cmd_block->cmd;
 		while (*cmds)
 		{
 			free(*cmds);
@@ -127,6 +129,7 @@ void free_cmd_block(t_cmd_block *cmd_block)
 		}
 		free(cmd_block->cmd);
 	}
+	free(cmd_block);
 }
 
 void create_pipe_list(t_pipeline **pipe_list, t_list **tokens)
