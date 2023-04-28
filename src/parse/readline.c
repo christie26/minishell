@@ -47,14 +47,17 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	create_tokens(&tokens, str);
 	if (!tokens) // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
 		return (NULL);
+	add_history(str); // 공백뺴고는 전부 들어가야함
 
-	expand_tokens(tokens, my_env);
+	expand_tokens(&tokens, my_env);
 	if (!tokens) // bad substitution or not closed brace
 		return (NULL);
 
 	splitting_tokens(tokens);
 
-	quote_remove_tokens(tokens);
+	quote_remove_tokens(&tokens);
+	if (!tokens) // 따옴표가 닫히지 않은 경우
+		return (NULL);
 
 	create_pipeline_list(&pipe_list, tokens);
 	ft_token_lstclear(&tokens);
@@ -79,11 +82,11 @@ int main(int argc, char *argv[], char *envp[])
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
 		{
-			add_history(res);
+			
 			mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}
-		// system("leaks minishell");
+		system("leaks minishell");
 		free(res);
     }
 }

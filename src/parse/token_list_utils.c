@@ -14,7 +14,6 @@ t_token	*ft_token_lstnew(int type, char *value)
 	return (new_token);
 }
 
-
 int	ft_token_lstsize(t_token *token_lst)
 {
 	int		cnt;

@@ -70,7 +70,7 @@ void quote_remove_check(t_list *tokens);
 void quote_removal(t_list *token);
 
 // void expand_tokens(t_list *tokens, char** my_env);
-void expand_tokens(t_token *token_list, char** my_env);
+void expand_tokens(t_token **token_list, char** my_env);
 char *word_list_join(t_list *word_list);
 char *get_key_from_word(char **str);
 char *get_expanded_word(char **str, char **my_env);
@@ -84,7 +84,7 @@ void word_splitting(t_token **new_list, char *word);
 // void splitting_tokens(t_list *tokens);
 void splitting_tokens(t_token *token_list);
 // void quote_remove_tokens(t_list *tokens);
-void quote_remove_tokens(t_token *token_list);
+void quote_remove_tokens(t_token **token_list);
 char *get_word_without_quote(char **str);
 char *get_quote_removed_string(char *str);
 

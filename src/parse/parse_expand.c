@@ -1,39 +1,13 @@
 
 #include "mini_parse.h"
 
-// void expand_tokens(t_list *tokens, char** my_env)
-// {
-// 	int is_here_doc;
-// 	char *content;
-
-// 	is_here_doc = 0;
-// 	while (tokens)
-// 	{
-// 		if (is_operator_char(*(char *)(tokens->content)) || is_here_doc)
-// 		{
-// 			is_here_doc = (ft_strcmp(tokens->content, "<<") == 0);
-// 			tokens = tokens->next;
-// 			continue;
-// 		}
-// 		content = get_expanded_string(tokens->content, my_env);
-// 		if (content == NULL) // bad substitution
-// 		{
-// 			ft_lstclear(&tokens, free);
-// 			return;
-// 		}
-// 		free(tokens->content);
-// 		tokens->content = content;
-// 		tokens = tokens->next;
-// 	}
-// }
-
-void expand_tokens(t_token *token_list, char** my_env)
+void expand_tokens(t_token **token_list, char** my_env)
 {
 	t_token *cur_token;
 	int is_here_doc;
 	char *content;
 
-	cur_token = token_list;
+	cur_token = *token_list;
 	is_here_doc = 0;
 	while (cur_token)
 	{
@@ -46,7 +20,7 @@ void expand_tokens(t_token *token_list, char** my_env)
 		content = get_expanded_string(cur_token->value, my_env);
 		if (content == NULL) // bad substitution
 		{
-			ft_token_lstclear(&token_list);
+			ft_token_lstclear(token_list);
 			return;
 		}
 		free(cur_token->value);
@@ -96,9 +70,9 @@ char *get_key_from_word(char **str)
 	if (brace)
 	{
 		if (**str == '\0')
-			ft_printf("brace not closed\n");
-		else if (**str != '}')
-			ft_printf("bad substitution\n");
+			ft_printf("yo shell: brace not closed\n");
+		else if (**str != '}' || *str - substr_offset == 0)
+			ft_printf("yo shell: bad substitution\n");
 		return (NULL);
 	}
 	key = ft_substr(substr_offset, 0, *str - substr_offset);

@@ -18,7 +18,6 @@ t_redirect	*ft_redirect_lstnew(int type, char *filename)
 	return (new_redirect_lst);
 }
 
-
 int	ft_redirect_lstsize(t_redirect *redirect_lst)
 {
 	int			cnt;

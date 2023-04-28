@@ -1,18 +1,6 @@
 
 #include "mini_parse.h"
 
-// t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block)
-// {
-// 	t_pipeline	*new_pipeline_lst;
-
-// 	new_pipeline_lst = (t_pipeline *)malloc(sizeof(t_pipeline));
-// 	if (!new_pipeline_lst)
-// 		exit(EXIT_FAILURE);
-// 	new_pipeline_lst->cmd_block = new_cmd_block;
-// 	new_pipeline_lst->next = NULL;
-// 	return (new_pipeline_lst);
-// }
-
 t_pipeline *ft_pipeline_lstnew(t_token **token_list)
 {
 	t_pipeline	*new_pipeline;
