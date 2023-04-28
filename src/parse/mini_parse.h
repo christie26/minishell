@@ -15,6 +15,18 @@
 # include "../model.h"
 # include "../built_in/built_in.h"
 
+enum e_token_type
+{
+	OPERATOR,
+	WORD
+};
+
+typedef struct s_token {
+    int				type;
+    char			*value;      
+    struct s_token	*next;
+}   t_token;
+
 // readline.c
 void print_tree(t_pipeline *pipeline_list);
 t_pipeline	*my_parse(char *str, char **my_env);
