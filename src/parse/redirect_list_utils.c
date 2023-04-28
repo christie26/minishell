@@ -4,12 +4,16 @@
 t_redirect	*ft_redirect_lstnew(int type, char *filename)
 {
 	t_redirect	*new_redirect_lst;
+	char	*cpy_filename;
 
 	new_redirect_lst = (t_redirect *)malloc(sizeof(t_redirect));
 	if (!new_redirect_lst)
-		return (0);
+		exit(EXIT_FAILURE);
+	cpy_filename = ft_strdup(filename);
+	if (cpy_filename == NULL)
+		exit(EXIT_FAILURE);;
 	new_redirect_lst->type = type;
-	new_redirect_lst->filename = filename;
+	new_redirect_lst->filename = cpy_filename;
 	new_redirect_lst->next = NULL;
 	return (new_redirect_lst);
 }

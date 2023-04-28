@@ -37,11 +37,13 @@ void print_tree(t_pipeline *pipeline_list)
 
 t_pipeline	*my_parse(char *str, char **my_env)
 {
-	t_pipeline	*pipe_list = NULL;
-	t_list		*tokens = NULL;
+	t_pipeline	*pipe_list;
+	t_token		*tokens;
 
 	(void)my_env;
 
+	pipe_list = NULL;
+	tokens = NULL;
 	create_tokens(&tokens, str);
 	if (!tokens) // 만드는데 실패했거나 아무것도 없는 공백이였을 경우
 		return (NULL);
@@ -54,7 +56,8 @@ t_pipeline	*my_parse(char *str, char **my_env)
 
 	// quote_remove_tokens(tokens);
 
-	create_pipe_list(&pipe_list, &tokens);
+	create_pipeline_list(&pipe_list, tokens);
+	ft_token_lstclear(&tokens, pipe_list == NULL);
 
 	return (pipe_list);
 }

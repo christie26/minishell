@@ -1,18 +1,42 @@
 
 #include "mini_parse.h"
 
-t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block)
+// t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block)
+// {
+// 	t_pipeline	*new_pipeline_lst;
+
+// 	new_pipeline_lst = (t_pipeline *)malloc(sizeof(t_pipeline));
+// 	if (!new_pipeline_lst)
+// 		exit(EXIT_FAILURE);
+// 	new_pipeline_lst->cmd_block = new_cmd_block;
+// 	new_pipeline_lst->next = NULL;
+// 	return (new_pipeline_lst);
+// }
+
+t_pipeline *ft_pipeline_lstnew(t_token **token_list)
 {
-	t_pipeline	*new_pipeline_lst;
+	t_pipeline	*new_pipeline;
+	t_cmd_block	*new_cmd_block;
 
-	new_pipeline_lst = (t_pipeline *)malloc(sizeof(t_pipeline));
-	if (!new_pipeline_lst)
-		return (0);
-	new_pipeline_lst->cmd_block = new_cmd_block;
-	new_pipeline_lst->next = NULL;
-	return (new_pipeline_lst);
+	if ((*token_list)->type == OPERATOR && ft_strcmp("|", (*token_list)->value) == 0) // pipe로 시작하는 경우 에러, 도중에 들어왔어도 create pipelist 에서 파이프 하나 밀어주고 들어옴
+	{
+		ft_printf("unexpected token: \'|\'\n");
+		return (NULL);
+	}
+
+	new_cmd_block = create_cmd_block(token_list);
+	
+	if (!new_cmd_block) // 파싱 에러 - redirect 에서 유효하지 않은 토큰이 온 경우
+		return (NULL);
+	
+	new_pipeline = (t_pipeline *)malloc(sizeof(t_pipeline));
+	if (!new_pipeline)
+		exit(EXIT_FAILURE);
+	
+	new_pipeline->cmd_block = new_cmd_block;
+	new_pipeline->next = NULL;
+	return (new_pipeline);
 }
-
 
 int	ft_pipeline_lstsize(t_pipeline *pipeline_lst)
 {

@@ -46,7 +46,7 @@ int is_quote(char c);
 // new_parse_token.c
 char *get_operator(char *str, size_t *idx);
 char *get_word_with_quote(char *str, size_t *idx);
-void	create_tokens(t_list **token_list, char *input);
+void	create_tokens(t_token **token_list, char *input);
 
 // parse_tree.c
 // void create_pipe_list(t_pipeline **pipe_list, t_list **tokens);
@@ -56,7 +56,12 @@ void	create_tokens(t_list **token_list, char *input);
 // void free_cmd_block(t_cmd_block *cmd_block);
 
 // new_parse_tree.c
-
+int get_redirection(t_token **cur_token, t_cmd_block *cmd_block);
+void cmd_list_to_char(t_list *cmd_list, t_cmd_block *new_cmd_block);
+void get_cmd(t_token **cur_token, t_list **cmd_list);
+void free_cmd_block(t_cmd_block *cmd_block);
+t_cmd_block *create_cmd_block(t_token **token_list);
+void create_pipeline_list(t_pipeline **pipe_list, t_token *token_list);
 
 // parse_expand.c
 int	is_expandable(char *word);
@@ -80,7 +85,8 @@ char *get_word_without_quote(char **str);
 char *get_quote_removed_string(char *str);
 
 // pipeline_list_utils.c
-t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
+// t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);
+t_pipeline *ft_pipeline_lstnew(t_token **token_list);
 int			ft_pipeline_lstsize(t_pipeline *pipeline_lst);
 t_pipeline	*ft_pipeline_lstlast(t_pipeline *pipeline_lst);
 void		ft_pipeline_lstadd_back(t_pipeline **pipeline_lst, t_pipeline *new);
@@ -98,7 +104,7 @@ t_token	*ft_token_lstnew(int type, char *value);
 int	ft_token_lstsize(t_token *token_lst);
 t_token	*ft_token_lstlast(t_token *token_lst);
 void	ft_token_lstadd_back(t_token **token_lst, t_token *new);
-void	ft_token_lstclear(t_token **token_lst, void (*del)(void *));
+void	ft_token_lstclear(t_token **token_lst);
 
 // with execute
 int         mini_execute(t_pipeline *pipeline, t_data *data);
