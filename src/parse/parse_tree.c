@@ -46,7 +46,7 @@ void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
 
 		prev_token = cur_token;
 		cur_token = cur_token->next;
-		ft_lstdel_node(tokens, prev_token, free);
+		ft_lstdel_node(tokens, prev_token, NULL);
 	}
 	
 	/*
@@ -155,7 +155,7 @@ void create_pipe_list(t_pipeline **pipe_list, t_list **tokens)
 		
 		ft_pipeline_lstadd_back(pipe_list, new_pipeline);
 
-		if (*tokens && ft_strcmp((*tokens)->content, "|")) // 파이프면 파이프 지우고 계속
+		if (*tokens && ft_strcmp((*tokens)->content, "|") == 0) // 파이프면 파이프 지우고 계속
 		{
 			next_token = (*tokens)->next;
 			ft_lstdelone(*tokens, free);
