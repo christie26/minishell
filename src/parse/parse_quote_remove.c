@@ -48,6 +48,8 @@ void word_splitting(t_token **new_list, char *word)
 	{
 		while (is_blank(*cur_content))
 			cur_content++;
+		if (*cur_content == '\0')
+			return ;
 		new_content = get_word_with_operator(&cur_content);
 		new_token = ft_token_lstnew(WORD, new_content);
 		if (new_token == NULL)
