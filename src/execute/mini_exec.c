@@ -30,8 +30,6 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 			child_process(data, pipeline, p_fd, i);
 		else
 			parent_process(data, p_fd, i, cpid);
-		if (short_exit_status == 127)
-			return ;
 		pipeline = pipeline->next;
 	}
 	i = -1;

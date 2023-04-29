@@ -13,7 +13,8 @@ void	ft_execute(char **options, t_data *data)
 		if (!cmd)
 		{
 			short_exit_status = 127;
-			ft_err_msg_exit(1, CMD_ERROR, __FILE__, __LINE__);
+			ft_err_msg(1, CMD_ERROR, __FILE__, __LINE__);
+			return ;
 		}
 		if (execve(cmd, options, get_env(data->my_env)) == -1)
 			ft_err_sys_exit(1, __FILE__, __LINE__);
