@@ -1,72 +1,73 @@
 
 #include "mini_parse.h"
 
-void print_tokens(void *content)
+char *get_operator(char *str, size_t *idx)
 {
-	content = (char *)content;
-	ft_putendl_fd(content, 1);
-}
-
-char *get_operator(char **input)
-{
-	char	*substr_offset;
 	char	*token_content;
+	size_t	len;
 	
-	substr_offset = *input;
-	++*input;
-	if (**input && (*(*input - 1) == **input && ft_strchr("<>", **input)))
-		++*input;
-	token_content = ft_substr(substr_offset, 0, *input - substr_offset);
+	len = 1;
+	len += (ft_strchr("<>", str[*idx]) && (str[*idx] == str[*idx + len])); // 리다이렉션인 경우 연속 두개까지 받을 수 있다
+	token_content = ft_substr(str, *idx, len);
 	if (token_content == NULL)
 		exit(EXIT_FAILURE);
+	*idx += len;
 	return (token_content);
 }
 
-char *get_word_with_quote(char **input)
+char *get_word_with_quote(char *str, size_t *idx)
 {
-	char *substr_offset;
-	char open_quote;
-	char *token_content;
+	char	open_quote;
+	char	*token_content;
+	size_t	len;
 
-	substr_offset = *input;
 	open_quote = '\0';
-	while (**input)
+	len = 0;
+	while (str[*idx + len])
 	{
 		if (open_quote == '\0')
 		{
-			if (is_metacharacter(**input))
+			if (is_metacharacter(str[*idx + len]))
 				break ;
-			else if (is_quote(**input))
-				open_quote = **input;
+			else if (is_quote(str[*idx + len]))
+				open_quote = str[*idx + len];
 		}
-		else if (open_quote && open_quote == **input)
+		else if (open_quote && open_quote == str[*idx + len])
 			open_quote = '\0';
-		++*input;
+		++len;
 	}
-	token_content = ft_substr(substr_offset, 0, *input - substr_offset);
+	token_content = ft_substr(str, *idx, len);
 	if (token_content == NULL)
 		exit(EXIT_FAILURE);
+	*idx += len;
 	return (token_content);
 }
 
-void	create_tokens(t_list **tokens, char *input)
+void	create_tokens(t_token **token_list, char *input)
 {
 	char	*content;
-	t_list	*new_token;
+	t_token	*new_token;
+	size_t	idx;
 
-	while (*input)
+	idx = 0;
+	while (input[idx])
 	{
-		while (is_blank(*input))
-			input++;
-		if (*input == '\0')
-			break;
-		else if (!is_metacharacter(*input))
-			content = get_word_with_quote(&input);
-		else if (is_operator_char(*input))
-			content = get_operator(&input);
-		new_token = ft_lstnew(content);
+		while (is_blank(input[idx]))
+			idx++;
+		if (input[idx] == '\0')
+			return ;
+		else if (!is_metacharacter(input[idx]))
+		{
+			content = get_word_with_quote(input, &idx);
+			new_token = ft_token_lstnew(WORD, content);
+		}
+		else if (is_operator_char(input[idx]))
+		{
+			content = get_operator(input, &idx);
+			new_token = ft_token_lstnew(OPERATOR, content);
+		}
 		if (new_token == NULL)
 			exit(EXIT_FAILURE);
-		ft_lstadd_back(tokens, new_token);
+		ft_token_lstadd_back(token_list, new_token);
 	}
 }

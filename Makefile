@@ -13,7 +13,8 @@ SRCS_PARSE		=	readline.c \
 					parse_quote_remove.c \
 					parse_tree.c \
 					pipeline_list_utils.c \
-					redirect_list_utils.c
+					redirect_list_utils.c \
+					token_list_utils.c
 
 SRCS_BUILT		=	builtin_center.c \
 					builtin_func1.c \

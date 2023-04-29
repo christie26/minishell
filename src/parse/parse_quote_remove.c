@@ -6,7 +6,7 @@
 	나중에 트리화 하는 과정에서 첫단계에 operator로 나누어진 토큰인지
 	word 안에서 확장으로 생성된 operator 문자인지는 구분할수없다는 문제가 있음
 */
-char *get_word_with_operator(char **word) 
+char *get_word_with_operator(char **word)
 {
 	char *substr_offset;
 	char open_quote;
@@ -37,11 +37,11 @@ char *get_word_with_operator(char **word)
 	content의 추가분할을 시도한다
 	맨 처음 토큰화와는 다르게 공백만 구분자로 사용된다
 */
-void word_splitting(t_list **new_list, char *word)
+void word_splitting(t_token **new_list, char *word)
 {
 	char	*cur_content;
 	char	*new_content;
-	t_list	*new_token;
+	t_token	*new_token;
 
 	cur_content = word;
 	while (*cur_content)
@@ -49,10 +49,10 @@ void word_splitting(t_list **new_list, char *word)
 		while (is_blank(*cur_content))
 			cur_content++;
 		new_content = get_word_with_operator(&cur_content);
-		new_token = ft_lstnew(new_content);
+		new_token = ft_token_lstnew(WORD, new_content);
 		if (new_token == NULL)
 			exit(EXIT_FAILURE);
-		ft_lstadd_back(new_list, new_token);
+		ft_token_lstadd_back(new_list, new_token);
 	}
 }
 
@@ -62,28 +62,30 @@ void word_splitting(t_list **new_list, char *word)
 	토큰수에 변동이 있을경우 중간에 삽입하되
 	추가된 토큰에 대한 확장검사는 진행되지 않는다
 */
-void splitting_tokens(t_list *tokens)
+void splitting_tokens(t_token *token_list)
 {
-	t_list *new_list;
-	t_list *next_token;
+	t_token *new_list;
+	t_token *next_token;
 
-	while (tokens)
+	while (token_list)
 	{
 		new_list = NULL;
-		word_splitting(&new_list, tokens->content); // 추가 분할을 시도한 새 리스트를 생성
-
-		free(tokens->content);
-		tokens->content = new_list->content; // 기존의 content 교체
-
-		if (ft_lstsize(new_list) > 1) // 추가적인 분할로인해 새로운 노드가 생성되었다면
+		word_splitting(&new_list, token_list->value); // 추가 분할을 시도한 새 리스트를 생성
+		// ft_printf("split blank: %p\n", new_list);
+		if (new_list)
 		{
-			next_token = tokens->next; // 원래 next node 를 저장해두고
-			tokens->next = new_list->next; // 새 리스트의 두번째 노드부터 이어붙인다
-			ft_lstadd_back(&tokens, next_token); // 그리고 저장해둔 next node 를 다시 이어붙인다
-		}
-		ft_lstdelone(new_list, NULL); // 새 리스트의 첫 노드는 content만 필요하므로 delone으로 지움
+			free(token_list->value);
+			token_list->value = new_list->value; // 기존의 content 교체
 
-		tokens = tokens->next;
+			if (ft_token_lstsize(new_list) > 1) // 추가적인 분할로인해 새로운 노드가 생성되었다면
+			{
+				next_token = token_list->next; // 원래 next node 를 저장해두고
+				token_list->next = new_list->next; // 새 리스트의 두번째 노드부터 이어붙인다
+				ft_token_lstadd_back(&token_list, next_token); // 그리고 저장해둔 next node 를 다시 이어붙인다
+			}
+			free(new_list);
+		}
+		token_list = token_list->next;
 	}
 }
 
@@ -91,14 +93,23 @@ void splitting_tokens(t_list *tokens)
 	토큰을 순회하며 주어진 토큰의 content를
 	따옴표가 제거된 content로 교체한다
 */
-void quote_remove_tokens(t_list *tokens)
+void quote_remove_tokens(t_token **token_list)
 {
-	while (tokens)
+	t_token *cur_token;
+	char *content;
+
+	cur_token = *token_list;
+	while (cur_token)
 	{
-		char *content = get_quote_removed_string(tokens->content);
-		free(tokens->content);
-		tokens->content = content;
-		tokens = tokens->next;
+		content = get_quote_removed_string(cur_token->value);
+		if (content == NULL)
+		{
+			ft_token_lstclear(token_list);
+			return;
+		}
+		free(cur_token->value);
+		cur_token->value = content;
+		cur_token = cur_token->next;
 	}
 }
 
@@ -123,9 +134,13 @@ char *get_word_without_quote(char **str)
 			break;
 		++*str;
 	}
+	if (open_quote)
+		return (NULL);
 	token_content = ft_substr(substr_offset, 0, *str - substr_offset);
 	if (token_content == NULL)
 		exit(EXIT_FAILURE);
+	if (is_quote(**str))
+		open_quote = *(*str)++;
 	return (token_content);
 }
 
@@ -144,6 +159,12 @@ char *get_quote_removed_string(char *str)
 	while (*str)
 	{
 		content = get_word_without_quote(&str);
+		if (content == NULL) // 따옴표가 닫히지 않음
+		{
+			ft_printf("yo shell: quote not closed\n");
+			ft_lstclear(&word_list, free);
+			return (NULL);
+		}
 		new_word = ft_lstnew(content);
 		if (new_word == NULL)
 			exit(EXIT_FAILURE);
