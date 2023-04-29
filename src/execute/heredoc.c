@@ -67,7 +67,7 @@ void	heredoc_open(t_redirect *redirect, char **env)
 		buf = get_next_line(STDIN_FILENO);
 	}
 	free(buf);
-	ft_close(fd, __FILE__, __LINE__);
+	ft_close(fd);
 	free(redirect->filename);
 	redirect->filename = tmp_file;
 }

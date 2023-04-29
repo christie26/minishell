@@ -13,12 +13,28 @@ void	free_path(char **path)
 	free(path);
 }
 
-void	ft_close(int fd, char *file, int line)
+void	ft_close(int fd)
 {
-	int	ret;
+	int	result;
 
-	ret = close(fd);
-	ft_err_sys_exit(ret == -1, file, line);
+	result = close(fd);
+	if (result == -1)
+	{
+		error_command("close");
+		exit (EXIT_FAILURE);
+	}
+}
+
+void	ft_dup2(int fd_from, int fd_to)
+{
+	int	result;
+
+	result = dup2(fd_from, fd_to);
+	if (result == -1)
+	{
+		error_command("dup2");
+		exit (EXIT_FAILURE);
+	}
 }
 
 int	get_short_exit(int exit_status)

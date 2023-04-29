@@ -1,10 +1,11 @@
 # all file
 SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
-					utils.c \
+					execute_utils.c \
 					child_parent.c \
 					redirection.c \
-					heredoc.c
+					heredoc.c \
+					new_error.c
 
 SRCS_PARSE		=	readline.c \
 					parse_simple_check.c \

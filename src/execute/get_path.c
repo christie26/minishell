@@ -31,17 +31,12 @@ char	*check_access(char *cmd, char **path)
 	char	*path_cmd;
 
 	i = 0;
-	if (access(cmd, X_OK) == 0)
-		return (cmd);
 	while (path[i])
 	{
 		path_cmd = ft_strjoin(path[i], cmd);
 		ft_err_msg_exit(!path_cmd, MALLOC_ERROR, __FILE__, __LINE__);
 		if (access(path_cmd, X_OK) == 0)
-		{
-			free(cmd);
 			return (path_cmd);
-		}
 		free(path_cmd);
 		i++;
 	}

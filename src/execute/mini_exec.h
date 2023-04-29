@@ -9,6 +9,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <sys/errno.h>
 
 # include "libft.h"
 # include "get_next_line.h"
@@ -29,7 +30,8 @@ int		redirection_center(t_redirect *redirect);
 char	**get_env(char **env);
 
 // utils
-void	ft_close(int fd, char *file, int line);
+void	ft_close(int fd);
+void	ft_dup2(int fd_from, int fd_to);
 int		get_short_exit(int exit_status);
 void	set_exit_status(t_data *data, int short_exit_status);
 void	free_path(char **path);
