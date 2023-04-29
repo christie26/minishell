@@ -17,10 +17,12 @@ SRCS_PARSE		=	readline.c \
 					token_list_utils.c
 
 SRCS_BUILT		=	builtin_center.c \
-					builtin_func1.c \
 					builtin_export.c \
 					builtin_unset.c \
-					builtin_env.c
+					builtin_env.c \
+					builtin_cd.c \
+					builtin_others.c \
+					builtin_utils.c
 
 # add path as their usage
 DIR_EXEC		= execute/

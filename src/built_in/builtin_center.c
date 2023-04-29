@@ -22,7 +22,7 @@ int	ft_builtin(char	**argv, t_data *data)
 	if (!ft_strcmp(cmd, "echo"))
 		return (ft_echo(argv, env));
 	else if (!ft_strcmp(cmd, "cd"))
-		return (ft_cd(cmd, argv, env));
+		return (ft_cd(data, argv, env));
 	else if (!ft_strcmp(cmd, "pwd"))
 		return (ft_pwd(cmd, argv, env));
 	else if (!ft_strcmp(cmd, "export"))
