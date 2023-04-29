@@ -1,6 +1,6 @@
 #include "./mini_exec.h"
 
-void	error_command_msg(char *cmd, char *message)
+int	error_command_msg(char *cmd, char *message)
 {
 	char	*cmd_extra;
 	char	*shell;
@@ -17,9 +17,10 @@ void	error_command_msg(char *cmd, char *message)
 	if (!with_message)
 		exit(EXIT_FAILURE);
 	write(2, with_message, ft_strlen(with_message));
+	return (EXIT_FAILURE);
 }
 
-void	error_command(char *cmd)
+int	error_command(char *cmd)
 {
 	char	*cmd_extra;
 	char	*shell;
@@ -32,4 +33,5 @@ void	error_command(char *cmd)
 		exit(EXIT_FAILURE);
 	free(cmd_extra);
 	perror(shell);
+	return(EXIT_FAILURE);
 }

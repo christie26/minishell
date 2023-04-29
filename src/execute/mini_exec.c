@@ -23,9 +23,11 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	i = -1;
 	while (++i < data->process_number)
 	{
-		ft_err_sys(pipe(p_fd) == -1, __FILE__, __LINE__);
+		if (pipe(p_fd) == -1)
+			error_command("pipe");
 		cpid = fork();
-		ft_err_sys(cpid == -1, __FILE__, __LINE__);
+		if (cpid == -1)
+			error_command("fork");
 		if (cpid == 0)
 			child_process(data, pipeline, p_fd, i);
 		else
@@ -70,7 +72,8 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	}
 	data->path = get_path(data->my_env);
 	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
-	ft_err_msg_exit(!data->pid_set, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!data->pid_set)
+		exit(EXIT_FAILURE);
 	heredoc_center(pipeline, data->my_env);
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
 		only_builtin(data, pipeline);

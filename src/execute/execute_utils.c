@@ -54,10 +54,12 @@ void	set_exit_status(t_data *data, int short_exit_status)
 	char	*key_value;
 
 	value = ft_itoa(short_exit_status);
-	ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!value)
+		exit(EXIT_FAILURE);
 	key_value = ft_strjoin("?=", value);
+	if (!key_value)
+		exit(EXIT_FAILURE);
 	free(value);
-	ft_err_msg_exit(!key_value, MALLOC_ERROR, __FILE__, __LINE__);
 	add_variable(key_value, data);
 	free(key_value);
 }

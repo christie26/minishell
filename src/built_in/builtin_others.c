@@ -4,7 +4,8 @@ int	ft_pwd(char *cmd, char **options, char **env)
 {
 	char	buf[1024];
 
-	ft_err_sys((getcwd(buf, 1024) == NULL), __FILE__, __LINE__);
+	if (getcwd(buf, 1024) == NULL)
+		error_command("pwd");
 	ft_putendl_fd(buf, 1);
 	(void)(cmd);
 	(void)(options);
@@ -18,11 +19,13 @@ char	*join_with_space(char *s1, char *s2)
 	char	*tmp;
 
 	result = ft_strjoin(s1, " ");
-	ft_err_msg_exit(!result, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!result)
+		exit(EXIT_FAILURE);
 	free(s1);
 	tmp = result;
 	result = ft_strjoin(tmp, s2);
-	ft_err_msg_exit(!result, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!result)
+		exit(EXIT_FAILURE);
 	free(tmp);
 	return (result);
 }
@@ -42,7 +45,8 @@ int	ft_echo(char **options, char **env)
 	if (!*options)
 		return (0);
 	result = ft_strdup(*options++);
-	ft_err_msg_exit(!result, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!result)
+		exit(EXIT_FAILURE);	
 	while (*options)
 		result = join_with_space(result, *options++);
 	if (endl)
@@ -61,16 +65,13 @@ int	ft_exit(char *cmd, char **options, char **env)
 	while (options[i])
 		i++;
 	if (i > 2)
-	{
-		ft_err_msg(1, "too many arguments", __FILE__, __LINE__);
-		return (1);
-	}
+		return (error_command_msg("exit", "too many arguments\n"));
 	else if (i == 1)
 		exit(short_exit_status);
 	options++;
 	if (!ft_strisnum(*options))
 	{
-		ft_err_msg(1, "numeric argument required", __FILE__, __LINE__);
+		error_command_msg("exit", EXIT_ERROR);
 		exit(255);
 	}
 	exit(ft_atoi(*options));

@@ -9,7 +9,8 @@ void	remove_variable(int index_env, t_data *data, int number)
 
 	env = data->my_env;
 	new_env = malloc(sizeof(char *) * number);
-	ft_err_msg_exit(!new_env, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!new_env)
+		exit(EXIT_FAILURE);
 	i = 0;
 	j = 0;
 	while (j < number)

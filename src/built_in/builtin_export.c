@@ -7,10 +7,8 @@ int	check_input(char *input)
 
 	i = 0;
 	count = 0;
-	if (!input)
-		return (ft_err_msg(1, "No input", __FILE__, __LINE__));
 	if (input[0] == '=' || !(ft_isalpha(input[0]) || input[0] == '_'))
-		return (ft_err_msg(1, EXPORT_ERROR, __FILE__, __LINE__));
+		return (error_command_msg("export", EXPORT_ERROR));
 	while (input[i])
 	{
 		if (input[i] == '=')
@@ -18,7 +16,7 @@ int	check_input(char *input)
 		i++;
 	}
 	if (count != 1)
-		return (ft_err_msg(1, "Invalid input", __FILE__, __LINE__));
+		return (error_command_msg("export", "Invalid input\n"));
 	return (0);
 }
 
@@ -79,7 +77,8 @@ void	add_variable(char *key_value, t_data *data)
 		i++;
 	number = i;
 	new_env = malloc(sizeof(char *) * (number + 2));
-	ft_err_msg_exit(!new_env, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!new_env)
+		exit(EXIT_FAILURE);
 	i = 0;
 	while (i < number)
 	{
@@ -87,7 +86,8 @@ void	add_variable(char *key_value, t_data *data)
 		i++;
 	}
 	new_env[i] = ft_strdup(key_value);
-	ft_err_msg_exit(!new_env[i], MALLOC_ERROR, __FILE__, __LINE__);
+	if (!new_env[i])
+		exit(EXIT_FAILURE);
 	new_env[i + 1] = 0;
 	data->my_env = new_env;
 	free(env);

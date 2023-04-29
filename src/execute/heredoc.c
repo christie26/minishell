@@ -24,7 +24,8 @@ char	*random_name(void)
 	int		j;
 
 	tmp_file = (char *)malloc(sizeof(char) * 16);
-	ft_err_msg_exit(!tmp_file, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!tmp_file)
+		exit(EXIT_FAILURE);
 	tmp_file[0] = 0;
 	ft_strlcat(tmp_file, "/tmp/tmp_file", 14);
 	i = '/';
@@ -53,16 +54,21 @@ void	heredoc_open(t_redirect *redirect, char **env)
 	size_t	len;
 
 	tmp_file = random_name();
-	ft_err_msg_exit(!tmp_file, TMP_FILE_ERROR, __FILE__, __LINE__);
+	if (!tmp_file)
+	{
+		error_command_msg("heredoc", TMP_FILE_ERROR);
+		exit(EXIT_FAILURE);
+	}
 	fd = open(tmp_file, O_CREAT | O_WRONLY, 0644);
-	ft_err_sys(fd == -1, __FILE__, __LINE__);
+	if (fd == -1)
+		error_command("heredoc");
 	len = ft_strlen(redirect->filename);
 	buf = get_next_line(STDIN_FILENO);
 	while (ft_strncmp(buf, redirect->filename, len) || buf[len] != '\n')
 	{
 		expanded = get_expanded_string(buf, env);
 		if (write(fd, expanded, ft_strlen(expanded)) == -1)
-			ft_err_sys(1, __FILE__, __LINE__);
+			error_command("heredoc");
 		free(buf);
 		buf = get_next_line(STDIN_FILENO);
 	}

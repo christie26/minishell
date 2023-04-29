@@ -9,5 +9,6 @@
 # define TMP_FILE_ERROR "Fail to make tmp file\n"
 # define EXPORT_ERROR "not a valid identifier\n"
 # define PIPE_ERROR "Too many pipes\n"
+# define EXIT_ERROR "numeric argument required\n"
 
 #endif

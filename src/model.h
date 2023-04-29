@@ -31,15 +31,7 @@ typedef struct s_data {
     char    **my_env;
 }   t_data;
 
-void	error_command_msg(char *cmd, char *message);
-void	error_command(char *cmd);
-
-/*
-redirection type
-input   1: < 
-        2: <<
-output  3: > 
-        4: >>
-*/ 
+int	error_command_msg(char *cmd, char *message);
+int	error_command(char *cmd);
 
 #endif
