@@ -62,30 +62,32 @@ void word_splitting(t_token **new_list, char *word)
 	토큰수에 변동이 있을경우 중간에 삽입하되
 	추가된 토큰에 대한 확장검사는 진행되지 않는다
 */
-void splitting_tokens(t_token *token_list)
+void splitting_tokens(t_token **token_list)
 {
 	t_token *new_list;
+	t_token *cur_token;
 	t_token *next_token;
 
-	while (token_list)
+	cur_token = *token_list;
+	while (cur_token)
 	{
+		next_token = cur_token->next; // 원래 next node 를 저장해두고
 		new_list = NULL;
-		word_splitting(&new_list, token_list->value); // 추가 분할을 시도한 새 리스트를 생성
-		// ft_printf("split blank: %p\n", new_list);
-		if (new_list)
+		word_splitting(&new_list, cur_token->value); // 추가 분할을 시도한 새 리스트를 생성
+		if (new_list == NULL)
+			ft_token_lstdel_node(token_list, cur_token);
+		else
 		{
-			free(token_list->value);
-			token_list->value = new_list->value; // 기존의 content 교체
-
-			if (ft_token_lstsize(new_list) > 1) // 추가적인 분할로인해 새로운 노드가 생성되었다면
+			free(cur_token->value);
+			cur_token->value = new_list->value; // 기존의 content 교체
+			if (new_list->next) // 추가적인 분할로인해 새로운 노드가 생성되었다면
 			{
-				next_token = token_list->next; // 원래 next node 를 저장해두고
-				token_list->next = new_list->next; // 새 리스트의 두번째 노드부터 이어붙인다
-				ft_token_lstadd_back(&token_list, next_token); // 그리고 저장해둔 next node 를 다시 이어붙인다
+				cur_token->next = new_list->next; // 새 리스트의 두번째 노드부터 이어붙인다
+				ft_token_lstlast(cur_token)->next = next_token; // 그리고 저장해둔 next node 를 다시 이어붙인다
 			}
 			free(new_list);
 		}
-		token_list = token_list->next;
+		cur_token = next_token;
 	}
 }
 
