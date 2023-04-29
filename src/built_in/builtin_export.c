@@ -95,10 +95,19 @@ void	add_variable(char *key_value, t_data *data)
 
 int	ft_export(char **options, t_data *data)
 {
-	int	return_value;
+	int		return_value;
+	int		i;
+	char	**env;
 
 	return_value = 0;
 	options++;
+	if (!(*options))
+	{
+		env = get_env(data->my_env);
+		i = -1;
+		while (env[++i])
+			print_variable(env[i]);
+	}
 	while (*options)
 	{
 		if (check_input(*options))

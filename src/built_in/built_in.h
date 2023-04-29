@@ -20,5 +20,7 @@ int		ft_exit(char *cmd, char **options, char **env);
 // utils
 char	*get_value(char *key, char **env);
 int		key_exist(char *key, t_data *data, int len);
+char	**get_env(char **env);
+void	print_variable(char *str);
 
 #endif
