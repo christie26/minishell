@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./built_in.h"
+#include "./mini_builtin.h"
 
 int	ft_builtin(char	**argv, t_data *data)
 {

@@ -1,4 +1,4 @@
-#include "built_in.h"
+#include "mini_builtin.h"
 
 int	check_input(char *input)
 {

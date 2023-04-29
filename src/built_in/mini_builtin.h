@@ -1,6 +1,6 @@
-#ifndef BUILT_IN_H
+#ifndef MINI_BUILTIN_H
 
-# define BUILT_IN_H
+# define MINI_BUILTIN_H
 
 # include <stdio.h>
 

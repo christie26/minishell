@@ -1,4 +1,4 @@
-#include "built_in.h"
+#include "mini_builtin.h"
 
 void	remove_variable(int index_env, t_data *data, int number)
 {
