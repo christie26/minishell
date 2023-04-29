@@ -7,5 +7,6 @@
 # define HOME_ERROR "Home not set"
 # define OLDPWD_ERROR "OLDPWD not set"
 # define TMP_FILE_ERROR "Fail to make tmp file"
+# define EXPORT_ERROR "not a valid identifier"
 
 #endif

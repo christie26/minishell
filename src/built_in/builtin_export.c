@@ -9,8 +9,8 @@ int	check_input(char *input)
 	count = 0;
 	if (!input)
 		return (ft_err_msg(1, "No input", __FILE__, __LINE__));
-	if (input[0] == '=')
-		return (ft_err_msg(1, "not a valid identifier", __FILE__, __LINE__));
+	if (input[0] == '=' || !(ft_isalpha(input[0]) || input[0] == '_'))
+		return (ft_err_msg(1, EXPORT_ERROR, __FILE__, __LINE__));
 	while (input[i])
 	{
 		if (input[i] == '=')
