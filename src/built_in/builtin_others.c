@@ -12,28 +12,43 @@ int	ft_pwd(char *cmd, char **options, char **env)
 	return (0);
 }
 
+char	*join_with_space(char *s1, char *s2)
+{
+	char	*result;
+	char	*tmp;
+
+	result = ft_strjoin(s1, " ");
+	ft_err_msg_exit(!result, MALLOC_ERROR, __FILE__, __LINE__);
+	free(s1);
+	tmp = result;
+	result = ft_strjoin(tmp, s2);
+	ft_err_msg_exit(!result, MALLOC_ERROR, __FILE__, __LINE__);
+	free(tmp);
+	return (result);
+}
+
 int	ft_echo(char **options, char **env)
 {
-	int	endl;
+	char	*result;
+	int		endl;
 
 	options++;
 	endl = 1;
-	if (!*options)
-		return (0);
-	if (!ft_strcmp(*options, "-n"))
+	if (*options && !ft_strcmp(*options, "-n"))
 	{
 		options++;
 		endl = 0;
 	}
+	if (!*options)
+		return (0);
+	result = ft_strdup(*options++);
+	ft_err_msg_exit(!result, MALLOC_ERROR, __FILE__, __LINE__);
 	while (*options)
-	{
-		ft_putstr_fd(*options, 1);
-		options++;
-		if (*options)
-			ft_putchar_fd(' ', 1);
-	}
+		result = join_with_space(result, *options++);
 	if (endl)
-		ft_putchar_fd('\n', 1);
+		printf("%s\n", result);
+	else
+		printf("%s", result);
 	(void)(env);
 	return (0);
 }
