@@ -71,18 +71,20 @@ void splitting_tokens(t_token *token_list)
 	{
 		new_list = NULL;
 		word_splitting(&new_list, token_list->value); // 추가 분할을 시도한 새 리스트를 생성
-
-		free(token_list->value);
-		token_list->value = new_list->value; // 기존의 content 교체
-
-		if (ft_token_lstsize(new_list) > 1) // 추가적인 분할로인해 새로운 노드가 생성되었다면
+		// ft_printf("split blank: %p\n", new_list);
+		if (new_list)
 		{
-			next_token = token_list->next; // 원래 next node 를 저장해두고
-			token_list->next = new_list->next; // 새 리스트의 두번째 노드부터 이어붙인다
-			ft_token_lstadd_back(&token_list, next_token); // 그리고 저장해둔 next node 를 다시 이어붙인다
-		}
-		free(new_list);
+			free(token_list->value);
+			token_list->value = new_list->value; // 기존의 content 교체
 
+			if (ft_token_lstsize(new_list) > 1) // 추가적인 분할로인해 새로운 노드가 생성되었다면
+			{
+				next_token = token_list->next; // 원래 next node 를 저장해두고
+				token_list->next = new_list->next; // 새 리스트의 두번째 노드부터 이어붙인다
+				ft_token_lstadd_back(&token_list, next_token); // 그리고 저장해둔 next node 를 다시 이어붙인다
+			}
+			free(new_list);
+		}
 		token_list = token_list->next;
 	}
 }
@@ -98,7 +100,7 @@ void quote_remove_tokens(t_token **token_list)
 
 	cur_token = *token_list;
 	while (cur_token)
-	{		
+	{
 		content = get_quote_removed_string(cur_token->value);
 		if (content == NULL)
 		{
