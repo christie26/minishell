@@ -1,4 +1,4 @@
-#include "built_in.h"
+#include "mini_builtin.h"
 
 void	remove_variable(int index_env, t_data *data, int number)
 {
@@ -9,7 +9,8 @@ void	remove_variable(int index_env, t_data *data, int number)
 
 	env = data->my_env;
 	new_env = malloc(sizeof(char *) * number);
-	ft_err_msg_exit(!new_env, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!new_env)
+		exit(EXIT_FAILURE);
 	i = 0;
 	j = 0;
 	while (j < number)
@@ -19,9 +20,7 @@ void	remove_variable(int index_env, t_data *data, int number)
 			j++;
 			continue ;
 		}
-		new_env[i] = env[j];
-		i++;
-		j++;
+		new_env[i++] = env[j++];
 	}
 	free(env[index_env]);
 	new_env[i] = 0;
