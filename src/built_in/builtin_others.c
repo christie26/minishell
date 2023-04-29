@@ -46,7 +46,7 @@ int	ft_echo(char **options, char **env)
 		return (0);
 	result = ft_strdup(*options++);
 	if (!result)
-		exit(EXIT_FAILURE);	
+		exit(EXIT_FAILURE);
 	while (*options)
 		result = join_with_space(result, *options++);
 	if (endl)

@@ -45,13 +45,30 @@ char	*random_name(void)
 	return (0);
 }
 
-void	heredoc_open(t_redirect *redirect, char **env)
+void	heredoc_write(int fd, char *filename, char **env)
 {
+	size_t	len;
 	char	*buf;
 	char	*expanded;
+
+	len = ft_strlen(filename);
+	buf = get_next_line(STDIN_FILENO);
+	while (ft_strncmp(buf, filename, len) || buf[len] != '\n')
+	{
+		expanded = get_expanded_string(buf, env);
+		if (write(fd, expanded, ft_strlen(expanded)) == -1)
+			error_command("heredoc");
+		free(buf);
+		buf = get_next_line(STDIN_FILENO);
+	}
+	free(buf);
+	ft_close(fd);
+}
+
+void	heredoc_open(t_redirect *redirect, char **env)
+{
 	char	*tmp_file;
 	int		fd;
-	size_t	len;
 
 	tmp_file = random_name();
 	if (!tmp_file)
@@ -62,18 +79,7 @@ void	heredoc_open(t_redirect *redirect, char **env)
 	fd = open(tmp_file, O_CREAT | O_WRONLY, 0644);
 	if (fd == -1)
 		error_command("heredoc");
-	len = ft_strlen(redirect->filename);
-	buf = get_next_line(STDIN_FILENO);
-	while (ft_strncmp(buf, redirect->filename, len) || buf[len] != '\n')
-	{
-		expanded = get_expanded_string(buf, env);
-		if (write(fd, expanded, ft_strlen(expanded)) == -1)
-			error_command("heredoc");
-		free(buf);
-		buf = get_next_line(STDIN_FILENO);
-	}
-	free(buf);
-	ft_close(fd);
+	heredoc_write(fd, redirect->filename, env);
 	free(redirect->filename);
 	redirect->filename = tmp_file;
 }

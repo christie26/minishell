@@ -20,9 +20,7 @@ void	remove_variable(int index_env, t_data *data, int number)
 			j++;
 			continue ;
 		}
-		new_env[i] = env[j];
-		i++;
-		j++;
+		new_env[i++] = env[j++];
 	}
 	free(env[index_env]);
 	new_env[i] = 0;

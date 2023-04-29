@@ -79,12 +79,9 @@ void	add_variable(char *key_value, t_data *data)
 	new_env = malloc(sizeof(char *) * (number + 2));
 	if (!new_env)
 		exit(EXIT_FAILURE);
-	i = 0;
-	while (i < number)
-	{
+	i = -1;
+	while (++i < number)
 		new_env[i] = env[i];
-		i++;
-	}
 	new_env[i] = ft_strdup(key_value);
 	if (!new_env[i])
 		exit(EXIT_FAILURE);

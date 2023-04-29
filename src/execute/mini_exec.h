@@ -42,6 +42,6 @@ int		is_builtin(char *cmd);
 void	add_variable(char *key_value, t_data *data);
 
 // expand part
-char *get_expanded_string(char *str, char **my_env);
+char	*get_expanded_string(char *str, char **my_env);
 
 #endif
