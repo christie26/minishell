@@ -116,31 +116,30 @@ void quote_remove_tokens(t_token **token_list)
 /*
 	따옴표 또한 구분자로 취급하여 문자열을 생성한다
 */
-char *get_word_without_quote(char **str)
+char *get_word_without_quote(char *str, size_t *idx)
 {
-	char *substr_offset;
-	char open_quote;
 	char *token_content;
+	char open_quote;
+	size_t len;
 
-	open_quote = '\0';
-	if (is_quote(**str))
-		open_quote = *(*str)++;
-	substr_offset = *str;
-	while (**str)
+	len = 0;
+	open_quote = 0;
+	if (is_quote(str[*idx]))
+		open_quote = str[(*idx)++];
+	while (str[*idx + len])
 	{
-		if (open_quote == '\0' && is_quote(**str))
+		if (open_quote && open_quote == str[*idx + len])
 			break;
-		else if (open_quote && open_quote == **str)
+		if (open_quote == 0 && is_quote(str[*idx + len]))
 			break;
-		++*str;
+		++len;
 	}
-	if (open_quote)
+	if (open_quote && open_quote != str[*idx + len])
 		return (NULL);
-	token_content = ft_substr(substr_offset, 0, *str - substr_offset);
+	token_content = ft_substr(str, *idx, len);
 	if (token_content == NULL)
 		exit(EXIT_FAILURE);
-	if (is_quote(**str))
-		open_quote = *(*str)++;
+	*idx += len + (open_quote != 0);
 	return (token_content);
 }
 
@@ -154,11 +153,13 @@ char *get_quote_removed_string(char *str)
 	t_list *word_list;
 	t_list *new_word;
 	char *content;
+	size_t idx;
 
 	word_list = NULL;
-	while (*str)
+	idx = 0;
+	while (str[idx])
 	{
-		content = get_word_without_quote(&str);
+		content = get_word_without_quote(str, &idx);
 		if (content == NULL) // 따옴표가 닫히지 않음
 		{
 			ft_printf("yo shell: quote not closed\n");

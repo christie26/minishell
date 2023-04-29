@@ -85,7 +85,8 @@ void word_splitting(t_token **new_list, char *word);
 void splitting_tokens(t_token *token_list);
 // void quote_remove_tokens(t_list *tokens);
 void quote_remove_tokens(t_token **token_list);
-char *get_word_without_quote(char **str);
+// char *get_word_without_quote(char **str);
+char *get_word_without_quote(char *str, size_t *idx);
 char *get_quote_removed_string(char *str);
 
 // pipeline_list_utils.c
