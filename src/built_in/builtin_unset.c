@@ -12,7 +12,7 @@ void	remove_variable(int index_env, t_data *data, int number)
 	ft_err_msg_exit(!new_env, MALLOC_ERROR, __FILE__, __LINE__);
 	i = 0;
 	j = 0;
-	while (i < number - 1)
+	while (j < number)
 	{
 		if (j == index_env)
 		{
@@ -23,6 +23,7 @@ void	remove_variable(int index_env, t_data *data, int number)
 		i++;
 		j++;
 	}
+	free(env[index_env]);
 	new_env[i] = 0;
 	data->my_env = new_env;
 	free(env);

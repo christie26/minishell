@@ -1,125 +1,85 @@
 
 #include "mini_parse.h"
 
-void get_redirections(t_list **tokens, t_cmd_block **cmd_block)
+int get_redirection(t_token **cur_token, t_cmd_block *cmd_block)
 {
-	t_list *cur_token;
-	t_list *prev_token;
-	t_redirect *new_redirect;
-	int type;
+	t_redirect	*new_redirect;
+	int			type;
 
-	cur_token = *tokens;
-	while (cur_token && (ft_strcmp(((cur_token->content)), "|") != 0)) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	type = 1;
+	if (*(*cur_token)->value == '>')
+		type = 3;
+	type += (ft_strlen((*cur_token)->value) > 1);
+
+	*cur_token = (*cur_token)->next;
+	if (*cur_token == NULL || (*cur_token)->type == OPERATOR)
 	{
-		if (!is_operator_char(*(char *)(cur_token->content))) // word 라면 패스
-		{
-			cur_token = cur_token->next;
-			continue;
-		}
-
-		// ------------ 타입 구분 ------------
-		type = 1; // < 을 기본값으로 먼저 세팅
-		if (*(char *)(cur_token->content) == '>') // 조건부에 따라 덮어씌움
-			type = 3;
-		type += (*(char *)(cur_token->content) == *((char *)(cur_token->content) + 1)); // 연달아 같은 문자면 +1
-
-		prev_token = cur_token;
-		cur_token = cur_token->next;
-		ft_lstdel_node(tokens, prev_token, free);
-
-		// ----------- 에러 케이스 -----------
-		if (cur_token == NULL) // redirection 으로 끝난경우
-		{
-			ft_printf("unexpected token \'newline\'");
-			return;
-		}
-		else if (cur_token && is_operator_char(*(char *)(cur_token->content))) // redirection 이 연속해서 등장하는 경우
-		{
-			ft_printf("unexpected token \'%s\'", cur_token->content);
-			return;
-		}
-		// -----------------------------------
-
-		// ------------ 파일 이름 ------------
-		new_redirect = ft_redirect_lstnew(type, (char *)(cur_token->content));
-		ft_redirect_lstadd_back(&((*cmd_block)->redirect), new_redirect);
-
-		prev_token = cur_token;
-		cur_token = cur_token->next;
-		ft_lstdel_node(tokens, prev_token, free);
+		ft_printf("syntax error near unexpected token ");
+		if (*cur_token == NULL)
+			ft_printf("\'newline\'\n");
+		else
+			ft_printf("\'%s\'\n", (*cur_token)->value);
+		return (0);
 	}
-	
-	/*
-		굳이 여기서 순회하며 찾아야하나 싶음
-		cmd에서 편하게 일괄처리하고싶었다지만...
-		그냥 밖에서 redirect, word 따라 함수를 개별로 호출하는편이...
-	*/
+
+	new_redirect = (t_redirect *)malloc(sizeof(t_redirect));
+	if (new_redirect == NULL)
+		exit(EXIT_FAILURE);
+
+	new_redirect = ft_redirect_lstnew(type, (*cur_token)->value);// word 뿐만 아니라 redirect 의 filename 도 문자열 주소만 옮겨주니 함부로 free 하면 안될듯
+	ft_redirect_lstadd_back(&(cmd_block->redirect), new_redirect);
+	*cur_token = (*cur_token)->next;
+	return (1);
 }
 
-void get_cmds(t_list **tokens, t_cmd_block **cmd_block)
+void cmd_list_to_char(t_list *cmd_list, t_cmd_block *new_cmd_block)
 {
-	size_t cnt = 0;
-	size_t idx = 0;
-	t_list *cur_token;
-	t_list *next_token;
+	t_list	*cmd_list_iter;
+	size_t	len;
+	char	**cmds;
 
-	cur_token = *tokens;
-	while (cur_token && ft_strcmp(cur_token->content, "|")) // 토큰이 다 떨어졌거나 파이프라면 순회 종료
+	cmd_list_iter = cmd_list;
+	len = ft_lstsize(cmd_list);
+	cmds = ft_calloc(len + 1, sizeof(char *));
+	if (cmds == NULL)
+		exit(EXIT_FAILURE);
+	while (cmd_list_iter)
 	{
-		cnt++;
-		cur_token = cur_token->next;
+		cmds[ft_lstsize(cmd_list) - len] = cmd_list_iter->content;
+		len--;
+		cmd_list_iter = cmd_list_iter->next;
 	}
-
-	if (cnt == 0)
-		return;
-
-	(*cmd_block)->cmd = (char **)calloc(cnt + 1, sizeof(char *)); // NULL 포인터가 필요한 이중배열이기때문에 +1만큼 생성
-
-	cur_token = *tokens;
-	while (idx < cnt)
-	{
-		next_token = cur_token->next;
-		(*cmd_block)->cmd[idx++] = (char *)(cur_token->content);
-		ft_lstdel_node(tokens, cur_token, NULL); // 문자열이 cmd안에서 쓰여야 하니 살려둔다
-		cur_token = next_token;
-	}
+	ft_lstclear(&cmd_list, NULL);
+	new_cmd_block->cmd = cmds;
 }
 
-t_cmd_block *create_cmd_block(t_list **tokens)
+void get_cmd(t_token **cur_token, t_list **cmd_list)
 {
-	t_cmd_block *new_cmd_block;
+	t_list *new_node;
+	char	*new_content;
 
-	new_cmd_block = ft_calloc(1, sizeof(t_cmd_block));
-	if (!new_cmd_block)
-		return (NULL);
-	
-	/*
-		redirect, word 리스트를 각각 두고
-		현재 토큰에 따라 리스트를 채워나가기?
-		마지막에 word 리스트만 char **로 변환...
-		확장후 오퍼레이터를 처리하기위해서는
-		토큰에 타입이라는 추가정보를 달아줘야함
-		그렇다면 여기서 트리를 만드는 과정도 수월해짐
-	*/
-
-	get_redirections(tokens, &new_cmd_block);
-	get_cmds(tokens, &new_cmd_block);
-	if (new_cmd_block->redirect == NULL && new_cmd_block->cmd == NULL)
+	while (*cur_token && (*cur_token)->type == WORD)
 	{
-		ft_printf("unexpected token: \'|\'\n");
-		free(new_cmd_block);
-		return (NULL);
+		new_content = ft_strdup((*cur_token)->value);
+		if (new_content == NULL)
+			exit(EXIT_FAILURE);
+		new_node = ft_lstnew(new_content);
+		if (new_node == NULL)
+			exit(EXIT_FAILURE);
+		ft_lstadd_back(cmd_list, new_node);
+		*cur_token = (*cur_token)->next;
 	}
-	return (new_cmd_block);
 }
 
 void free_cmd_block(t_cmd_block *cmd_block)
 {
+	char **cmds;
+
 	if (cmd_block->redirect)
 		ft_redirect_lstclear(&cmd_block->redirect);
 	if (cmd_block->cmd)
 	{
-		char **cmds = cmd_block->cmd;
+		cmds = cmd_block->cmd;
 		while (*cmds)
 		{
 			free(*cmds);
@@ -127,36 +87,78 @@ void free_cmd_block(t_cmd_block *cmd_block)
 		}
 		free(cmd_block->cmd);
 	}
+	free(cmd_block);
 }
 
-void create_pipe_list(t_pipeline **pipe_list, t_list **tokens)
-{
-	t_pipeline *new_pipeline;
-	t_cmd_block *new_cmd_block;
-	t_list *next_token;
+/*
 
-	while (*tokens)
+	토큰 하나씩 순회
+
+	operator 토큰일 경우
+	- 파이프일때
+	- 파이프가 아닐떄
+		- redirection
+		- 다음토큰도 operator 면 에러 -> unexpected token 'token -> value'
+		- 다음토큰이 비었으면 에러 -> unexpected token 'newline'
+	word 토큰일 경우
+	- 저장해뒀다가 일괄적으로 char** 로 변환...?
+		- 토큰의 value를 옮겨담은 리스트를 따로 만들것인지...?
+		- 토큰의 value를 strdup으로 복제한 리스트를 따로 만들것인지...?
+
+*/
+t_cmd_block *create_cmd_block(t_token **token_list)
+{
+	t_cmd_block *new_cmd_block;
+	t_list		*cmd_list;
+
+	new_cmd_block = ft_calloc(1, sizeof(t_cmd_block));
+	if (!new_cmd_block)
+		exit(EXIT_FAILURE);
+	cmd_list = NULL;
+
+	while (*token_list && !((*token_list)->type == OPERATOR && ft_strcmp("|", (*token_list)->value) == 0))
 	{
-		new_cmd_block = create_cmd_block(tokens);
-		
-		if (!new_cmd_block) // 파싱 에러
+		if ((*token_list)->type == OPERATOR)
 		{
-			ft_lstclear(tokens, free);
-			ft_pipeline_lstclear(pipe_list);
-			return;
+			if (!get_redirection(token_list, new_cmd_block))
+			{
+				free(new_cmd_block);
+				return (NULL);
+			}
 		}
-		
-		new_pipeline = ft_pipeline_lstnew(new_cmd_block);
-		if (!new_pipeline)
-			exit(EXIT_FAILURE);
+		else
+			get_cmd(token_list, &cmd_list);
+	}
+	cmd_list_to_char(cmd_list, new_cmd_block);
+	return (new_cmd_block);
+}
+
+
+
+void create_pipeline_list(t_pipeline **pipe_list, t_token *token_list)
+{
+	t_pipeline	*new_pipeline;
+
+	while (token_list)
+	{
+		new_pipeline = ft_pipeline_lstnew(&token_list);
+		if (!new_pipeline) // 파이프로 시작했거나 redirect 에러
+		{
+			ft_pipeline_lstclear(pipe_list);
+			return ;
+		}
 		
 		ft_pipeline_lstadd_back(pipe_list, new_pipeline);
 
-		if (*tokens && ft_strcmp((*tokens)->content, "|")) // 파이프면 파이프 지우고 계속
+		if (token_list && ft_strcmp(token_list->value, "|") == 0) // redirect 와 word 를 다 밀었으니 파이프나 널문자가 있을것
 		{
-			next_token = (*tokens)->next;
-			ft_lstdelone(*tokens, free);
-			*tokens = next_token;
+			token_list = token_list->next;
+			if (!token_list) // 파이프로 끝난경우
+			{
+				ft_printf("unexpected token: \'newline\'\n");
+				ft_pipeline_lstclear(pipe_list);
+				return ;
+			}
 		}
 	}
 }
