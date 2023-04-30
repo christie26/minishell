@@ -1,8 +1,6 @@
 
 #include "mini_parse.h"
 
-int	short_exit_status;
-
 void print_tree(t_pipeline *pipeline_list)
 {
 	size_t idx = 0;
