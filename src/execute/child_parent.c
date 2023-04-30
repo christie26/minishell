@@ -29,6 +29,7 @@ void	ft_execute(char **options, t_data *data)
 
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
+	short_exit_status = 0;
 	if (i != 0)
 	{
 		ft_dup2(data->prev_fd, 0);
