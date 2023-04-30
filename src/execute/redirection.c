@@ -6,11 +6,12 @@ int	redirection_1(char	*file)
 
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (dup2(fd, 0) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (close(fd) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
+	{
+		error_command(file);
+		return (1);
+	}
+	ft_dup2(fd, 0);
+	ft_close(fd);
 	return (0);
 }
 
@@ -20,11 +21,12 @@ int	redirection_2(char	*file)
 
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (dup2(fd, 0) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (close(fd) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
+	{
+		error_command(file);
+		return (1);
+	}
+	ft_dup2(fd, 0);
+	ft_close(fd);
 	return (0);
 }
 
@@ -34,11 +36,12 @@ int	redirection_3(char *file)
 
 	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (dup2(fd, 1) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (close(fd) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
+	{
+		error_command(file);
+		return (1);
+	}	
+	ft_dup2(fd, 1);
+	ft_close(fd);
 	return (0);
 }
 
@@ -48,11 +51,12 @@ int	redirection_4(char *file)
 
 	fd = open(file, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (dup2(fd, 1) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
-	if (close(fd) == -1)
-		return (ft_err_sys(1, __FILE__, __LINE__));
+	{
+		error_command(file);
+		return (1);
+	}	
+	ft_dup2(fd, 1);
+	ft_close(fd);
 	return (0);
 }
 

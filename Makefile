@@ -1,10 +1,11 @@
 # all file
 SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
-					utils.c \
+					execute_utils.c \
 					child_parent.c \
 					redirection.c \
-					heredoc.c
+					heredoc.c \
+					new_error.c
 
 SRCS_PARSE		=	readline.c \
 					parse_simple_check.c \
@@ -17,10 +18,12 @@ SRCS_PARSE		=	readline.c \
 					token_list_utils.c
 
 SRCS_BUILT		=	builtin_center.c \
-					builtin_func1.c \
 					builtin_export.c \
 					builtin_unset.c \
-					builtin_env.c
+					builtin_env.c \
+					builtin_cd.c \
+					builtin_others.c \
+					builtin_utils.c
 
 # add path as their usage
 DIR_EXEC		= execute/

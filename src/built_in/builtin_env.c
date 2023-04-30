@@ -1,4 +1,4 @@
-#include "built_in.h"
+#include "mini_builtin.h"
 
 char	**get_env(char **env)
 {
@@ -11,7 +11,8 @@ char	**get_env(char **env)
 	while (env[number])
 		number++;
 	tmp_env = malloc(sizeof(char *) * (number + 1));
-	ft_err_msg_exit(!tmp_env, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!tmp_env)
+		exit(EXIT_FAILURE);
 	i = 0;
 	j = 0;
 	while (j < number)
@@ -65,14 +66,16 @@ char	*get_value(char *key, char **env)
 		{
 			free(test_key);
 			value = ft_substr(env_line, i + 1, ft_strlen(env_line));
-			ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
+			if (!value)
+				exit(EXIT_FAILURE);
 			return (value);
 		}
 		free(test_key);
 		env++;
 	}
 	value = ft_strdup("");
-	ft_err_msg_exit(!value, MALLOC_ERROR, __FILE__, __LINE__);
+	if (!value)
+		exit(EXIT_FAILURE);
 	return (value);
 }
 
@@ -83,8 +86,8 @@ int	ft_env(char *cmd, char **options, char **env)
 	options++;
 	if (*options)
 	{
-		ft_err_msg(1, "We don't need arguments", __FILE__, __LINE__);
-		return (127);
+		error_command_msg("env", "We don't need arguments\n");
+		return (1);
 	}
 	i = 0;
 	while (env[i])

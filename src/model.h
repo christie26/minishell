@@ -4,7 +4,8 @@
 
 # include <unistd.h>
 
-extern int short_exit_status;
+// extern int short_exit_status;
+int short_exit_status;
 
 typedef struct s_redirect {
     int					type;
@@ -30,12 +31,7 @@ typedef struct s_data {
     char    **my_env;
 }   t_data;
 
-/*
-redirection type
-input   1: < 
-        2: <<
-output  3: > 
-        4: >>
-*/ 
+int	error_command_msg(char *cmd, char *message);
+int	error_command(char *cmd);
 
 #endif
