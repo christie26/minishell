@@ -82,10 +82,12 @@ char *get_word_with_operator(char **word);
 // void word_splitting(t_list **new_list, char *word);
 void word_splitting(t_token **new_list, char *word);
 // void splitting_tokens(t_list *tokens);
-void splitting_tokens(t_token *token_list);
+// void splitting_tokens(t_token *token_list);
+void splitting_tokens(t_token **token_list);
 // void quote_remove_tokens(t_list *tokens);
 void quote_remove_tokens(t_token **token_list);
-char *get_word_without_quote(char **str);
+// char *get_word_without_quote(char **str);
+char *get_word_without_quote(char *str, size_t *idx);
 char *get_quote_removed_string(char *str);
 
 // pipeline_list_utils.c
@@ -105,9 +107,10 @@ void		ft_redirect_lstclear(t_redirect **redirect_lst);
 
 // token_list_utils.c
 t_token	*ft_token_lstnew(int type, char *value);
-int	ft_token_lstsize(t_token *token_lst);
+// int	ft_token_lstsize(t_token *token_lst);
 t_token	*ft_token_lstlast(t_token *token_lst);
 void	ft_token_lstadd_back(t_token **token_lst, t_token *new);
+void	ft_token_lstdel_node(t_token **token_lst, t_token *target);
 void	ft_token_lstclear(t_token **token_lst);
 
 // with execute

@@ -51,7 +51,7 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	if (!tokens) // bad substitution or not closed brace
 		return (NULL);
 	
-	splitting_tokens(tokens); // 공백만 있는 토큰인경우...
+	splitting_tokens(&tokens); // 공백만 있는 토큰인경우... -> 확장이 이루어진 토큰에 대해서만 이루어진다
 	
 	quote_remove_tokens(&tokens);
 	if (!tokens) // 따옴표가 닫히지 않은 경우
