@@ -9,6 +9,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+#include <signal.h>
+
 # include "libft.h"
 # include "ft_printf.h"
 # include "get_next_line.h"

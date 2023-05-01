@@ -77,6 +77,11 @@ int main(int argc, char *argv[], char *envp[])
     while (1)
     {
 		res = readline("yo shell$ ");
+		if (res == NULL)
+		{
+			ft_printf("exit\n");
+			continue;
+		}
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
 		{
