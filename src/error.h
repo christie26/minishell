@@ -10,5 +10,6 @@
 # define EXPORT_ERROR "not a valid identifier\n"
 # define PIPE_ERROR "Too many pipes\n"
 # define EXIT_ERROR "numeric argument required\n"
+# define START_ERROR "No such file or directory\n"
 
 #endif

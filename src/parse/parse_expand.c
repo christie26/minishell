@@ -1,11 +1,10 @@
-
 #include "mini_parse.h"
 
-void expand_tokens(t_token **token_list, char** my_env)
+void	expand_tokens(t_token **token_list, char **my_env)
 {
-	t_token *cur_token;
-	int is_here_doc;
-	char *content;
+	t_token	*cur_token;
+	int		is_here_doc;
+	char	*content;
 
 	cur_token = *token_list;
 	is_here_doc = 0;
@@ -15,13 +14,13 @@ void expand_tokens(t_token **token_list, char** my_env)
 		{
 			is_here_doc = (ft_strcmp(cur_token->value, "<<") == 0);
 			cur_token = cur_token->next;
-			continue;
+			continue ;
 		}
 		content = get_expanded_string(cur_token->value, my_env);
-		if (content == NULL) // bad substitution
+		if (content == NULL)
 		{
 			ft_token_lstclear(token_list);
-			return;
+			return ;
 		}
 		free(cur_token->value);
 		cur_token->value = content;
@@ -29,11 +28,11 @@ void expand_tokens(t_token **token_list, char** my_env)
 	}
 }
 
-char *word_list_join(t_list *word_list)
+char	*word_list_join(t_list *word_list)
 {
-	char *result;
-	char *temp;
-	t_list *word_list_iter;
+	char	*result;
+	char	*temp;
+	t_list	*word_list_iter;
 
 	result = ft_strdup("");
 	if (result == NULL)
@@ -52,14 +51,11 @@ char *word_list_join(t_list *word_list)
 	return (result);
 }
 
-char *get_key_from_word(char **str)
+char	*get_key_from_word(char **str)
 {
-	// 중괄호 사용여부 체크
-	// 중괄호를 사용했다면 bad substitution 체크
-	// 그렇지 않으면 ft_alnum일때만 계속해서 변수이름으로 해석한다
-	int brace;
-	char *substr_offset;
-	char *key;
+	int		brace;
+	char	*substr_offset;
+	char	*key;
 
 	brace = (**str == '{');
 	if (brace)
@@ -83,18 +79,18 @@ char *get_key_from_word(char **str)
 	return (key);
 }
 
-char *get_expanded_word(char **str, char **my_env)
+char	*get_expanded_word(char **str, char **my_env)
 {
-	char check;
-	char *key;
-	char *result;
+	char	check;
+	char	*key;
+	char	*result;
 
-	check = *(*str + 1); // 체크할때는 문자 주소가 밀리면 안된다, 맨 마지막 케이스에서 $를 포함해서 단어를 만들어야하기 때문에
+	check = *(*str + 1);
 	if (ft_isalnum(check) || check == '{')
 	{
 		++*str;
 		key = get_key_from_word(str);
-		if (key == NULL) // bad substitution or not closed brace
+		if (key == NULL)
 			return (NULL);
 		result = get_value(key, my_env);
 		free(key);
@@ -106,19 +102,19 @@ char *get_expanded_word(char **str, char **my_env)
 		++*str;
 		return (get_value("?", my_env));
 	}
-	else // 문자열 확장이거나 의미없는 특수문자인경우 $포함해서 그냥 출력
+	else
 	{
 		if (is_quote(check))
-			++*str; // 따옴표라면 $빼고 따옴표부터
+			++*str;
 		return (get_non_expanded_word(str));
 	}
 }
 
-char *get_non_expanded_word(char **str)
+char	*get_non_expanded_word(char **str)
 {
-	char open_quote;
-	char *substr_offset;
-	char *word;
+	char	open_quote;
+	char	*substr_offset;
+	char	*word;
 
 	substr_offset = *str;
 	open_quote = '\0';
@@ -131,7 +127,7 @@ char *get_non_expanded_word(char **str)
 		else if (open_quote && open_quote == **str)
 			open_quote = '\0';
 		if (**str == '$' && open_quote != '\'')
-			break;
+			break ;
 		++*str;
 	}
 	word = ft_substr(substr_offset, 0, *str - substr_offset);
@@ -140,11 +136,11 @@ char *get_non_expanded_word(char **str)
 	return (word);
 }
 
-char *get_expanded_string(char *str, char **my_env)
+char	*get_expanded_string(char *str, char **my_env)
 {
-	t_list *word_list;
-	t_list *new_word;
-	char *content;
+	t_list	*word_list;
+	t_list	*new_word;
+	char	*content;
 
 	word_list = NULL;
 	while (*str)
@@ -152,7 +148,7 @@ char *get_expanded_string(char *str, char **my_env)
 		if (*str == '$')
 		{
 			content = get_expanded_word(&str, my_env);
-			if (content == NULL) // bad substitution or not closed brace
+			if (content == NULL)
 			{
 				ft_lstclear(&word_list, free);
 				return (NULL);
