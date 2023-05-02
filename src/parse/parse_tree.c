@@ -123,6 +123,7 @@ t_cmd_block *create_cmd_block(t_token **token_list)
 			if (!get_redirection(token_list, new_cmd_block))
 			{
 				free(new_cmd_block);
+				ft_lstclear(&cmd_list, free); // redirect 부터 일괄처리후 cmd를 구하는것이 아니기 때문에 도중에 모아둔 cmd는 날려야 한다
 				return (NULL);
 			}
 		}
