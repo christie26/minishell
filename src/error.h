@@ -11,5 +11,7 @@
 # define PIPE_ERROR "Too many pipes\n"
 # define EXIT_ERROR "numeric argument required\n"
 # define START_ERROR "No such file or directory\n"
+# define BAD_SUB_ERROR "bad substitution\n"
+# define BRACE_ERROR "brace not closed\n"
 
 #endif

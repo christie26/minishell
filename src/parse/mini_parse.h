@@ -101,6 +101,6 @@ void		ft_token_lstclear(t_token **token_lst);
 // with execute
 int			mini_execute(t_pipeline *pipeline, t_data *data);
 char		**init_envp(char **envp);
-void		set_exit_status(t_data *data, int short_exit_status);
+void		set_exit_status(t_data *data, int g_exit_status);
 
 #endif

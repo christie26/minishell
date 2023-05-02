@@ -1,5 +1,16 @@
 #include "mini_parse.h"
 
+void	print_tree2(t_redirect *temp_redir)
+{
+	while (temp_redir)
+	{
+		ft_printf("\n");
+		ft_printf("redirect type: %d\n", temp_redir->type);
+		ft_printf("redirect filename: %s\n", temp_redir->filename);
+		temp_redir = temp_redir->next;
+	}
+}
+
 void	print_tree(t_pipeline *pipeline_list)
 {
 	size_t		idx;
@@ -14,13 +25,7 @@ void	print_tree(t_pipeline *pipeline_list)
 		cur_cmd_block = pipeline_list->cmd_block;
 		ft_printf("--- redirect ---\n");
 		temp_redir = cur_cmd_block->redirect;
-		while (temp_redir)
-		{
-			ft_printf("\n");
-			ft_printf("redirect type: %d\n", temp_redir->type);
-			ft_printf("redirect filename: %s\n", temp_redir->filename);
-			temp_redir = temp_redir->next;
-		}
+		print_tree2(temp_redir);
 		ft_printf("\n");
 		ft_printf("--- cmd ---\n\n");
 		temp_cmd = cur_cmd_block->cmd;
