@@ -57,7 +57,7 @@ t_pipeline	*my_parse(char *str, char **my_env)
 
 int	main(int argc, char *argv[], char *envp[])
 {
-    char		*res;
+	char		*res;
 	t_pipeline	*pipeline_list;
 	t_data		data;
 
@@ -66,17 +66,16 @@ int	main(int argc, char *argv[], char *envp[])
 		error_command_msg(argv[1], START_ERROR);
 		return (1);
 	}
-	(void)argv;
 	data.my_env = init_envp(envp);
 	set_exit_status(&data, 0);
-    while (1)
-    {
+	while (1)
+	{
 		// signal_setting_readmode();
 		res = readline("yo shell$ ");
 		if (res == NULL)
 		{
 			ft_printf("exit\n");
-			continue;
+			continue ;
 		}
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
@@ -87,5 +86,5 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		// system("leaks minishell");
 		free(res);
-    }
+	}
 }
