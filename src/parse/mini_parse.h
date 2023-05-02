@@ -9,6 +9,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+#include <signal.h>
+
 # include "libft.h"
 # include "ft_printf.h"
 # include "get_next_line.h"
@@ -89,6 +91,11 @@ void quote_remove_tokens(t_token **token_list);
 // char *get_word_without_quote(char **str);
 char *get_word_without_quote(char *str, size_t *idx);
 char *get_quote_removed_string(char *str);
+
+// signals.c
+void	sig_handler_readmode(int signum);
+void	signal_setting_readmode(void);
+void	signal_setting_commandmode(void);
 
 // pipeline_list_utils.c
 // t_pipeline	*ft_pipeline_lstnew(t_cmd_block *new_cmd_block);

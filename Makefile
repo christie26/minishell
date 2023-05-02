@@ -15,7 +15,8 @@ SRCS_PARSE		=	readline.c \
 					parse_tree.c \
 					pipeline_list_utils.c \
 					redirect_list_utils.c \
-					token_list_utils.c
+					token_list_utils.c \
+					signals.c
 
 SRCS_BUILT		=	builtin_center.c \
 					builtin_export.c \
