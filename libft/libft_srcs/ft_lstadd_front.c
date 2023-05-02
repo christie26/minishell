@@ -14,10 +14,10 @@
 
 void	ft_lstadd_front(t_list **lst, t_list *new)
 {
-	t_list *cur_node;
+	t_list	*cur_node;
 
 	if (lst == NULL)
-		return;
+		return ;
 	cur_node = ft_lstlast(new);
 	cur_node->next = *lst;
 	*lst = new;

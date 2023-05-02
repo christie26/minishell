@@ -1,17 +1,16 @@
-
 #include "mini_parse.h"
 
 t_redirect	*ft_redirect_lstnew(int type, char *filename)
 {
 	t_redirect	*new_redirect_lst;
-	char	*cpy_filename;
+	char		*cpy_filename;
 
 	new_redirect_lst = (t_redirect *)malloc(sizeof(t_redirect));
 	if (!new_redirect_lst)
 		exit(EXIT_FAILURE);
 	cpy_filename = ft_strdup(filename);
 	if (cpy_filename == NULL)
-		exit(EXIT_FAILURE);;
+		exit(EXIT_FAILURE);
 	new_redirect_lst->type = type;
 	new_redirect_lst->filename = cpy_filename;
 	new_redirect_lst->next = NULL;
@@ -50,7 +49,7 @@ void	ft_redirect_lstadd_back(t_redirect **redirect_lst, t_redirect *new)
 	t_redirect	*cur_redirect;
 
 	if (redirect_lst == NULL)
-		return;
+		return ;
 	if (*redirect_lst)
 	{
 		cur_redirect = ft_redirect_lstlast(*redirect_lst);
