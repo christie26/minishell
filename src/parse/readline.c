@@ -76,6 +76,7 @@ int main(int argc, char *argv[], char *envp[])
 	set_exit_status(&data, 0);
     while (1)
     {
+		// signal_setting_readmode();
 		res = readline("yo shell$ ");
 		if (res == NULL)
 		{
@@ -85,11 +86,11 @@ int main(int argc, char *argv[], char *envp[])
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
 		{
-			
-			mini_execute(pipeline_list, &data);
+			// signal_setting_commandmode();
+			// mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}
-		// system("leaks minishell");
+		system("leaks minishell");
 		free(res);
     }
 }
