@@ -33,7 +33,7 @@ char	**get_env(char **env);
 void	ft_close(int fd);
 void	ft_dup2(int fd_from, int fd_to);
 int		get_short_exit(int exit_status);
-void	set_exit_status(t_data *data, int short_exit_status);
+void	set_exit_status(t_data *data, int g_exit_status);
 void	free_path(char **path);
 
 // built-in

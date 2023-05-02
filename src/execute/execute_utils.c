@@ -40,20 +40,20 @@ void	ft_dup2(int fd_from, int fd_to)
 int	get_short_exit(int exit_status)
 {
 	if (WIFEXITED(exit_status))
-		short_exit_status = WEXITSTATUS(exit_status);
+		g_exit_status = WEXITSTATUS(exit_status);
 	else if (WIFSIGNALED(exit_status))
-		short_exit_status = WTERMSIG(exit_status);
+		g_exit_status = WTERMSIG(exit_status);
 	else
-		short_exit_status = WSTOPSIG(exit_status);
-	return (short_exit_status);
+		g_exit_status = WSTOPSIG(exit_status);
+	return (g_exit_status);
 }
 
-void	set_exit_status(t_data *data, int short_exit_status)
+void	set_exit_status(t_data *data, int g_exit_status)
 {
 	char	*value;
 	char	*key_value;
 
-	value = ft_itoa(short_exit_status);
+	value = ft_itoa(g_exit_status);
 	if (!value)
 		exit(EXIT_FAILURE);
 	key_value = ft_strjoin("?=", value);

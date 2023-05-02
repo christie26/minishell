@@ -1,4 +1,3 @@
-
 #include "mini_parse.h"
 
 /*

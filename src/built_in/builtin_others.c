@@ -67,7 +67,7 @@ int	ft_exit(char *cmd, char **options, char **env)
 	if (i > 2)
 		return (error_command_msg("exit", "too many arguments\n"));
 	else if (i == 1)
-		exit(short_exit_status);
+		exit(g_exit_status);
 	options++;
 	if (!ft_strisnum(*options))
 	{

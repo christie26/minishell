@@ -1,4 +1,3 @@
-
 #include "mini_parse.h"
 
 t_token	*ft_token_lstnew(int type, char *value)
@@ -13,21 +12,6 @@ t_token	*ft_token_lstnew(int type, char *value)
 	new_token->next = NULL;
 	return (new_token);
 }
-
-// int	ft_token_lstsize(t_token *token_lst)
-// {
-// 	int		cnt;
-// 	t_token	*cur_token;
-
-// 	cnt = 0;
-// 	cur_token = token_lst;
-// 	while (cur_token)
-// 	{
-// 		cur_token = cur_token->next;
-// 		cnt++;
-// 	}
-// 	return (cnt);
-// }
 
 t_token	*ft_token_lstlast(t_token *token_lst)
 {
@@ -46,7 +30,7 @@ void	ft_token_lstadd_back(t_token **token_lst, t_token *new)
 	t_token	*cur_token;
 
 	if (token_lst == NULL)
-		return;
+		return ;
 	if (*token_lst)
 	{
 		cur_token = ft_token_lstlast(*token_lst);
