@@ -111,7 +111,7 @@ char	*get_quote_removed_string(char *str)
 		content = get_word_without_quote(str, &idx);
 		if (content == NULL)
 		{
-			ft_printf("yo shell: quote not closed\n");
+			error_command_msg("parse", QUOTE_ERROR);
 			ft_lstclear(&word_list, free);
 			return (NULL);
 		}

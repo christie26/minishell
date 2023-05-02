@@ -104,7 +104,7 @@ void	create_pipeline_list(t_pipeline **pipe_list, t_token *token_list)
 			token_list = token_list->next;
 			if (!token_list)
 			{
-				ft_printf("unexpected token: \'newline\'\n");
+				error_command_msg("parse", UNEXPECTED_TOKEN_ERROR1);
 				ft_pipeline_lstclear(pipe_list);
 				return ;
 			}

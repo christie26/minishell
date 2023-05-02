@@ -8,7 +8,7 @@ t_pipeline	*ft_pipeline_lstnew(t_token **token_list)
 	if ((*token_list)->type == OPERATOR && \
 		ft_strcmp("|", (*token_list)->value) == 0)
 	{
-		ft_printf("unexpected token: \'|\'\n");
+		error_command_msg("parse", UNEXPECTED_TOKEN_ERROR2);
 		return (NULL);
 	}
 	new_cmd_block = create_cmd_block(token_list);

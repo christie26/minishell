@@ -13,5 +13,8 @@
 # define START_ERROR "No such file or directory\n"
 # define BAD_SUB_ERROR "bad substitution\n"
 # define BRACE_ERROR "brace not closed\n"
-
+# define QUOTE_ERROR "quote not closed\n"
+# define UNEXPECTED_TOKEN_ERROR "unexpected token\n"
+# define UNEXPECTED_TOKEN_ERROR1 "unexpected token: \'newline\'\n"
+# define UNEXPECTED_TOKEN_ERROR2 "unexpected token: \'|\'\n"
 #endif
