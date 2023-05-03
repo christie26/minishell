@@ -1,13 +1,12 @@
-
 #include "mini_parse.h"
 
-char *get_operator(char *str, size_t *idx)
+char	*get_operator(char *str, size_t *idx)
 {
 	char	*token_content;
 	size_t	len;
-	
+
 	len = 1;
-	len += (ft_strchr("<>", str[*idx]) && (str[*idx] == str[*idx + len])); // 리다이렉션인 경우 연속 두개까지 받을 수 있다
+	len += (ft_strchr("<>", str[*idx]) && (str[*idx] == str[*idx + len]));
 	token_content = ft_substr(str, *idx, len);
 	if (token_content == NULL)
 		exit(EXIT_FAILURE);
@@ -15,7 +14,7 @@ char *get_operator(char *str, size_t *idx)
 	return (token_content);
 }
 
-char *get_word_with_quote(char *str, size_t *idx)
+char	*get_word_with_quote(char *str, size_t *idx)
 {
 	char	open_quote;
 	char	*token_content;

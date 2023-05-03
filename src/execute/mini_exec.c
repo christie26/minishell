@@ -38,7 +38,7 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	while (++i < data->process_number)
 		waitpid(data->pid_set[i], &exit_status, 0);
 	get_short_exit(exit_status);
-	set_exit_status(data, short_exit_status);
+	set_exit_status(data, g_exit_status);
 }
 
 int	only_builtin(t_data *data, t_pipeline *pipeline)

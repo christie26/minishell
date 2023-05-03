@@ -15,7 +15,7 @@ void	ft_execute(char **options, t_data *data)
 		cmd_path = check_access(cmd, data->path);
 		if (!cmd_path)
 		{
-			short_exit_status = 127;
+			g_exit_status = 127;
 			error_command_msg(cmd, CMD_ERROR);
 			return ;
 		}
@@ -29,7 +29,7 @@ void	ft_execute(char **options, t_data *data)
 
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
-	short_exit_status = 0;
+	g_exit_status = 0;
 	if (i != 0)
 	{
 		ft_dup2(data->prev_fd, 0);
@@ -47,8 +47,8 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 		ft_execute(pipeline->cmd_block->cmd, data);
 	}
 	else
-		short_exit_status = 1;
-	exit(short_exit_status);
+		g_exit_status = 1;
+	exit(g_exit_status);
 }
 
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
