@@ -19,9 +19,6 @@ int	get_redirection(t_token **cur_token, t_cmd_block *cmd_block)
 			ft_printf("\'%s\'\n", (*cur_token)->value);
 		return (0);
 	}
-	new_redirect = (t_redirect *)malloc(sizeof(t_redirect));
-	if (new_redirect == NULL)
-		exit(EXIT_FAILURE);
 	new_redirect = ft_redirect_lstnew(type, (*cur_token)->value);
 	ft_redirect_lstadd_back(&(cmd_block->redirect), new_redirect);
 	*cur_token = (*cur_token)->next;
