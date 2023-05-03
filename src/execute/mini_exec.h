@@ -16,8 +16,9 @@
 # include "../model.h"
 # include "../error.h"
 
-void	heredoc_center(t_pipeline *pipeline, char **env);
+int		heredoc_center(t_data *data, t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
+void	heredoc_open(t_redirect *redirect, char **env);
 
 // get path
 char	**get_path(char **env);
@@ -32,7 +33,7 @@ char	**get_env(char **env);
 // utils
 void	ft_close(int fd);
 void	ft_dup2(int fd_from, int fd_to);
-int		get_short_exit(int exit_status);
+void	get_short_exit(int exit_status);
 void	set_exit_status(t_data *data, int g_exit_status);
 void	free_path(char **path);
 

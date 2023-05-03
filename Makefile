@@ -5,6 +5,7 @@ SRCS_EXEC		=	mini_exec.c \
 					child_parent.c \
 					redirection.c \
 					heredoc.c \
+					heredoc2.c \
 					new_error.c
 
 SRCS_PARSE		=	readline.c \
