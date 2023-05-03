@@ -19,6 +19,8 @@ int	ft_builtin(char	**argv, t_data *data)
 
 	cmd = argv[0];
 	env = data->my_env;
+	if (!cmd)
+		return (1);
 	if (!ft_strcmp(cmd, "echo"))
 		return (ft_echo(argv, env));
 	else if (!ft_strcmp(cmd, "cd"))
@@ -39,6 +41,8 @@ int	ft_builtin(char	**argv, t_data *data)
 
 int	is_builtin(char	*cmd)
 {
+	if (!cmd)
+		return (1);
 	if (!ft_strcmp(cmd, "echo"))
 		return (1);
 	else if (!ft_strcmp(cmd, "cd"))
