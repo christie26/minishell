@@ -73,9 +73,9 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	data.my_env = init_envp(envp);
 	set_exit_status(&data, 0);
+	signal_setting_readmode();
 	while (1)
 	{
-		// signal_setting_readmode();
 		res = readline("yo shell$ ");
 		if (res == NULL)
 		{
