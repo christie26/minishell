@@ -35,6 +35,7 @@ int		error_command(char *cmd);
 
 void	sig_handler_readmode(int signum);
 void	signal_setting_readmode(void);
+void	sig_handler_commandmode(int signum);
 void	signal_setting_commandmode(void);
 
 #endif

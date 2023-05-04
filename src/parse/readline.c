@@ -47,6 +47,8 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	pipe_list = NULL;
 	tokens = NULL;
 	create_tokens(&tokens, str);
+	if (!tokens)
+		return (NULL);
 	add_history(str);
 	expand_tokens(&tokens, my_env);
 	if (!tokens)
@@ -73,9 +75,9 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	data.my_env = init_envp(envp);
 	set_exit_status(&data, 0);
-	signal_setting_readmode();
 	while (1)
 	{
+		signal_setting_readmode();
 		res = readline("yo shell$ ");
 		if (res == NULL)
 		{
@@ -86,6 +88,8 @@ int	main(int argc, char *argv[], char *envp[])
 		if (pipeline_list)
 		{
 			// signal_setting_commandmode();
+			if (signal(SIGINT, SIG_IGN) == SIG_ERR)
+				exit(EXIT_FAILURE);
 			mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}

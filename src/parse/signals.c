@@ -29,14 +29,23 @@
 
 */
 
+void	sig_handler_commandmode(int signum)
+{
+	if (signum == SIGQUIT)
+	{
+		write(1, "Quit: 3\n", 8);
+		exit(SIGQUIT);
+	}
+}
+
 void	sig_handler_readmode(int signum)
 {
 	if (signum == SIGINT)
 	{
+		write(1, "\n", 1);
+		rl_replace_line("", 1); // 바뀐 줄의 내용을 비운다고 알림ß
 		rl_on_new_line(); // 줄이 바뀌었다고 알림
-		// rl_replace_line("", 1); // 바뀐 줄의 내용을 비운다고 알림
 		rl_redisplay(); // 바뀐 줄을 표시 함
-		ft_printf("hi\n");
 	}
 }
 
@@ -50,9 +59,10 @@ void	signal_setting_readmode(void)
 
 void	signal_setting_commandmode(void)
 {
+	ft_printf("sig com set\n");
 	if (signal(SIGINT, SIG_DFL) == SIG_ERR)
 		exit(EXIT_FAILURE);
-	if (signal(SIGQUIT, SIG_DFL) == SIG_ERR)
+	if (signal(SIGQUIT, sig_handler_commandmode) == SIG_ERR)
 		exit(EXIT_FAILURE);
 }
 

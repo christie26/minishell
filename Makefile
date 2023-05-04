@@ -59,10 +59,10 @@ RM			= rm -f
 all:		${NAME}
 
 .c.o:
-			$(CC) $(CFLAGS) -Ilibft/includes -c $< -o $@
+			$(CC) $(CFLAGS) -Ilibft/includes -Ignu_readline/include -c $< -o $@
 
 $(NAME): 	$(OBJS) $(LIBFT)
-			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)
+			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -Lgnu_readline/lib -lreadline -o $(NAME)
 
 $(LIBFT):
 			make -j3 -C ./libft all
