@@ -1,90 +1,51 @@
 #include "./mini_exec.h"
 
-void	heredoc_unlink(t_pipeline *pipeline)
+void	child_heredoc(t_redirect *redirect, char **env, int p_fd[2])
 {
-	t_redirect	*redirect;
-
-	while (pipeline)
-	{
-		redirect = pipeline->cmd_block->redirect;
-		while (redirect)
-		{
-			if (redirect->type == 2)
-				unlink(redirect->filename);
-			redirect = redirect->next;
-		}
-		pipeline = pipeline->next;
-	}
+	signal_setting_heredocmode();
+	heredoc_open(redirect, env);
+	ft_close(p_fd[0]);
+	ft_close(p_fd[1]);
 }
 
-char	*random_name(void)
+int	parent_heredoc(int p_fd[2], pid_t cpid)
 {
-	char	*tmp_file;
-	int		i;
-	int		j;
+	int	exit_status;
 
-	tmp_file = (char *)malloc(sizeof(char) * 16);
-	if (!tmp_file)
-		exit(EXIT_FAILURE);
-	tmp_file[0] = 0;
-	ft_strlcat(tmp_file, "/tmp/tmp_file", 14);
-	i = '/';
-	while (i++ < '9')
-	{
-		j = '/';
-		while (j++ < '9')
-		{
-			tmp_file[13] = i;
-			tmp_file[14] = j;
-			tmp_file[15] = 0;
-			if (access(tmp_file, F_OK))
-				return (tmp_file);
-		}
-	}
-	free(tmp_file);
+	waitpid(cpid, &exit_status, 0);
+	if (exit_status == 2)
+		return (1);
+	ft_close(p_fd[0]);
+	ft_close(p_fd[1]);
 	return (0);
 }
 
-void	heredoc_write(int fd, char *filename, char **env)
+int	run_heredoc(t_data *data, t_redirect *redirect)
 {
-	size_t	len;
-	char	*buf;
-	char	*expanded;
+	int			p_fd[2];
+	pid_t		cpid;
+	char		**env;
 
-	len = ft_strlen(filename);
-	buf = get_next_line(STDIN_FILENO);
-	while (ft_strncmp(buf, filename, len) || buf[len] != '\n')
+	env = data->my_env;
+	if (pipe(p_fd) == -1)
+		error_command("pipe");
+	cpid = fork();
+	if (cpid == -1)
+		error_command("fork");
+	if (cpid == 0)
+		child_heredoc(redirect, env, p_fd);
+	else
 	{
-		expanded = get_expanded_string(buf, env);
-		if (write(fd, expanded, ft_strlen(expanded)) == -1)
-			error_command("heredoc");
-		free(buf);
-		buf = get_next_line(STDIN_FILENO);
+		if (parent_heredoc(p_fd, cpid) == 1)
+		{
+			set_exit_status(data, 1);
+			return (1);
+		}
 	}
-	free(buf);
-	ft_close(fd);
+	return (0);
 }
 
-void	heredoc_open(t_redirect *redirect, char **env)
-{
-	char	*tmp_file;
-	int		fd;
-
-	tmp_file = random_name();
-	if (!tmp_file)
-	{
-		error_command_msg("heredoc", TMP_FILE_ERROR);
-		exit(EXIT_FAILURE);
-	}
-	fd = open(tmp_file, O_CREAT | O_WRONLY, 0644);
-	if (fd == -1)
-		error_command("heredoc");
-	heredoc_write(fd, redirect->filename, env);
-	free(redirect->filename);
-	redirect->filename = tmp_file;
-}
-
-void	heredoc_center(t_pipeline *pipeline, char **env)
+int	heredoc_center(t_data *data, t_pipeline *pipeline)
 {
 	t_redirect	*redirect;
 
@@ -94,9 +55,13 @@ void	heredoc_center(t_pipeline *pipeline, char **env)
 		while (redirect)
 		{
 			if (redirect->type == 2)
-				heredoc_open(redirect, env);
+			{
+				if (run_heredoc(data, redirect))
+					return (1);
+			}
 			redirect = redirect->next;
 		}
 		pipeline = pipeline->next;
 	}
+	return (0);
 }

@@ -55,3 +55,11 @@ void	signal_setting_commandmode(void)
 	if (signal(SIGQUIT, SIG_DFL) == SIG_ERR)
 		exit(EXIT_FAILURE);
 }
+
+void	signal_setting_heredocmode(void)
+{
+	if (signal(SIGINT, SIG_DFL) == SIG_ERR)
+		exit(EXIT_FAILURE);
+	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
+		exit(EXIT_FAILURE);
+}
