@@ -40,7 +40,7 @@ char	*check_access(char *cmd, char **path)
 		path_cmd = ft_strjoin(path[i], cmd);
 		if (!path_cmd)
 			exit(EXIT_FAILURE);
-		if (access(path_cmd, X_OK) == 0)
+		if (is_exist(path_cmd))
 			return (path_cmd);
 		free(path_cmd);
 		i++;

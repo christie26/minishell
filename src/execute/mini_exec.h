@@ -25,6 +25,7 @@ char	*heredoc_open(t_redirect *redirect, char **env);
 // get path
 char	**get_path(char **env);
 char	*check_access(char *cmd, char **path);
+int		is_exist(char *cmd);
 
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);

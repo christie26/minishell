@@ -8,6 +8,25 @@ int	is_directory(char *cmd)
 	return (S_ISDIR(buf.st_mode));
 }
 
+int	have_permission(char *cmd)
+{
+	struct stat buf;
+
+	stat(cmd, &buf);
+	return (S_IRWXU & buf.st_mode);
+}
+
+int is_exist(char *cmd)
+{
+	struct stat	buf;
+	int			result;
+
+	result = stat(cmd, &buf);
+	if (result == 0)
+		return (1);
+	return (0);
+}
+
 void	ft_execute(char **options, t_data *data)
 {
 	char	*cmd;
@@ -18,7 +37,7 @@ void	ft_execute(char **options, t_data *data)
 		exit(0);
 	if (is_builtin(cmd))
 		exit(ft_builtin(options, data));
-	if (access(cmd, X_OK) == 0)
+	if (is_exist(cmd))
 		cmd_path = cmd;
 	else
 	{
@@ -33,12 +52,12 @@ void	ft_execute(char **options, t_data *data)
 	if (is_directory(cmd_path))
 	{
 		error_command_msg(cmd, DIREC_ERROR);
-		exit(EXIT_FAILURE);
+		exit(126);
 	}
 	if (execve(cmd_path, options, get_env(data->my_env)) == -1)
 	{
 		error_command(cmd);
-		exit (EXIT_FAILURE);
+		exit(126);
 	}
 }
 
