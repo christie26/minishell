@@ -74,6 +74,14 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	return (pipe_list);
 }
 
+void	readline_exit(void)
+{
+	ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+	ft_putstr_fd("\033[10C", STDOUT_FILENO);
+	ft_printf("exit\n");
+	exit(EXIT_SUCCESS);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	char		*res;
@@ -88,10 +96,7 @@ int	main(int argc, char *argv[], char *envp[])
 		signal_setting_readmode();
 		res = readline("yo shell$ ");
 		if (res == NULL)
-		{
-			write(1, "exit\n", 5);
-			return (0);
-		}
+			readline_exit();
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
 		{
