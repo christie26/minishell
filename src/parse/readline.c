@@ -79,6 +79,7 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		signal_setting_readmode();
 		res = readline("yo shell$ ");
+		set_exit_status(&data, g_exit_status);
 		if (res == NULL)
 		{
 			write(1, "exit\n", 5);
