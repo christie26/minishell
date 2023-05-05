@@ -41,6 +41,8 @@ void	get_short_exit(int exit_status)
 {
 	if (exit_status == 2 || exit_status == 3)
 	{
+		if (exit_status == 3)
+			write(1, "Quit: 3\n", 8);
 		g_exit_status = 128 + exit_status;
 		return ;
 	}

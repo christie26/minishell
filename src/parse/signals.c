@@ -33,10 +33,10 @@ void	sig_handler_readmode(int signum)
 {
 	if (signum == SIGINT)
 	{
-		rl_on_new_line(); // 줄이 바뀌었다고 알림
-		// rl_replace_line("", 1); // 바뀐 줄의 내용을 비운다고 알림
-		rl_redisplay(); // 바뀐 줄을 표시 함
-		ft_printf("hi\n");
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 1);
+		rl_redisplay();
 	}
 }
 
