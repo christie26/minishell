@@ -37,12 +37,14 @@ int		mini_execute(t_pipeline *pipeline, t_data *data);
 // heredoc
 int		heredoc_center(t_data *data, t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
-char	*heredoc_open(t_redirect *redirect, char **env);
+char	*get_tmp_file(void);
+void	heredoc_write(int fd, char *filename, char **env);
 
 // get path
-char	**get_path(char **env);
+char	**set_path(char **env);
 char	*check_access(char *cmd, char **path);
 int		is_exist(char *cmd);
+char	*get_cmd_path(char *cmd, char **path);
 
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);

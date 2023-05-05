@@ -12,27 +12,29 @@
 
 #include "./mini_exec.h"
 
-char	*child_heredoc(t_redirect *redirect, char **env, int p_fd[2])
+void	child_heredoc(char *delimeter, char **env, int p_fd[2], char *new_file)
 {
-	char *new_file;
+	int	fd;
 
 	signal_setting_heredocmode();
-	new_file = heredoc_open(redirect, env);
+	fd = open(new_file, O_CREAT | O_WRONLY, 0644);
+	if (fd == -1)
+		error_command("heredoc");
+	heredoc_write(fd, delimeter, env);
 	ft_close(p_fd[0]);
 	ft_close(p_fd[1]);
-	return (new_file);
+	exit(0);
 }
 
-int	parent_heredoc(int p_fd[2], pid_t cpid)
+void	parent_heredoc(int p_fd[2], pid_t cpid)
 {
 	int	exit_status;
 
 	waitpid(cpid, &exit_status, 0);
 	if (exit_status == 2)
-		return (1);
+		g_exit_status = 1;
 	ft_close(p_fd[0]);
 	ft_close(p_fd[1]);
-	return (0);
 }
 
 int	run_heredoc(t_data *data, t_redirect *redirect)
@@ -41,27 +43,20 @@ int	run_heredoc(t_data *data, t_redirect *redirect)
 	pid_t		cpid;
 	char		**env;
 	char		*new_file;
+	char		*delimeter;
 
 	env = data->my_env;
+	delimeter = redirect->filename;
 	if (pipe(p_fd) == -1)
 		error_command("pipe");
 	cpid = fork();
 	if (cpid == -1)
 		error_command("fork");
-	new_file = 0;
+	new_file = get_tmp_file();
 	if (cpid == 0)
-	{
-		new_file = child_heredoc(redirect, env, p_fd);
-		exit(0);
-	}
+		child_heredoc(delimeter, env, p_fd, new_file);
 	else
-	{
-		if (parent_heredoc(p_fd, cpid) == 1)
-		{
-			g_exit_status = 1;
-			return (1);
-		}
-	}
+		parent_heredoc(p_fd, cpid);
 	free(redirect->filename);
 	redirect->filename = new_file;
 	return (0);
@@ -78,7 +73,8 @@ int	heredoc_center(t_data *data, t_pipeline *pipeline)
 		{
 			if (redirect->type == 2)
 			{
-				if (run_heredoc(data, redirect))
+				run_heredoc(data, redirect);
+				if (g_exit_status == 1)
 					return (1);
 			}
 			redirect = redirect->next;

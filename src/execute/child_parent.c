@@ -22,17 +22,12 @@ void	ft_execute(char **options, t_data *data)
 		exit(0);
 	if (is_builtin(cmd))
 		exit(ft_builtin(options, data));
-	if (is_exist(cmd))
-		cmd_path = cmd;
-	else
+	cmd_path = get_cmd_path(cmd, data->path);
+	if (!cmd_path)
 	{
-		cmd_path = check_access(cmd, data->path);
-		if (!cmd_path)
-		{
-			g_exit_status = 127;
-			error_command_msg(cmd, CMD_ERROR);
-			return ;
-		}
+		g_exit_status = 127;
+		error_command_msg(cmd, CMD_ERROR);
+		return ;
 	}
 	if (is_directory(cmd_path))
 	{

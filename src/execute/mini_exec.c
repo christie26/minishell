@@ -78,7 +78,7 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 		error_command_msg("dup2", PIPE_ERROR);
 		exit (24);
 	}
-	data->path = get_path(data->my_env);
+	data->path = set_path(data->my_env);
 	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
 	if (!data->pid_set)
 		exit(EXIT_FAILURE);

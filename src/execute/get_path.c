@@ -14,8 +14,6 @@
 
 char	**get_path(char **env)
 {
-	int		i;
-	char	*tmp;
 	char	**path;
 
 	while (*env)
@@ -29,6 +27,18 @@ char	**get_path(char **env)
 	path = ft_split((*env + 5), ':');
 	if (!path)
 		exit(EXIT_FAILURE);
+	return (path);
+}
+
+char	**set_path(char **env)
+{
+	int		i;
+	char	*tmp;
+	char	**path;
+
+	path = get_path(env);
+	if (!path)
+		return (0);
 	i = 0;
 	while (path[i])
 	{
@@ -61,4 +71,12 @@ char	*check_access(char *cmd, char **path)
 		i++;
 	}
 	return (0);
+}
+
+char	*get_cmd_path(char *cmd, char **path)
+{
+	if (is_exist(cmd))
+		return (cmd);
+	else
+		return (check_access(cmd, path));
 }
