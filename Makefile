@@ -2,6 +2,7 @@
 SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
 					execute_utils.c \
+					execute_utils2.c \
 					child_parent.c \
 					redirection.c \
 					heredoc.c \

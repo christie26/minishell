@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:52:05 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 18:52:06 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/05/05 20:33:45 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,7 @@ char	*get_expanded_word(char **str, char **my_env)
 		return (ft_itoa(g_exit_status));
 	}
 	else
-	{
-		if (is_quote(check))
-			++*str;
 		return (get_non_expanded_word(str));
-	}
 }
 
 char	*get_non_expanded_word(char **str)

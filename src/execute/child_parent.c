@@ -6,38 +6,11 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:50:21 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 18:51:42 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/05/05 20:30:56 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./mini_exec.h"
-
-int	is_directory(char *cmd)
-{
-	struct stat buf;
-
-	stat(cmd, &buf);
-	return (S_ISDIR(buf.st_mode));
-}
-
-int	have_permission(char *cmd)
-{
-	struct stat buf;
-
-	stat(cmd, &buf);
-	return (S_IRWXU & buf.st_mode);
-}
-
-int is_exist(char *cmd)
-{
-	struct stat	buf;
-	int			result;
-
-	result = stat(cmd, &buf);
-	if (result == 0)
-		return (1);
-	return (0);
-}
 
 void	ft_execute(char **options, t_data *data)
 {
@@ -87,14 +60,12 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 		ft_dup2(p_fd[1], 1);
 		data->prev_fd = p_fd[0];
 	}
-	if (!redirection_center(pipeline->cmd_block->redirect))
-	{
-		ft_close(p_fd[0]);
-		ft_close(p_fd[1]);
-		ft_execute(pipeline->cmd_block->cmd, data);
-	}
-	else
+	if (redirection_center(pipeline->cmd_block->redirect))
 		g_exit_status = 1;
+	ft_close(p_fd[0]);
+	ft_close(p_fd[1]);
+	if (g_exit_status == 0)
+		ft_execute(pipeline->cmd_block->cmd, data);
 	exit(g_exit_status);
 }
 

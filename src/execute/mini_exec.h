@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:51:12 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 18:51:16 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/05/05 19:58:30 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,15 @@ void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
 // redirection
 int		redirection_center(t_redirect *redirect);
 
-// utils
+// utils1
 void	ft_close(int fd);
 void	ft_dup2(int fd_from, int fd_to);
 void	get_short_exit(int exit_status);
 void	free_path(char **path);
+
+// utils2
+int		is_directory(char *cmd);
+int		have_permission(char *cmd);
+int		is_exist(char *cmd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:51:03 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 18:51:07 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/05/05 20:30:47 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,12 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 		waitpid(data->pid_set[i], &exit_status, 0);
 	get_short_exit(exit_status);
 }
+
 void	only_builtin(t_data *data, t_pipeline *pipeline)
 {
 	int	saved_stdin;
 	int	saved_stdout;
-	int	return_value;
 
-	return_value = 0;
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
 	if (redirection_center(pipeline->cmd_block->redirect))

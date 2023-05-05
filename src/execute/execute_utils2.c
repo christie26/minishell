@@ -1,33 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_simple_check.c                               :+:      :+:    :+:   */
+/*   execute_utils2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/05 20:32:23 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 20:32:24 by yoonsele         ###   ########.fr       */
+/*   Created: 2023/05/05 19:57:30 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 19:58:31 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_parse.h"
+#include "./mini_exec.h"
 
-int	is_blank(char c)
+int	is_directory(char *cmd)
 {
-	return (c == 32 || c == 9 || c == 10);
+	struct stat	buf;
+
+	stat(cmd, &buf);
+	return (S_ISDIR(buf.st_mode));
 }
 
-int	is_operator_char(char c)
+int	have_permission(char *cmd)
 {
-	return (ft_strchr("|<>", c) > 0);
+	struct stat	buf;
+
+	stat(cmd, &buf);
+	return (S_IRWXU & buf.st_mode);
 }
 
-int	is_metacharacter(char c)
+int	is_exist(char *cmd)
 {
-	return (is_blank(c) || is_operator_char(c));
-}
+	struct stat	buf;
+	int			result;
 
-int	is_quote(char c)
-{
-	return (c == '\'' || c == '\"');
+	result = stat(cmd, &buf);
+	if (result == 0)
+		return (1);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:50:31 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 18:50:32 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/05/05 19:18:47 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	free_path(char **path)
 	int	i;
 
 	i = 0;
+	if (!path)
+		return ;
 	while (path[i])
 	{
 		free(path[i]);

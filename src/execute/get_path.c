@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:50:35 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 19:08:46 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/05/05 19:19:04 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,14 @@ char	**get_path(char **env)
 	char	*tmp;
 	char	**path;
 
-	while (*env++)
+	while (*env)
 	{
 		if (!ft_strncmp(*env, "PATH", 4))
 			break ;
+		env++;
 	}
+	if (*env == NULL)
+		return (0);
 	path = ft_split((*env + 5), ':');
 	if (!path)
 		exit(EXIT_FAILURE);
@@ -45,7 +48,7 @@ char	*check_access(char *cmd, char **path)
 	char	*path_cmd;
 
 	i = 0;
-	if (ft_strlen(cmd) == 0)
+	if (ft_strlen(cmd) == 0 || !path)
 		return (0);
 	while (path[i])
 	{
