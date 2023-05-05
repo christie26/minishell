@@ -9,6 +9,7 @@
 # include <fcntl.h>
 
 # include <signal.h>
+# include <termios.h>
 
 # include "libft.h"
 # include "ft_printf.h"

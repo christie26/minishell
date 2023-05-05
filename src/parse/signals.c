@@ -42,6 +42,11 @@ void	sig_handler_readmode(int signum)
 
 void	signal_setting_readmode(void)
 {
+	struct termios my_terminal;
+
+	tcgetattr(STDIN_FILENO, &my_terminal);
+	my_terminal.c_lflag &= ~ECHOCTL;
+	tcsetattr(STDIN_FILENO, TCSANOW, &my_terminal);
 	if (signal(SIGINT, sig_handler_readmode) == SIG_ERR)
 		exit(EXIT_FAILURE);
 	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
