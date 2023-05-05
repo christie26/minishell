@@ -55,7 +55,7 @@ char	*get_expanded_word(char **str, char **my_env)
 	{
 		++*str;
 		++*str;
-		return (get_value("?", my_env));
+		return (ft_itoa(g_exit_status));
 	}
 	else
 	{

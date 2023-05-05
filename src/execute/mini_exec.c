@@ -38,10 +38,8 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	while (++i < data->process_number)
 		waitpid(data->pid_set[i], &exit_status, 0);
 	get_short_exit(exit_status);
-	set_exit_status(data, g_exit_status);
 }
-
-int	only_builtin(t_data *data, t_pipeline *pipeline)
+void	only_builtin(t_data *data, t_pipeline *pipeline)
 {
 	int	saved_stdin;
 	int	saved_stdout;
@@ -51,12 +49,11 @@ int	only_builtin(t_data *data, t_pipeline *pipeline)
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
 	if (redirection_center(pipeline->cmd_block->redirect))
-		return_value = 1;
+		g_exit_status = 1;
 	else
-		set_exit_status(data, ft_builtin(pipeline->cmd_block->cmd, data));
+		g_exit_status = ft_builtin(pipeline->cmd_block->cmd, data);
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
-	return (return_value);
 }
 
 int	mini_execute(t_pipeline *pipeline, t_data *data)

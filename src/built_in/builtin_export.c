@@ -11,6 +11,8 @@ int	check_input(char *input)
 		return (error_command_msg("export", EXPORT_ERROR));
 	while (input[i])
 	{
+		if (!(ft_isalpha(input[i]) || input[i] == '_'))
+			return (error_command_msg("export", EXPORT_ERROR));
 		if (input[i] == '=')
 			count++;
 		i++;

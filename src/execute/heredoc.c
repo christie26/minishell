@@ -46,7 +46,7 @@ int	run_heredoc(t_data *data, t_redirect *redirect)
 	{
 		if (parent_heredoc(p_fd, cpid) == 1)
 		{
-			set_exit_status(data, 1);
+			g_exit_status = 1;
 			return (1);
 		}
 	}

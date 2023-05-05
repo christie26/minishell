@@ -74,12 +74,11 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	}
 	data.my_env = init_envp(envp);
-	set_exit_status(&data, 0);
+	g_exit_status = 0;
 	while (1)
 	{
 		signal_setting_readmode();
 		res = readline("yo shell$ ");
-		set_exit_status(&data, g_exit_status);
 		if (res == NULL)
 		{
 			write(1, "exit\n", 5);

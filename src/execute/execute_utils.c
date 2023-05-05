@@ -53,19 +53,3 @@ void	get_short_exit(int exit_status)
 	else
 		g_exit_status = WSTOPSIG(exit_status);
 }
-
-void	set_exit_status(t_data *data, int g_exit_status)
-{
-	char	*value;
-	char	*key_value;
-
-	value = ft_itoa(g_exit_status);
-	if (!value)
-		exit(EXIT_FAILURE);
-	key_value = ft_strjoin("?=", value);
-	if (!key_value)
-		exit(EXIT_FAILURE);
-	free(value);
-	add_variable(key_value, data);
-	free(key_value);
-}
