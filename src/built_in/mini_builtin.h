@@ -8,6 +8,10 @@
 # include "../model.h"
 # include "../error.h"
 
+int		ft_builtin(char **argv, t_data *data);
+int		is_builtin(char *cmd);
+char	**init_envp(char **envp);
+
 // built-in files
 int		ft_echo(char **options, char **env);
 int		ft_cd(t_data *data, char **options, char **env);

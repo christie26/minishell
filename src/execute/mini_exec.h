@@ -17,7 +17,12 @@
 # include "get_next_line.h"
 # include "../model.h"
 # include "../error.h"
+# include "../built_in/mini_builtin.h"
+# include "../parse/mini_parse.h"
 
+int		mini_execute(t_pipeline *pipeline, t_data *data);
+
+// heredoc
 int		heredoc_center(t_data *data, t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
 char	*heredoc_open(t_redirect *redirect, char **env);
@@ -30,21 +35,14 @@ int		is_exist(char *cmd);
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
 void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
+
+// redirection
 int		redirection_center(t_redirect *redirect);
-char	**get_env(char **env);
 
 // utils
 void	ft_close(int fd);
 void	ft_dup2(int fd_from, int fd_to);
 void	get_short_exit(int exit_status);
 void	free_path(char **path);
-
-// built-in
-int		ft_builtin(char **argv, t_data *data);
-int		is_builtin(char *cmd);
-void	add_variable(char *key_value, t_data *data);
-
-// expand part
-char	*get_expanded_string(char *str, char **my_env);
 
 #endif
