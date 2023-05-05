@@ -18,7 +18,7 @@
 
 int		heredoc_center(t_data *data, t_pipeline *pipeline);
 void	heredoc_unlink(t_pipeline *pipeline);
-void	heredoc_open(t_redirect *redirect, char **env);
+char	*heredoc_open(t_redirect *redirect, char **env);
 
 // get path
 char	**get_path(char **env);

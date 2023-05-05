@@ -6,7 +6,7 @@
 /*   By: yonghyle <yonghyle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:47:00 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 13:27:46 by yonghyle         ###   ########.fr       */
+/*   Updated: 2023/05/05 14:23:13 by yonghyle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	ft_builtin(char	**argv, t_data *data)
 int	is_builtin(char	*cmd)
 {
 	if (!cmd)
-		return (1);
+		return (0);
 	if (!ft_strcmp(cmd, "echo"))
 		return (1);
 	else if (!ft_strcmp(cmd, "cd"))

@@ -6,6 +6,8 @@ void	ft_execute(char **options, t_data *data)
 	char	*cmd_path;
 
 	cmd = options[0];
+	if (!cmd)
+		exit(0);
 	if (is_builtin(cmd))
 		exit(ft_builtin(options, data));
 	if (access(cmd, X_OK) == 0)

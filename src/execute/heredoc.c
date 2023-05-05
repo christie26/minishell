@@ -1,12 +1,14 @@
 #include "./mini_exec.h"
 
-void	child_heredoc(t_redirect *redirect, char **env, int p_fd[2])
+char	*child_heredoc(t_redirect *redirect, char **env, int p_fd[2])
 {
+	char *new_file;
+
 	signal_setting_heredocmode();
-	heredoc_open(redirect, env);
+	new_file = heredoc_open(redirect, env);
 	ft_close(p_fd[0]);
 	ft_close(p_fd[1]);
-	exit(0);
+	return (new_file);
 }
 
 int	parent_heredoc(int p_fd[2], pid_t cpid)
@@ -26,6 +28,7 @@ int	run_heredoc(t_data *data, t_redirect *redirect)
 	int			p_fd[2];
 	pid_t		cpid;
 	char		**env;
+	char		*new_file;
 
 	env = data->my_env;
 	if (pipe(p_fd) == -1)
@@ -33,8 +36,12 @@ int	run_heredoc(t_data *data, t_redirect *redirect)
 	cpid = fork();
 	if (cpid == -1)
 		error_command("fork");
+	new_file = 0;
 	if (cpid == 0)
-		child_heredoc(redirect, env, p_fd);
+	{
+		new_file = child_heredoc(redirect, env, p_fd);
+		exit(0);
+	}
 	else
 	{
 		if (parent_heredoc(p_fd, cpid) == 1)
@@ -43,6 +50,8 @@ int	run_heredoc(t_data *data, t_redirect *redirect)
 			return (1);
 		}
 	}
+	free(redirect->filename);
+	redirect->filename = new_file;
 	return (0);
 }
 

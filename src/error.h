@@ -10,7 +10,7 @@
 # define EXPORT_ERROR "not a valid identifier\n"
 # define PIPE_ERROR "Too many pipes\n"
 # define EXIT_ERROR "numeric argument required\n"
-# define START_ERROR "No such file or directory\n"
+# define START_ERROR "Do not put any argument !\n"
 # define BAD_SUB_ERROR "bad substitution\n"
 # define BRACE_ERROR "brace not closed\n"
 # define QUOTE_ERROR "quote not closed\n"

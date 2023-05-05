@@ -66,7 +66,7 @@ void	heredoc_write(int fd, char *filename, char **env)
 	ft_close(fd);
 }
 
-void	heredoc_open(t_redirect *redirect, char **env)
+char	*heredoc_open(t_redirect *redirect, char **env)
 {
 	char	*tmp_file;
 	int		fd;
@@ -82,5 +82,5 @@ void	heredoc_open(t_redirect *redirect, char **env)
 		error_command("heredoc");
 	heredoc_write(fd, redirect->filename, env);
 	free(redirect->filename);
-	redirect->filename = tmp_file;
+	return (tmp_file);
 }
