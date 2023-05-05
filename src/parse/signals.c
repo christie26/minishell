@@ -31,24 +31,18 @@ void	signal_setting_readmode(void)
 	tcgetattr(STDIN_FILENO, &my_terminal);
 	my_terminal.c_lflag &= ~ECHOCTL;
 	tcsetattr(STDIN_FILENO, TCSANOW, &my_terminal);
-	if (signal(SIGINT, sig_handler_readmode) == SIG_ERR)
-		exit(EXIT_FAILURE);
-	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-		exit(EXIT_FAILURE);
+	signal(SIGINT, sig_handler_readmode);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	signal_setting_commandmode(void)
 {
-	if (signal(SIGINT, SIG_DFL) == SIG_ERR)
-		exit(EXIT_FAILURE);
-	if (signal(SIGQUIT, SIG_DFL) == SIG_ERR)
-		exit(EXIT_FAILURE);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 void	signal_setting_heredocmode(void)
 {
-	if (signal(SIGINT, SIG_DFL) == SIG_ERR)
-		exit(EXIT_FAILURE);
-	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-		exit(EXIT_FAILURE);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_IGN);
 }

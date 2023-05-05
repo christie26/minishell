@@ -81,12 +81,8 @@ int	main(int argc, char *argv[], char *envp[])
 	t_data		data;
 
 	if (argc != 1)
-	{
-		error_command_msg(argv[1], START_ERROR);
-		return (1);
-	}
+		return (error_command_msg(argv[1], START_ERROR));
 	data.my_env = init_envp(envp);
-	g_exit_status = 0;
 	while (1)
 	{
 		signal_setting_readmode();
@@ -99,8 +95,7 @@ int	main(int argc, char *argv[], char *envp[])
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
 		{
-			if (signal(SIGINT, SIG_IGN) == SIG_ERR)
-				exit(EXIT_FAILURE);
+			signal(SIGINT, SIG_IGN);
 			mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}

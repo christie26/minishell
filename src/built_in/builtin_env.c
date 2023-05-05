@@ -59,6 +59,7 @@ char	**init_envp(char **envp)
 		i++;
 	}
 	new_env[i] = 0;
+	g_exit_status = 0;
 	return (new_env);
 }
 
