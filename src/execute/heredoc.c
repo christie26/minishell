@@ -6,6 +6,7 @@ void	child_heredoc(t_redirect *redirect, char **env, int p_fd[2])
 	heredoc_open(redirect, env);
 	ft_close(p_fd[0]);
 	ft_close(p_fd[1]);
+	exit(0);
 }
 
 int	parent_heredoc(int p_fd[2], pid_t cpid)

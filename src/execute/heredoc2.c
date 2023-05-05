@@ -58,6 +58,7 @@ void	heredoc_write(int fd, char *filename, char **env)
 		expanded = get_expanded_string(buf, env);
 		if (write(fd, expanded, ft_strlen(expanded)) == -1)
 			error_command("heredoc");
+		free(expanded);
 		free(buf);
 		buf = get_next_line(STDIN_FILENO);
 	}
