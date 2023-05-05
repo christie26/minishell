@@ -43,16 +43,20 @@ int	ft_echo(char **options, char **env)
 		endl = 0;
 	}
 	if (!*options)
-		return (0);
-	result = ft_strdup(*options++);
-	if (!result)
-		exit(EXIT_FAILURE);
-	while (*options)
-		result = join_with_space(result, *options++);
+		result = ft_strdup("");
+	else
+	{
+		result = ft_strdup(*options++);
+		if (!result)
+			exit(EXIT_FAILURE);
+		while (*options)
+			result = join_with_space(result, *options++);
+	}
 	if (endl)
 		printf("%s\n", result);
 	else
 		printf("%s", result);
+	free(result);
 	(void)(env);
 	return (0);
 }

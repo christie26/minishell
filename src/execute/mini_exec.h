@@ -10,6 +10,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/errno.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 
 # include "libft.h"
 # include "get_next_line.h"

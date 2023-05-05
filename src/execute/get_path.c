@@ -33,6 +33,8 @@ char	*check_access(char *cmd, char **path)
 	char	*path_cmd;
 
 	i = 0;
+	if (ft_strlen(cmd) == 0)
+		return (0);
 	while (path[i])
 	{
 		path_cmd = ft_strjoin(path[i], cmd);

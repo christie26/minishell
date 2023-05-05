@@ -4,6 +4,7 @@
 
 # define MALLOC_ERROR "Fail to malloc\n"
 # define CMD_ERROR "command not found\n"
+# define DIREC_ERROR "is directory\n"
 # define HOME_ERROR "Home not set\n"
 # define OLDPWD_ERROR "OLDPWD not set\n"
 # define TMP_FILE_ERROR "Fail to make tmp file\n"

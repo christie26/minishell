@@ -1,5 +1,13 @@
 #include "./mini_exec.h"
 
+int	is_directory(char *cmd)
+{
+	struct stat buf;
+
+	stat(cmd, &buf);
+	return (S_ISDIR(buf.st_mode));
+}
+
 void	ft_execute(char **options, t_data *data)
 {
 	char	*cmd;
@@ -21,6 +29,11 @@ void	ft_execute(char **options, t_data *data)
 			error_command_msg(cmd, CMD_ERROR);
 			return ;
 		}
+	}
+	if (is_directory(cmd_path))
+	{
+		error_command_msg(cmd, DIREC_ERROR);
+		exit(EXIT_FAILURE);
 	}
 	if (execve(cmd_path, options, get_env(data->my_env)) == -1)
 	{
