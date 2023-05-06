@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_unset.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:50:05 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 18:50:05 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_builtin.h"
 
 void	remove_variable(int index_env, t_data *data, int number)
@@ -28,6 +40,22 @@ void	remove_variable(int index_env, t_data *data, int number)
 	free(env);
 }
 
+int	check_input_unset(char *input)
+{
+	int	i;
+
+	i = 0;
+	if (input[0] == '=' || !(ft_isalpha(input[0]) || input[0] == '_'))
+		return (error_command_msg("unset", EXPORT_ERROR));
+	while (input[i])
+	{
+		if (!(ft_isalpha(input[i]) || input[i] == '_'))
+			return (error_command_msg("unset", EXPORT_ERROR));
+		i++;
+	}
+	return (0);
+}
+
 int	ft_unset(char **options, t_data *data)
 {
 	int		index_env;
@@ -39,6 +67,8 @@ int	ft_unset(char **options, t_data *data)
 	options++;
 	if (!*options)
 		return (0);
+	if (check_input_unset(*options))
+		return (1);
 	index_env = key_exist(*options, data, ft_strlen(*options));
 	if (index_env != -1)
 		remove_variable(index_env, data, number);

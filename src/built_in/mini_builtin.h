@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini_builtin.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:50:12 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 18:50:13 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINI_BUILTIN_H
 
 # define MINI_BUILTIN_H
@@ -7,6 +19,10 @@
 # include "../../libft/includes/libft.h"
 # include "../model.h"
 # include "../error.h"
+
+int		ft_builtin(char **argv, t_data *data);
+int		is_builtin(char *cmd);
+char	**init_envp(char **envp);
 
 // built-in files
 int		ft_echo(char **options, char **env);

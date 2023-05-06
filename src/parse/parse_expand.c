@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_expand.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:52:05 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 20:33:45 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_parse.h"
 
 char	*get_key_from_word(char **str)
@@ -55,14 +67,10 @@ char	*get_expanded_word(char **str, char **my_env)
 	{
 		++*str;
 		++*str;
-		return (get_value("?", my_env));
+		return (ft_itoa(g_exit_status));
 	}
 	else
-	{
-		if (is_quote(check))
-			++*str;
 		return (get_non_expanded_word(str));
-	}
 }
 
 char	*get_non_expanded_word(char **str)

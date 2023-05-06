@@ -1,18 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:49:56 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 20:30:45 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_builtin.h"
 
 int	check_input(char *input)
 {
 	int	i;
 	int	count;
+	int	key;
 
 	i = 0;
 	count = 0;
+	key = 1;
 	if (input[0] == '=' || !(ft_isalpha(input[0]) || input[0] == '_'))
 		return (error_command_msg("export", EXPORT_ERROR));
 	while (input[i])
 	{
 		if (input[i] == '=')
+		{
+			key = 0;
 			count++;
+		}
+		if (key && (!(ft_isalpha(input[i]) || input[i] == '_')))
+			return (error_command_msg("export", EXPORT_ERROR));
 		i++;
 	}
 	if (count != 1)

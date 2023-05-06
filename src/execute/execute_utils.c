@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:50:31 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 19:18:47 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "./mini_exec.h"
 
 void	free_path(char **path)
@@ -5,6 +17,8 @@ void	free_path(char **path)
 	int	i;
 
 	i = 0;
+	if (!path)
+		return ;
 	while (path[i])
 	{
 		free(path[i]);
@@ -41,6 +55,8 @@ void	get_short_exit(int exit_status)
 {
 	if (exit_status == 2 || exit_status == 3)
 	{
+		if (exit_status == 3)
+			write(1, "Quit: 3\n", 8);
 		g_exit_status = 128 + exit_status;
 		return ;
 	}
@@ -50,20 +66,4 @@ void	get_short_exit(int exit_status)
 		g_exit_status = WTERMSIG(exit_status);
 	else
 		g_exit_status = WSTOPSIG(exit_status);
-}
-
-void	set_exit_status(t_data *data, int g_exit_status)
-{
-	char	*value;
-	char	*key_value;
-
-	value = ft_itoa(g_exit_status);
-	if (!value)
-		exit(EXIT_FAILURE);
-	key_value = ft_strjoin("?=", value);
-	if (!key_value)
-		exit(EXIT_FAILURE);
-	free(value);
-	add_variable(key_value, data);
-	free(key_value);
 }

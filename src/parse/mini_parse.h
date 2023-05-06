@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini_parse.h                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:52:01 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 18:52:01 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINI_PARSE_H
 # define MINI_PARSE_H
 
@@ -9,12 +21,14 @@
 # include <fcntl.h>
 
 # include <signal.h>
+# include <termios.h>
 
 # include "libft.h"
 # include "ft_printf.h"
 # include "get_next_line.h"
 # include "../model.h"
 # include "../built_in/mini_builtin.h"
+# include "../execute/mini_exec.h"
 
 enum e_token_type
 {
@@ -97,10 +111,5 @@ t_token		*ft_token_lstlast(t_token *token_lst);
 void		ft_token_lstadd_back(t_token **token_lst, t_token *new);
 void		ft_token_lstdel_node(t_token **token_lst, t_token *target);
 void		ft_token_lstclear(t_token **token_lst);
-
-// with execute
-int			mini_execute(t_pipeline *pipeline, t_data *data);
-char		**init_envp(char **envp);
-void		set_exit_status(t_data *data, int g_exit_status);
 
 #endif

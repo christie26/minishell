@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_others.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 18:50:01 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 20:30:44 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "./mini_builtin.h"
 
 int	ft_pwd(char *cmd, char **options, char **env)
@@ -13,20 +25,29 @@ int	ft_pwd(char *cmd, char **options, char **env)
 	return (0);
 }
 
-char	*join_with_space(char *s1, char *s2)
+char	*join_with_space(char **word)
 {
 	char	*result;
 	char	*tmp;
 
-	result = ft_strjoin(s1, " ");
+	result = ft_strdup(*word);
 	if (!result)
 		exit(EXIT_FAILURE);
-	free(s1);
-	tmp = result;
-	result = ft_strjoin(tmp, s2);
-	if (!result)
-		exit(EXIT_FAILURE);
-	free(tmp);
+	word++;
+	while (*word)
+	{
+		tmp = result;
+		result = ft_strjoin(result, " ");
+		if (!result)
+			exit(EXIT_FAILURE);
+		free(tmp);
+		tmp = result;
+		result = ft_strjoin(tmp, *word);
+		if (!result)
+			exit(EXIT_FAILURE);
+		free(tmp);
+		word++;
+	}
 	return (result);
 }
 
@@ -43,16 +64,14 @@ int	ft_echo(char **options, char **env)
 		endl = 0;
 	}
 	if (!*options)
-		return (0);
-	result = ft_strdup(*options++);
-	if (!result)
-		exit(EXIT_FAILURE);
-	while (*options)
-		result = join_with_space(result, *options++);
+		result = ft_strdup("");
+	else
+		result = join_with_space(options);
 	if (endl)
 		printf("%s\n", result);
 	else
 		printf("%s", result);
+	free(result);
 	(void)(env);
 	return (0);
 }

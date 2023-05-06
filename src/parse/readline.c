@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   readline.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/05 20:32:37 by yoonsele          #+#    #+#             */
+/*   Updated: 2023/05/05 20:32:38 by yoonsele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_parse.h"
 
 void	print_tree2(t_redirect *temp_redir)
@@ -47,6 +59,8 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	pipe_list = NULL;
 	tokens = NULL;
 	create_tokens(&tokens, str);
+	if (!tokens)
+		return (NULL);
 	add_history(str);
 	expand_tokens(&tokens, my_env);
 	if (!tokens)
@@ -60,6 +74,14 @@ t_pipeline	*my_parse(char *str, char **my_env)
 	return (pipe_list);
 }
 
+void	readline_exit(void)
+{
+	ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+	ft_putstr_fd("\033[10C", STDOUT_FILENO);
+	ft_printf("exit\n");
+	exit(EXIT_SUCCESS);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	char		*res;
@@ -67,29 +89,21 @@ int	main(int argc, char *argv[], char *envp[])
 	t_data		data;
 
 	if (argc != 1)
-	{
-		error_command_msg(argv[1], START_ERROR);
-		return (1);
-	}
+		return (error_command_msg(argv[1], START_ERROR));
 	data.my_env = init_envp(envp);
-	set_exit_status(&data, 0);
-	signal_setting_readmode();
 	while (1)
 	{
+		signal_setting_readmode();
 		res = readline("yo shell$ ");
 		if (res == NULL)
-		{
-			ft_printf("exit\n");
-			continue ;
-		}
+			readline_exit();
 		pipeline_list = my_parse(res, data.my_env);
 		if (pipeline_list)
 		{
-			// signal_setting_commandmode();
+			signal(SIGINT, SIG_IGN);
 			mini_execute(pipeline_list, &data);
 			ft_pipeline_lstclear(&pipeline_list);
 		}
-		// system("leaks minishell");
 		free(res);
 	}
 }

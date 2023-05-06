@@ -2,6 +2,7 @@
 SRCS_EXEC		=	mini_exec.c \
 					get_path.c \
 					execute_utils.c \
+					execute_utils2.c \
 					child_parent.c \
 					redirection.c \
 					heredoc.c \
@@ -60,10 +61,10 @@ RM			= rm -f
 all:		${NAME}
 
 .c.o:
-			$(CC) $(CFLAGS) -Ilibft/includes -c $< -o $@
+			$(CC) $(CFLAGS) -Ilibft/includes -I../gnu_readline/include -c $< -o $@
 
 $(NAME): 	$(OBJS) $(LIBFT)
-			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -lreadline -o $(NAME)
+			$(CC) $(CFLAGS) $(OBJS) -L./libft -lft -L../gnu_readline/lib -lreadline -o $(NAME)
 
 $(LIBFT):
 			make -j3 -C ./libft all
