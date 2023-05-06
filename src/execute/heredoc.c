@@ -32,7 +32,10 @@ void	parent_heredoc(int p_fd[2], pid_t cpid)
 
 	waitpid(cpid, &exit_status, 0);
 	if (exit_status == 2)
+	{
+		write(1, "\n", 1);
 		g_exit_status = 1;
+	}
 	ft_close(p_fd[0]);
 	ft_close(p_fd[1]);
 }
