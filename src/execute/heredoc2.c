@@ -64,17 +64,20 @@ void	heredoc_write(int fd, char *delimeter, char **env)
 	char	*expanded;
 
 	len = ft_strlen(delimeter);
+	write(1, "> ", 2);
 	buf = get_next_line(STDIN_FILENO);
-	while (ft_strncmp(buf, delimeter, len) || buf[len] != '\n')
+	while (buf && (ft_strncmp(buf, delimeter, len) || buf[len] != '\n'))
 	{
 		expanded = get_expanded_string(buf, env);
 		if (write(fd, expanded, ft_strlen(expanded)) == -1)
 			error_command("heredoc");
 		free(expanded);
 		free(buf);
+		write(1, "> ", 2);
 		buf = get_next_line(STDIN_FILENO);
 	}
-	free(buf);
+	if (buf)
+		free(buf);
 	ft_close(fd);
 }
 
