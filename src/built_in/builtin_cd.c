@@ -12,19 +12,11 @@
 
 #include "./mini_builtin.h"
 
-void	set_old_pwd(char *option, t_data *data)
+void	set_old_pwd(char *current_pwd, t_data *data)
 {
 	char	*key_value;
-	char	old_pwd[1024];
-	char	*old_pwd_from_env;
 
-	old_pwd_from_env = get_value("OLDPWD", data->my_env);
-	if (old_pwd_from_env[0] == 0 && !ft_strcmp(option, "-"))
-		return ;
-	free(old_pwd_from_env);
-	if (getcwd(old_pwd, 1024) == NULL)
-		error_command("cd");
-	key_value = ft_strjoin("OLDPWD=", old_pwd);
+	key_value = ft_strjoin("OLDPWD=", current_pwd);
 	add_variable(key_value, data);
 	free(key_value);
 }
@@ -92,9 +84,11 @@ int	move_to_old_pwd(char **env)
 int	ft_cd(t_data *data, char **options, char **env)
 {
 	int		return_value;
+	char	current_pwd[1024];
 
 	options++;
-	set_old_pwd(*options, data);
+	if (getcwd(current_pwd, 1024) == NULL)
+		error_command("cd");
 	if (!*options || !ft_strcmp(*options, "~"))
 		return_value = move_to_home(env);
 	else if (*options && !ft_strcmp(*options, "-"))
@@ -110,6 +104,9 @@ int	ft_cd(t_data *data, char **options, char **env)
 			return_value = 0;
 	}
 	if (return_value == 0)
+	{
+		set_old_pwd(current_pwd, data);
 		set_pwd(data);
+	}
 	return (return_value);
 }
