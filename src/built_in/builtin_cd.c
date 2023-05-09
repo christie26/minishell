@@ -33,7 +33,7 @@ int	move_to_home(char **env)
 	char	*home;
 
 	home = get_value("HOME", env);
-	if (!ft_strcmp(home, ""))
+	if (home && !ft_strcmp(home, ""))
 	{
 		error_command_msg("cd", HOME_ERROR);
 		free(home);
@@ -57,7 +57,7 @@ int	move_to_old_pwd(char **env)
 	char	*old_pwd;
 
 	old_pwd = get_value("OLDPWD", env);
-	if (!ft_strcmp(old_pwd, ""))
+	if (old_pwd && !ft_strcmp(old_pwd, ""))
 	{
 		error_command_msg("cd", OLDPWD_ERROR);
 		free(old_pwd);
