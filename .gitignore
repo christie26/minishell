@@ -7,3 +7,4 @@ mini
 minishell
 **/a.out
 gnu_readline/
+*.dSYM

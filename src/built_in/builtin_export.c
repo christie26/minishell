@@ -123,6 +123,7 @@ int	ft_export(char **options, t_data *data)
 		i = -1;
 		while (env[++i])
 			print_variable(env[i]);
+		free(env);
 	}
 	while (*options)
 	{
