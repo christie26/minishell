@@ -105,7 +105,7 @@ int	ft_env(char *cmd, char **options, char **env)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], "?=", 2))
+		if (ft_strncmp(env[i], "?=", 2) && ft_strchr(env[i], '=') != NULL)
 			ft_putendl_fd(env[i], 1);
 		i++;
 	}

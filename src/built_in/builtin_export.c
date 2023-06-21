@@ -35,7 +35,7 @@ int	key_exist(char *key, t_data *data, int len)
 	index_env = 0;
 	while (env[index_env])
 	{
-		if (!ft_strncmp(key, env[index_env], len) && env[index_env][len] == '=')
+		if (!ft_strncmp(key, env[index_env], len))
 			return (index_env);
 		index_env++;
 	}
