@@ -21,8 +21,12 @@ int	check_input(char *input)
 	i = 0;
 	count = 0;
 	key = 1;
-	if (input[0] == '=' || !(ft_isalpha(input[0]) || input[0] == '_'))
-		return (error_command_msg("export", EXPORT_ERROR));
+	while (input[i] && input[i] != '=')
+	{
+		if (!(ft_isalpha(input[i]) || input[i] == '_'))
+			return (error_command_msg("export", EXPORT_ERROR));
+		i++;
+	}
 	return (0);
 }
 
@@ -60,6 +64,8 @@ int	if_key_exist(char *key_value, t_data *data)
 	index_env = key_exist(key_value, data, i);
 	if (index_env != -1)
 	{
+		if (ft_strchr(key_value, '=') == NULL)
+			return (1);
 		tmp = env[index_env];
 		env[index_env] = ft_strdup(key_value);
 		free(tmp);
@@ -115,12 +121,9 @@ int	ft_export(char **options, t_data *data)
 	while (*options)
 	{
 		if (check_input(*options))
-		{
-			options++;
 			return_value = 1;
-			continue ;
-		}
-		add_variable(*options, data);
+		else
+			add_variable(*options, data);
 		options++;
 	}
 	return (return_value);
