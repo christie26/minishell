@@ -23,19 +23,6 @@ int	check_input(char *input)
 	key = 1;
 	if (input[0] == '=' || !(ft_isalpha(input[0]) || input[0] == '_'))
 		return (error_command_msg("export", EXPORT_ERROR));
-	while (input[i])
-	{
-		if (input[i] == '=')
-		{
-			key = 0;
-			count++;
-		}
-		if (key && (!(ft_isalpha(input[i]) || input[i] == '_')))
-			return (error_command_msg("export", EXPORT_ERROR));
-		i++;
-	}
-	if (count != 1)
-		return (error_command_msg("export", "Invalid input\n"));
 	return (0);
 }
 
