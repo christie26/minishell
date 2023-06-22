@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:51:03 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 20:30:47 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/06/22 18:23:23 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,5 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	else
 		execute_center(data, pipeline);
 	heredoc_unlink(pipeline);
-	free_path(data->path);
-	free(data->pid_set);
 	return (return_value);
 }

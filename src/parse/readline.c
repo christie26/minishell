@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 20:32:37 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 20:32:38 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/06/22 18:19:32 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,30 +80,4 @@ void	readline_exit(void)
 	ft_putstr_fd("\033[10C", STDOUT_FILENO);
 	ft_printf("exit\n");
 	exit(EXIT_SUCCESS);
-}
-
-int	main(int argc, char *argv[], char *envp[])
-{
-	char		*res;
-	t_pipeline	*pipeline_list;
-	t_data		data;
-
-	if (argc != 1)
-		return (error_command_msg(argv[1], START_ERROR));
-	data.my_env = init_envp(envp);
-	while (1)
-	{
-		signal_setting_readmode();
-		res = readline("yo shell$ ");
-		if (res == NULL)
-			readline_exit();
-		pipeline_list = my_parse(res, data.my_env);
-		if (pipeline_list)
-		{
-			signal(SIGINT, SIG_IGN);
-			mini_execute(pipeline_list, &data);
-			ft_pipeline_lstclear(&pipeline_list);
-		}
-		free(res);
-	}
 }

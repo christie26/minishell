@@ -6,7 +6,7 @@
 /*   By: yoonsele <yoonsele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 18:52:01 by yoonsele          #+#    #+#             */
-/*   Updated: 2023/05/05 18:52:01 by yoonsele         ###   ########.fr       */
+/*   Updated: 2023/06/22 18:22:58 by yoonsele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,5 +111,7 @@ t_token		*ft_token_lstlast(t_token *token_lst);
 void		ft_token_lstadd_back(t_token **token_lst, t_token *new);
 void		ft_token_lstdel_node(t_token **token_lst, t_token *target);
 void		ft_token_lstclear(t_token **token_lst);
+
+void		readline_exit(void);
 
 #endif
