@@ -71,6 +71,7 @@ void		expand_check(t_list *tokens, char **my_env);
 void		quote_remove_check(t_list *tokens);
 void		quote_removal(t_list *token);
 
+// parse_expand2.c
 void		expand_tokens(t_token **token_list, char **my_env);
 char		*word_list_join(t_list *word_list);
 char		*get_key_from_word(char **str);
@@ -86,10 +87,11 @@ void		quote_remove_tokens(t_token **token_list);
 char		*get_word_without_quote(char *str, size_t *idx);
 char		*get_quote_removed_string(char *str);
 
-// // signals.c
-// void		sig_handler_readmode(int signum);
-// void		signal_setting_readmode(void);
-// void		signal_setting_commandmode(void);
+// signals.c
+void		sig_handler_readmode(int signum);
+void		signal_setting_readmode(void);
+void		signal_setting_commandmode(void);
+void		signal_setting_heredocmode(void);
 
 // pipeline_list_utils.c
 t_pipeline	*ft_pipeline_lstnew(t_token **token_list);

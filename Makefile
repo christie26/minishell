@@ -7,7 +7,7 @@ SRCS_EXEC		=	mini_exec.c \
 					redirection.c \
 					heredoc.c \
 					heredoc2.c \
-					new_error.c
+					ft_error.c
 
 SRCS_PARSE		=	readline.c \
 					parse_simple_check.c \

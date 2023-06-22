@@ -17,6 +17,7 @@
 # include <stdio.h>
 
 # include "../../libft/includes/libft.h"
+# include "../execute/mini_exec.h"
 # include "../model.h"
 # include "../error.h"
 

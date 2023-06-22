@@ -42,12 +42,4 @@ typedef struct s_data {
 	char	**my_env;
 }	t_data;
 
-int		error_command_msg(char *cmd, char *message);
-int		error_command(char *cmd);
-
-void	sig_handler_readmode(int signum);
-void	signal_setting_readmode(void);
-void	signal_setting_commandmode(void);
-void	signal_setting_heredocmode(void);
-
 #endif

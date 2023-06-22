@@ -53,15 +53,17 @@ void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
 // redirection
 int		redirection_center(t_redirect *redirect);
 
-// utils1
+// utils
 void	ft_close(int fd);
 void	ft_dup2(int fd_from, int fd_to);
 void	get_short_exit(int exit_status);
 void	free_path(char **path);
-
-// utils2
 int		is_directory(char *cmd);
 int		have_permission(char *cmd);
 int		is_exist(char *cmd);
+
+// error handling
+int		error_command_msg(char *cmd, char *message);
+int		error_command(char *cmd);
 
 #endif
