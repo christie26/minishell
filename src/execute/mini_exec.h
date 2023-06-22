@@ -32,7 +32,7 @@
 # include "../built_in/mini_builtin.h"
 # include "../parse/mini_parse.h"
 
-int		mini_execute(t_pipeline *pipeline, t_data *data);
+void	mini_execute(t_pipeline *pipeline, t_data *data);
 
 // heredoc
 int		heredoc_center(t_data *data, t_pipeline *pipeline);

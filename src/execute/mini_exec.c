@@ -67,11 +67,8 @@ void	only_builtin(t_data *data, t_pipeline *pipeline)
 	dup2(saved_stdout, STDOUT_FILENO);
 }
 
-int	mini_execute(t_pipeline *pipeline, t_data *data)
+void	mini_execute(t_pipeline *pipeline, t_data *data)
 {
-	int	return_value;
-
-	return_value = 0;
 	data->process_number = get_process_number(pipeline);
 	if (data->process_number > 1024)
 	{
@@ -83,11 +80,10 @@ int	mini_execute(t_pipeline *pipeline, t_data *data)
 	if (!data->pid_set)
 		exit(EXIT_FAILURE);
 	if (heredoc_center(data, pipeline))
-		return (1);
+		return ;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))
 		only_builtin(data, pipeline);
 	else
 		execute_center(data, pipeline);
-	heredoc_unlink(pipeline);
-	return (return_value);
+	return ;
 }

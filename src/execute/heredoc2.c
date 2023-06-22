@@ -22,7 +22,9 @@ void	heredoc_unlink(t_pipeline *pipeline)
 		while (redirect)
 		{
 			if (redirect->type == 2)
+			{
 				unlink(redirect->filename);
+			}
 			redirect = redirect->next;
 		}
 		pipeline = pipeline->next;
