@@ -45,20 +45,23 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 {
 	g_exit_status = 0;
 	signal_setting_commandmode();
-	if (i != 0)
+	if (data->process_number > 1)
 	{
-		ft_dup2(data->prev_fd, 0);
-		ft_close(data->prev_fd);
-	}
-	if (i != data->process_number - 1)
-	{
-		ft_dup2(p_fd[1], 1);
-		data->prev_fd = p_fd[0];
+		if (i != 0)
+		{
+			ft_dup2(data->prev_fd, 0);
+			ft_close(data->prev_fd);
+		}
+		if (i != data->process_number - 1)
+		{
+			ft_dup2(p_fd[1], 1);
+			data->prev_fd = p_fd[0];
+		}
+		ft_close(p_fd[0]);
+		ft_close(p_fd[1]);
 	}
 	if (redirection_center(pipeline->cmd_block->redirect))
 		g_exit_status = 1;
-	ft_close(p_fd[0]);
-	ft_close(p_fd[1]);
 	if (g_exit_status == 0)
 		ft_execute(pipeline->cmd_block->cmd, data);
 	exit(g_exit_status);
@@ -66,6 +69,8 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 
 void	parent_process(t_data *data, int *p_fd, int i)
 {
+	if (data->process_number == 1)
+		return ;
 	if (i == 0)
 		data->prev_fd = p_fd[0];
 	else if (i == data->process_number - 1)

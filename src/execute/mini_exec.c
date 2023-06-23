@@ -32,10 +32,12 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 	pid_t	cpid;
 
 	i = -1;
+	ft_memset(p_fd, 0, 2 * sizeof(int));
 	while (++i < data->process_number)
 	{
-		if (pipe(p_fd) == -1)
-			error_command("pipe");
+		if (data->process_number > 1)
+			if (pipe(p_fd) == -1)
+				error_command("pipe");
 		cpid = fork();
 		if (cpid == -1)
 			error_command("fork");
