@@ -30,7 +30,6 @@ char	*get_key_from_word(char **str)
 			error_command_msg("parse", BRACE_ERROR);
 		else if (**str != '}' || *str - substr_offset == 0)
 			error_command_msg("parse", BAD_SUB_ERROR);
-		return (NULL);
 	}
 	key = ft_substr(substr_offset, 0, *str - substr_offset);
 	if (key == NULL)
