@@ -61,22 +61,18 @@ char	*random_name(void)
 
 void	heredoc_write(int fd, char *delimeter, char **env)
 {
-	size_t	len;
 	char	*buf;
 	char	*expanded;
 
-	len = ft_strlen(delimeter);
-	write(1, "> ", 2);
-	buf = get_next_line(STDIN_FILENO);
-	while (buf && (ft_strncmp(buf, delimeter, len) || buf[len] != '\n'))
+	buf = readline("> ");
+	while (buf && ft_strcmp(buf, delimeter))
 	{
 		expanded = get_expanded_string(buf, env);
 		if (write(fd, expanded, ft_strlen(expanded)) == -1)
 			error_command("heredoc");
 		free(expanded);
 		free(buf);
-		write(1, "> ", 2);
-		buf = get_next_line(STDIN_FILENO);
+		buf = readline("> ");
 	}
 	if (buf)
 		free(buf);
