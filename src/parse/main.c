@@ -35,7 +35,7 @@ int	main(int argc, char *argv[], char *envp[])
 			free(res);
 			free_path(data.path);
 			free(data.pid_set);
-			heredoc_unlink(pipeline_list, data.process_number);
+			heredoc_unlink(pipeline_list);
 			ft_pipeline_lstclear(&pipeline_list);
 		}
 	}
