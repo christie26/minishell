@@ -29,7 +29,6 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 {
 	int		i;
 	int		p_fd[2];
-	int		exit_status;
 	pid_t	cpid;
 
 	i = -1;
@@ -43,13 +42,10 @@ void	execute_center(t_data *data, t_pipeline *pipeline)
 		if (cpid == 0)
 			child_process(data, pipeline, p_fd, i);
 		else
-			parent_process(data, p_fd, i, cpid);
+			parent_process(data, p_fd, i);
 		pipeline = pipeline->next;
 	}
-	i = -1;
-	while (++i < data->process_number)
-		waitpid(data->pid_set[i], &exit_status, 0);
-	get_short_exit(exit_status);
+	update_exit(data->process_number, cpid);
 }
 
 void	only_builtin(t_data *data, t_pipeline *pipeline)
@@ -76,9 +72,6 @@ void	mini_execute(t_pipeline *pipeline, t_data *data)
 		exit (24);
 	}
 	data->path = set_path(data->my_env);
-	data->pid_set = malloc(sizeof(pid_t) * data->process_number);
-	if (!data->pid_set)
-		exit(EXIT_FAILURE);
 	if (heredoc_center(data, pipeline))
 		return ;
 	if (data->process_number == 1 && is_builtin(pipeline->cmd_block->cmd[0]))

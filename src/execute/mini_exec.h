@@ -48,7 +48,7 @@ char	*get_cmd_path(char *cmd, char **path);
 
 // child & parent process
 void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i);
-void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid);
+void	parent_process(t_data *data, int *p_fd, int i);
 
 // redirection
 int		redirection_center(t_redirect *redirect);
@@ -56,7 +56,7 @@ int		redirection_center(t_redirect *redirect);
 // utils
 void	ft_close(int fd);
 void	ft_dup2(int fd_from, int fd_to);
-void	get_short_exit(int exit_status);
+void	update_exit(int process_number, pid_t cpid);
 void	free_path(char **path);
 int		is_directory(char *cmd);
 int		have_permission(char *cmd);

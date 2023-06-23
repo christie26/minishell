@@ -36,7 +36,6 @@ typedef struct s_pipeline {
 
 typedef struct s_data {
 	int		process_number;
-	pid_t	*pid_set;
 	int		prev_fd;
 	char	**path;
 	char	**my_env;

@@ -51,8 +51,20 @@ void	ft_dup2(int fd_from, int fd_to)
 	}
 }
 
-void	get_short_exit(int exit_status)
+void	update_exit(int process_number, pid_t cpid)
 {
+	int		i;
+	int		exit_tmp;
+	int		exit_status;
+	pid_t	pid_check;
+
+	i = -1;
+	while (++i < process_number)
+	{
+		pid_check = waitpid(-1, &exit_tmp, 0);
+		if (pid_check == cpid)
+			exit_status = exit_tmp;
+	}
 	if (exit_status == 2 || exit_status == 3)
 	{
 		if (exit_status == 3)

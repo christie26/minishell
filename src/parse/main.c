@@ -33,7 +33,6 @@ int	main(int argc, char *argv[], char *envp[])
 			signal(SIGINT, SIG_IGN);
 			mini_execute(pipeline_list, &data);
 			free_path(data.path);
-			free(data.pid_set);
 			heredoc_unlink(pipeline_list);
 			ft_pipeline_lstclear(&pipeline_list);
 		}

@@ -64,7 +64,7 @@ void	child_process(t_data *data, t_pipeline *pipeline, int *p_fd, int i)
 	exit(g_exit_status);
 }
 
-void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
+void	parent_process(t_data *data, int *p_fd, int i)
 {
 	if (i == 0)
 		data->prev_fd = p_fd[0];
@@ -79,5 +79,4 @@ void	parent_process(t_data *data, int *p_fd, int i, pid_t cpid)
 		data->prev_fd = p_fd[READ];
 	}
 	ft_close((p_fd[WRITE]));
-	data->pid_set[i] = cpid;
 }
