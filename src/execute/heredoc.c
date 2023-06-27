@@ -84,5 +84,6 @@ int	heredoc_center(t_data *data, t_pipeline *pipeline)
 		}
 		pipeline = pipeline->next;
 	}
+	g_exit_status = 0;
 	return (0);
 }
