@@ -70,6 +70,7 @@ void	heredoc_write(int fd, char *delimeter, char **env)
 		expanded = get_expanded_string(buf, env);
 		if (write(fd, expanded, ft_strlen(expanded)) == -1)
 			error_command("heredoc");
+		write(fd, "\n", 1);
 		free(expanded);
 		free(buf);
 		buf = readline("> ");
