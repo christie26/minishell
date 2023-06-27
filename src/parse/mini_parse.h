@@ -43,7 +43,6 @@ typedef struct s_token {
 }	t_token;
 
 // readline.c
-void		print_tree(t_pipeline *pipeline_list);
 t_pipeline	*my_parse(char *str, char **my_env);
 
 // parse_simple_check.c
