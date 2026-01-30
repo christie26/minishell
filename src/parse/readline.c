@@ -40,6 +40,6 @@ void	readline_exit(void)
 {
 	ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
 	ft_putstr_fd("\033[10C", STDOUT_FILENO);
-	ft_printf("exit\n");
+	printf("exit\n");
 	exit(EXIT_SUCCESS);
 }

@@ -19,7 +19,7 @@ int	is_blank(char c)
 
 int	is_operator_char(char c)
 {
-	return (ft_strchr("|<>", c) > 0);
+	return (ft_strchr("|<>", c) != NULL);
 }
 
 int	is_metacharacter(char c)

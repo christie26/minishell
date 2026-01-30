@@ -24,11 +24,11 @@ int	get_redirection(t_token **cur_token, t_cmd_block *cmd_block)
 	*cur_token = (*cur_token)->next;
 	if (*cur_token == NULL || (*cur_token)->type == OPERATOR)
 	{
-		ft_printf("syntax error near unexpected token ");
+		printf("syntax error near unexpected token ");
 		if (*cur_token == NULL)
-			ft_printf("\'newline\'\n");
+			printf("\'newline\'\n");
 		else
-			ft_printf("\'%s\'\n", (*cur_token)->value);
+			printf("\'%s\'\n", (*cur_token)->value);
 		return (0);
 	}
 	new_redirect = ft_redirect_lstnew(type, (*cur_token)->value);

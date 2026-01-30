@@ -24,7 +24,6 @@
 # include <termios.h>
 
 # include "libft.h"
-# include "ft_printf.h"
 # include "get_next_line.h"
 # include "../model.h"
 # include "../built_in/mini_builtin.h"
