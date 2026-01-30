@@ -15,8 +15,9 @@
 # define MODEL_H
 
 # include <unistd.h>
+# include <sys/wait.h>
 
-int	g_exit_status;
+extern int	g_exit_status;
 
 typedef struct s_redirect {
 	int					type;

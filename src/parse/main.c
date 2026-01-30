@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "mini_parse.h"
+int g_exit_status = 0;
 
 int	main(int argc, char *argv[], char *envp[])
 {
