@@ -85,22 +85,22 @@ LIBFT_SRCS = ${addprefix libft_srcs/,\
 
 LIBFT_OBJS = ${LIBFT_SRCS:.c=.o}
 
-FT_PRINTF_SRCS = ${addprefix ft_printf_srcs/,\
-							 ft_flags_utils.c \
-							 ft_pf_char_fd.c \
-							 ft_pf_hex_fd.c \
-							 ft_pf_hexlen.c \
-							 ft_pf_nbr_nosign_fd.c \
-							 ft_pf_nbrlen.c \
-							 ft_pf_nchar_fd.c \
-							 ft_pf_nstr_fd.c \
-							 ft_pf_ptr_fd.c \
-							 ft_pf_str_fd.c \
-							 ft_print_data_utils.c \
-							 ft_printf.c \
-}
+# FT_PRINTF_SRCS = ${addprefix ft_printf_srcs/,\
+# 							 ft_flags_utils.c \
+# 							 ft_pf_char_fd.c \
+# 							 ft_pf_hex_fd.c \
+# 							 ft_pf_hexlen.c \
+# 							 ft_pf_nbr_nosign_fd.c \
+# 							 ft_pf_nbrlen.c \
+# 							 ft_pf_nchar_fd.c \
+# 							 ft_pf_nstr_fd.c \
+# 							 ft_pf_ptr_fd.c \
+# 							 ft_pf_str_fd.c \
+# 							 ft_print_data_utils.c \
+# 							 ft_printf.c \
+# }
 
-FT_PRINTF_OBJS = ${FT_PRINTF_SRCS:.c=.o}
+# FT_PRINTF_OBJS = ${FT_PRINTF_SRCS:.c=.o}
 
 GNL_SRCS = ${addprefix gnl_srcs/,\
 					   get_next_line.c\
@@ -111,7 +111,7 @@ GNL_OBJS = ${GNL_SRCS:.c=.o}
 
 # 과제별로 폴더를 나누고 그 안에서 소스파일을 관리
 
-ALL_OBJS = ${LIBFT_OBJS} ${FT_PRINTF_OBJS} ${GNL_OBJS}
+ALL_OBJS = ${LIBFT_OBJS} ${GNL_OBJS}
 
 # 이후 OBJS의 추가 수정을 쉽게 하기위해 변수 하나에 모두 묶어줌
 
