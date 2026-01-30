@@ -15,12 +15,8 @@
 int	check_input(char *input)
 {
 	int	i;
-	int	count;
-	int	key;
 
 	i = 0;
-	count = 0;
-	key = 1;
 	while (input[i] && input[i] != '=')
 	{
 		if (!(ft_isalpha(input[i]) || input[i] == '_'))
